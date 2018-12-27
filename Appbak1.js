@@ -17,7 +17,7 @@ const { width } = Dimensions.get('window');
 const MyStack = createNavigator({   
   Classic,
   Share
-});
+}, );
 
 class CustomNavigator extends React.Component {
   static router = {

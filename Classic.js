@@ -1,26 +1,33 @@
 import React from 'react'
-import { View, ListView, TouchableOpacity, Dimensions, Text } from 'react-native'
+import { View, FlatList, TouchableOpacity, Text, Modal, StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { layoutHomeData } from './HomeActions';
 import { get } from './request'
 import globalStyles from './globalStyles'
 
-const { width } = Dimensions.get('window')
+let noDataTips = '当前没有内容'
 
 class Classic extends React.Component {
 
   constructor(props) {
     super(props)
-    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     this.state = {
-      dataSource: ds
+      classics: [],
+      noDataTips,
+      modalVisible: false
     }
   }
 
+  setModalVisible(visible) {
+    this.setState({
+      modalVisible: visible
+    })
+  }
+
   async componentWillMount() {
-    let data = await get('http://192.168.1.6:8080/features/classic')
-    let { appName, slogan, features, success, classics = []} = data
+    let data = await get('features/classic')
+    let { appName, slogan, features, success, classics = [], noDataTips = noDataTips } = data
     if (success) {
       this.props.layoutHomeData({
         appName,
@@ -28,46 +35,52 @@ class Classic extends React.Component {
         features
       })
       this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(classics)
+        classics,
+        noDataTips
       })
     }
   }
 
-
   render() {
     return (
       <View style={{flex: 1, paddingTop: 20}}>
-        <ListView
+        {this.state.classics.length ? <FlatList
           style={{
             paddingTop: 3,
             paddingLeft: 7,
             paddingRight: 7,
             paddingBottom: 4
           }}
-          dataSource={this.state.dataSource}
-          renderRow={(rowData) => {
+          data={this.state.classics}
+          renderItem={({item}) => {
             return (
               <View style={{
                 paddingTop: 5,
                 paddingBottom: 5,
               }}>
-                <TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => this.props.navigation.navigate('ClassicDetail', {
+                    itemId: item._id
+                  })}
+                >
                   <Text style={{ 
                     fontSize: 16,
                     color: '#7094b7',
                     lineHeight: 32
-                   }}>{rowData.title}</Text>
+                   }}>{item.title}</Text>
                   <Text style={{ 
                     fontSize: 14,
                     color: '#999999',
                     lineHeight: 24
-                   }}>{rowData.summary}</Text>
+                   }}>{item.summary}</Text>
                 </TouchableOpacity>
                 <View style={{
                   flexDirection: 'row',
                   justifyContent: 'flex-end',
                 }}>
-                  <TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => this.setModalVisible(true)}
+                  >
                     <Text style={{ 
                     fontSize: 12,
                     color: '#7094b7',
@@ -80,8 +93,54 @@ class Classic extends React.Component {
               </View>
             )
           }}
-          renderSeparator={(sectionId, rowId) => <View key={rowId} style={globalStyles.separator} />}
-        />
+          ItemSeparatorComponent={() => <View style={globalStyles.separator} />}
+          keyExtractor={(item) => (item._id)}
+        /> : (<View>
+          <Text style={{
+            color: '#333333',
+            textAlign: 'center'
+          }}>
+            {this.state.noDataTips}
+          </Text>
+        </View>)}
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={this.state.modalVisible}
+          onRequestClose={() => {this.setModalVisible(false)}}
+        >
+          <TouchableOpacity 
+            activeOpacity={1} 
+            onPressOut={() => this.setModalVisible(false)}
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: 'rgba(0,0,0,0.5)'
+            }}
+          >
+            <View style={{
+              width: 250,
+              height: 150,
+              backgroundColor: 'white',
+              borderRadius: 3,
+              padding: 10
+            }}>
+              <View style={{
+                paddingVertical: 10
+              }}>
+                <Text>推荐到:</Text>
+              </View>
+              <TouchableOpacity
+                style={globalStyles.button}
+                onPress={() => {
+                  this.setModalVisible(false)
+                }}>
+                <Text style={globalStyles.buttonText}>排忧解难</Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        </Modal>
       </View>
     );
   }

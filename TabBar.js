@@ -6,18 +6,21 @@ const { width } = Dimensions.get('window');
 
 class TabBar extends React.Component {
 
-  // 添加
-  onPressClassic() {
-    const { navigation } = this.props
-    navigation.navigate('Classic')
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      curTab: 'CLASSIC'
+    }
   }
 
-  // 浏览
-  onPressShare(feature) {
+  onPressTab(feature) {
     const { navigation } = this.props
+    this.setState({
+      curTab: feature
+    })
     feature = feature.toLowerCase()
     let featureStr = feature.charAt(0).toUpperCase() + feature.slice(1)
-    console.log(featureStr)
     navigation.navigate(featureStr)
   }
 
@@ -37,10 +40,19 @@ class TabBar extends React.Component {
       {(features? Object.entries(features) : []).map(feature => (
         <TouchableOpacity
          key={feature[0]}
-         style={{ flex: 1 }}
-         onPress={this.onPressShare.bind(this, feature[0])}
+         style={{ 
+           height: 54,
+           flex: 1
+         }}
+         onPress={this.onPressTab.bind(this, feature[0])}
         >
-          <Text style={{ textAlign: 'center' }}>{feature[1]}</Text>
+          <Text 
+            style={{ 
+              textAlign: 'center',
+              lineHeight: 54,
+              color: this.state.curTab === feature[0] ? 'red' : null
+            }}
+          >{feature[1]}</Text>
         </TouchableOpacity>
       ))}
       </View>

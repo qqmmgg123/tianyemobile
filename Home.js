@@ -11,6 +11,7 @@ import globalStyles from './globalStyles'
 import TYicon from './TYicon'
 
 class Home extends Component {
+  static router = Tab.router;
 
   static navigationOptions = {
     drawerLabel: '首页'
@@ -30,7 +31,7 @@ class Home extends Component {
           </TouchableOpacity>
         </View>
         <View style={globalStyles.headerBottomLine}></View>
-        <Tab />
+        <Tab navigation={this.props.navigation} />
       </View>
     )
   }

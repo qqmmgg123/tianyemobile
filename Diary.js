@@ -1,80 +1,159 @@
 import React from 'react'
-import { View, ListView, TouchableOpacity, Dimensions, Text } from 'react-native'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import { layoutHomeData } from './HomeActions';
-import { get } from './request'
-import globalStyles from './globalStyles'
+import { View, TouchableOpacity, Text, TextInput, KeyboardAvoidingView } from 'react-native'
+import TYicon from './TYicon'
+import { post } from './request'
+import { toast } from './Toast'
 
-const { width } = Dimensions.get('window')
-
-class Diary extends React.Component {
+export default class DiaryEditor extends React.Component {
 
   constructor(props) {
     super(props)
-    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-    this.state = {
-      dataSource: ds
+    this.state = { 
+      content: ''
     }
   }
 
-  async componentWillMount() {
-    let data = await get('http://192.168.1.6:8080/features/diary')
-    let { appName, slogan, features, success, diarys = []} = data
-    console.log(data, diarys)
-    if (success) {
-      this.props.layoutHomeData({
-        appName,
-        slogan,
-        features
-      })
+  componentDidMount() {
+    /* this.subs = [
+      // this.props.navigation.addListener('willFocus', () => console.log('will focus')),
+      // this.props.navigation.addListener('willBlur', () => console.log('will blur')),
+      this.props.navigation.addListener('didFocus', () => {
+        this._input.focus()
+      }),
+      this.props.navigation.addListener('didBlur', () => {
+        this._input.blur()
+      }),
+    ] */
+  }
+
+  componentWillUnmount() {
+    this.subs.forEach((sub) => {
+      sub.remove();
+    })
+  }
+
+  async postDiary() {
+    const { content } = this.state
+
+    if (!content.trim()) {
+      toast('您没有输入内容。');
+    }
+
+    let res = await post('diary', {
+      content
+    })
+    if (res.success) {
+      const info = '已记录。'
       this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(diarys)
+        content: ''
       })
+      toast(info)
+    } else {
+      const { info } = res
+      toast(info)
     }
   }
-
 
   render() {
     return (
-      <View style={{flex: 1, paddingTop: 20}}>
-        <ListView
+      <KeyboardAvoidingView
+        keyboardVerticalOffset={62}
+        style={{
+          flex: 1,
+          paddingTop: 3,
+          paddingHorizontal: 7
+        }}
+        behavior='position'
+      >
+        <TextInput
+          onChangeText={(content) => this.setState({content})}
+          autoFocus={true}
+          value={this.state.content}
+          ref={ref => {
+            this._input = ref
+          }}
           style={{
+            flex: 1,
             paddingTop: 3,
-            paddingLeft: 7,
-            paddingRight: 7,
-            paddingBottom: 4
+            paddingHorizontal: 7,
+            paddingBottom: 4,
+            marginTop: 10,
+            textAlignVertical: 'top'
           }}
-          dataSource={this.state.dataSource}
-          renderRow={(rowData) => {
-            return (
-              <View style={{
-                paddingTop: 5,
-                paddingBottom: 5,
-              }}>
-                <TouchableOpacity>
-                  <Text style={{ 
-                    fontSize: 14,
-                    color: '#999999',
-                    lineHeight: 24
-                   }}>{rowData.content}</Text>
-                </TouchableOpacity>
-              </View>
-            )
-          }}
-          renderSeparator={(sectionId, rowId) => <View key={rowId} style={globalStyles.separator} />}
+          placeholder="记录点滴心语..."
+          placeholderTextColor="#999999"
+          autoCapitalize="none"
+          multiline={true}
         />
-      </View>
-    );
+        <View
+          style={{
+            borderRadius: 3,
+            backgroundColor: '#f2f2f2',
+            borderColor: '#e6e6e6',
+            borderStyle: 'solid',
+            borderWidth: 1,
+            paddingVertical: 10,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop: 10
+          }}
+        >
+          <Text style={{
+            color: '#adadad',
+            fontSize: 12,
+            marginRight: 10
+          }}>仅自己可见</Text>
+          <TYicon name='suoding' size={16} color='#b8b8b8'></TYicon>
+        </View>
+        <TouchableOpacity
+          style={{
+            borderColor: '#dddddd', 
+            borderWidth: 1, 
+            borderRadius: 3,
+            justifyContent: 'center',
+            height: 36,
+            paddingVertical: 10,
+            marginTop: 10
+          }}
+          onPress={this.postDiary.bind(this)}
+        >
+          <Text style={{
+            alignItems: 'center', 
+            color: '#666666', 
+            textAlign: 'center'
+          }}>记录</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => this.props.navigation.navigate('DiaryList')}
+          style={{
+            position: 'absolute',
+            width: 48,
+            height: 48,
+            backgroundColor: 'red',
+            bottom: 20,
+            right: 20,
+            borderRadius: 24,
+            elevation:4,
+            shadowOffset: { width: 5, height: 5 },
+            shadowColor: "grey",
+            shadowOpacity: 0.5,
+            shadowRadius: 10,
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          {/*<Text
+            style={{
+            color: '#ffffff',
+            fontSize: 20,
+            fontWeight: 'bold',
+            textAlign: 'center',
+            lineHeight: 48,
+          }}>省</Text>*/}
+          <TYicon name='beizhuyitianxie' size={32} color='white'></TYicon>
+        </TouchableOpacity>
+      </KeyboardAvoidingView>
+    )
   }
 }
-
-const mapStateToProps = null
-
-const mapDispatchToProps = dispatch => (
-  bindActionCreators({
-    layoutHomeData,
-  }, dispatch)
-)
-
-export default connect(mapStateToProps, mapDispatchToProps)(Diary);

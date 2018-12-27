@@ -1,17 +1,17 @@
 import { combineReducers } from 'redux'
 import { 
-  HOME_DATA_LOADED 
+  HOME_DATA_LOADED,
+  NEED_LOGIN
 } from './types'
 
-const INITIAL_STATE = {
+const homeReducer = (state = {
   homeData: {
     appName: '',
     slogan: '',
-    features: null
+    features: null,
   }
-}
-
-const homeReducer = (state = INITIAL_STATE, action) => {
+}, action) => {
+  console.log(action)
   switch (action.type) {
     case HOME_DATA_LOADED:
       return Object.assign({}, state.homeData, action.homeData)
@@ -20,6 +20,22 @@ const homeReducer = (state = INITIAL_STATE, action) => {
   }
 }
 
+const loginReducer = (state = {
+  loginData: {
+    need_login: true,
+    userId: ''
+  }
+}, action) => {
+  console.log(action)
+  switch (action.type) {
+    case NEED_LOGIN:
+      return Object.assign({}, state.loginData, action.loginData)
+    default:
+      return state
+  }
+}
+
 export default combineReducers({
-  homeData: homeReducer
+  homeData: homeReducer,
+  loginData: loginReducer
 })

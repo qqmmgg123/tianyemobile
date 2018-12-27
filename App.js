@@ -1,153 +1,105 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { Provider } from 'react-redux'
-import { createStore } from 'redux';
 import {
-  SafeAreaView,
-  StyleSheet, 
   View,
-  Text,
-  TextInput,
-  TouchableOpacity
+  ScrollView,
+  TouchableOpacity,
+  Text
 } from 'react-native'
-import { createAppContainer, createDrawerNavigator } from 'react-navigation'
+import { 
+  createAppContainer, 
+  createStackNavigator,
+  createDrawerNavigator,
+  DrawerItems, 
+  SafeAreaView
+} from 'react-navigation'
+import { get, getUserInfo, removeUser, setCurRoute, getCurRoute, removeCurRoute } from './request'
 import Home from './Home'
-import HomeReducer from './HomeReducer';
+import Friend from './Friend'
+import Login from './Login'
+import HelpEditor from './HelpEditor'
+import HelpDetail from './HelpDetail'
+import ShareEditor from './ShareEditor'
+import ShareDetail from './ShareDetail'
+import ClassicDetail from './ClassicDetail'
+import DiaryList from './DiaryList'
+import NavigatorService from './services/navigator'
+import { store } from './Store'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { changeLoginState } from './HomeActions';
 
-const store = createStore(HomeReducer)
+class DrawerList extends React.Component {
 
-class Friend extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = { 
-      query: ''
+  async postLogout() {
+    let res = await get('logout')
+    if (res.success) {
+      this.props.navigation.closeDrawer()
+      let curRoute = getCurRoute()
+      if (curRoute) {
+        this.props.navigation.navigate('Classic')
+      }
+      this.props.changeLoginState({
+        need_login: true,
+        userId: ''
+      })
+      await removeUser()
     }
   }
 
-  static navigationOptions = {
-    drawerLabel: '知己',
-  };
-
   render() {
-    return (
-      <View style={{
-        paddingTop: 3,
-        paddingHorizontal: 7,
-        paddingBottom: 4
-      }}>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <TextInput
-            style={{
-              borderColor: '#cccccc', 
-              borderWidth: 1,
-              height: 36,
-              paddingTop: 3,
-              paddingHorizontal: 7,
-              paddingBottom: 4,
-              borderRadius: 3,
-              flex: 1
-            }}
-            placeholder="请输入对方用户名或邮箱"
-            placeholderTextColor="#cccccc"
-            allowFontScaling={false}
-            onChangeText={(query) => this.setState({query})}
-            value={this.state.query}
-          />
-          <TouchableOpacity
-            style={{
-              borderColor: '#dddddd', 
-              borderWidth: 1, 
-              borderRadius: 3,
-              justifyContent: 'center',
-              height: 36,
-              paddingTop: 3,
-              paddingHorizontal: 7,
-              paddingBottom: 4
-            }}
-          >
-            <Text style={{alignItems: 'center', color: '#666666'}}>查找</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    )
-  }
-}
+    let { need_login } = this.props.loginData
 
-class Login extends React.Component {
-
-  constructor(props) {
-    super(props)
-    this.state = { 
-      username: '用户名',
-      password: '密码'
-    }
-  }
-
-  static navigationOptions = {
-    drawerLabel: '登录'
-  };
-
-  render() {
     return (
       <View>
-        <TextInput
-          onChangeText={(username) => this.setState({username})}
-          value={this.state.username}
-          style={{
-            borderColor: '#cccccc', 
-            borderWidth: 1,
-            height: 36,
-            paddingTop: 3,
-            paddingHorizontal: 7,
-            paddingBottom: 4,
-            borderRadius: 3,
-          }}
-          placeholder="用户名"
-          placeholderTextColor="#cccccc"
-          allowFontScaling={false}
-        />
-        <TextInput
-          style={{
-            borderColor: '#cccccc', 
-            borderWidth: 1,
-            height: 36,
-            paddingTop: 3,
-            paddingHorizontal: 7,
-            paddingBottom: 4,
-            borderRadius: 3,
-          }}
-          placeholder="请输入对方用户名或邮箱"
-          placeholderTextColor="#cccccc"
-          allowFontScaling={false}
-          onChangeText={(password) => this.setState({password})}
-          value={this.state.password}
-        />
-        <TouchableOpacity
-          style={{
-            borderColor: '#dddddd', 
-            borderWidth: 1, 
-            borderRadius: 3,
-            justifyContent: 'center',
-            height: 36,
-            paddingTop: 3,
-            paddingHorizontal: 7,
-            paddingBottom: 4
-          }}
-        >
-          <Text style={{alignItems: 'center', color: '#666666'}}>登录</Text>
-        </TouchableOpacity>
-      </View>
-    )
+        <ScrollView>
+          <DrawerItems
+            {...this.props}
+            getLabel = {(scene) => {
+              if (scene.route.key !== 'Login' || need_login) {
+                return (<Text 
+                  style={{
+                    height: 36,
+                    lineHeight: 36,
+                    paddingHorizontal: 10
+                  }}>{this.props.getLabel(scene)}</Text>)
+              } else {
+                return null
+              }
+            }}
+          />
+          </ScrollView>
+          {!need_login
+            ? (<TouchableOpacity
+                onPress={this.postLogout.bind(this)}
+              >
+                <Text 
+                  style={{ 
+                    height: 36,
+                    lineHeight: 36,
+                    paddingHorizontal: 10
+                  }}>登出</Text>
+              </TouchableOpacity>)
+            : null}
+        </View>
+      )
   }
 }
 
-const styles = StyleSheet.create({
-  icon: {
-    width: 24,
-    height: 24,
-  },
-});
+const mapStateToProps = (state) => {
+  const { loginData } = state
+  return { loginData }
+}
 
-const MyDrawerNavigator = createDrawerNavigator({
+const mapDispatchToProps = dispatch => (
+  bindActionCreators({
+    changeLoginState,
+  }, dispatch)
+)
+
+const DrawerComponent =  connect(mapStateToProps, mapDispatchToProps)(DrawerList)
+
+const AppDrawerNavigator = createDrawerNavigator({
   Home: {
     screen: Home,
   },
@@ -156,17 +108,66 @@ const MyDrawerNavigator = createDrawerNavigator({
   },
   Login: {
     screen: Login,
-  },
+  }
+}, {
+  contentComponent: DrawerComponent
 })
 
-const AppContainer = createAppContainer(MyDrawerNavigator)
+const DrawerContainer = createAppContainer(AppDrawerNavigator)
+
+const AppNav = createStackNavigator({
+  DrawerList: DrawerContainer,
+  ClassicDetail,
+  ShareDetail,
+  HelpDetail,
+  HelpEditor,
+  ShareEditor,
+  DiaryList,
+}, {
+  headerMode: 'none',
+})
+
+const defaultGetStateForAction = AppNav.router.getStateForAction;
+
+AppNav.router.getStateForAction = (action, state) => {
+  if (action.type === 'Navigation/NAVIGATE' && action.routeName) {
+    console.log(action.type, action.routeName)
+    if (action.routeName !== 'Login') {
+      setCurRoute(action.routeName)
+    }
+    switch (action.routeName) {
+      case 'Diary':
+      case 'Help':
+      case 'Friend':
+        let userInfo = getUserInfo()
+        if (!userInfo) {
+          NavigatorService.navigate('Login')
+          return null
+        }
+        break
+      default:
+        break
+    }
+  }
+  return defaultGetStateForAction(action, state);
+}
+
+const AppContainer = createAppContainer(AppNav)
 
 export default class App extends React.Component {
+
   render() {
     return (
       <Provider store={ store }>
-        <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
-          <AppContainer />
+        <SafeAreaView 
+          style={{flex: 1, backgroundColor: '#fff'}} 
+          forceInset={{ top: 'always', horizontal: 'never' }}
+        >
+          <AppContainer 
+            ref={nav => {
+              NavigatorService.setContainer(nav);
+            }}
+          />
         </SafeAreaView>
       </Provider>
     )
