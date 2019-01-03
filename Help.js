@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, FlatList, TouchableOpacity, Text, TextInput, SafeAreaView, Modal, KeyboardAvoidingView, Animated, findNodeHandle } from 'react-native'
+import { View, FlatList, TouchableOpacity, Text, TextInput, SafeAreaView, Modal, KeyboardAvoidingView, Animated, findNodeHandle, StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { layoutHomeData } from './HomeActions';
@@ -49,12 +49,13 @@ class HelpItem extends React.Component {
           }}
         >
           <Text style={{ 
-          fontSize: 12,
-          color: '#7094b7',
+          fontSize: 14,
+          color: '#FF0140',
           height: 27,
           lineHeight: 27,
-          paddingRight: 14
-        }}>更多 {reply_count - 5} 条</Text>
+          paddingRight: 14,
+          textAlign: 'center'
+        }}>更多 {reply_count - 5} 条回复</Text>
         </TouchableOpacity>
       )
     } else {
@@ -66,28 +67,38 @@ class HelpItem extends React.Component {
     const rowStyles = [
       { opacity: this._animated }
     ]
-    const { content = '', replies, _id, creator_id, reply_count } = this.props
-
+    const { content = '', replies, _id, creator_id, reply_count, remark = [], username = '' } = this.props
+    console.log(remark)
     return (
       <Animated.View style={rowStyles}>
         <View 
           style={{
-            paddingTop: 5,
-            paddingBottom: 5,
+            paddingTop: 10,
+            // paddingBottom: 15
           }}
         >
           <View>
             <Text style={{ 
-              fontSize: 16,
-              color: '#333333',
+              fontSize: 14,
+              color: '#333',
+              lineHeight: 24
+              }}>{remark[0] || username}：</Text>
+            <Text style={{ 
+              marginTop: 5,
+              fontSize: 14,
+              color: '#333',
               lineHeight: 24
               }}>{content}</Text>
           </View>
           <View style={{
+            marginTop: 5,
             flexDirection: 'row',
             justifyContent: 'flex-end',
           }}>
             <TouchableOpacity
+              style={{
+                padding: 10
+              }}
               onPress={() => this.props.onReply({ 
                 replyType: 'help', 
                 replyId: _id,
@@ -96,47 +107,62 @@ class HelpItem extends React.Component {
               })}
             >
               <Text style={{ 
-              fontSize: 12,
-              color: '#7094b7',
-              height: 27,
-              lineHeight: 27,
-              paddingRight: 14
+              fontSize: 14,
+              color: '#FF0140',
               }}>回复</Text>
             </TouchableOpacity>
             <TouchableOpacity
+              style={{
+                padding: 10
+              }}
               onPress={() => this.removeHelp(_id)}
             >
               <Text style={{ 
-              fontSize: 12,
-              color: '#7094b7',
-              height: 27,
-              lineHeight: 27,
-              paddingRight: 14
+              fontSize: 14,
+              color: '#FF0140'
               }}>已排解</Text>
             </TouchableOpacity>
           </View>
           <View style={{
+            marginTop: 5,
             backgroundColor: '#f3f4f5',
-            borderRadius: 3
+            borderRadius: 3,
+            marginBottom: 10
           }}>
-            {replies.map(reply => (
-              <TouchableOpacity
-                key={reply._id}
-                style={{
-                  padding: 10
-                }}
-                onPress={() => this.props.onReply({ 
-                  replyType: 'reply', 
-                  replyId: reply._id,
-                  parentId: _id,
-                  receiverId: reply.creator_id 
-                })}
-              >
-                <Text style={{
-                  fontSize: 12
-                }}>{reply.content || ''}</Text>
-              </TouchableOpacity>
-            ))}
+            {replies.map(reply => {
+              const replyName = (reply.remark && reply.remark[0] || reply.username || '')
+              return (
+                <TouchableOpacity
+                  key={reply._id}
+                  style={{
+                    padding: 10
+                  }}
+                  onLongPress={() => this.removeReply()}
+                  onPress={() => this.props.onReply({ 
+                    replyType: 'reply', 
+                    replyId: reply._id,
+                    parentId: _id,
+                    receiverId: reply.creator_id,
+                    receiverName: replyName
+                  })}
+                >
+                  <Text style={{
+                    fontSize: 14,
+                    color: '#333'
+                  }}>
+                    {replyName + (reply.reply_type === 'reply' ? '@' + (reply.rremark && reply.rremark[0] || reply.receivername) : '') + '：' + (reply.content || '')}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => this.props.navigation.navigate('ClassicDetail', {
+                      itemId: reply.ref_id
+                    })}
+                  >
+                    <Text>{reply.ref_title || ''}</Text>
+                    <Text>{reply.ref_summary || ''}</Text>
+                  </TouchableOpacity>
+                </TouchableOpacity>
+              )
+            })}
             {this.moreButton(_id, reply_count)}
           </View>
         </View>
@@ -220,7 +246,6 @@ class Help extends React.Component {
   async loadData() {
     let data = await get('features/help')
     let { appName, slogan, features, success, helps = [], noDataTips = noDataTips, troubleHolder = '' } = data
-    console.log(data, helps)
     if (success) {
       this.props.layoutHomeData({
         appName,
@@ -247,8 +272,13 @@ class Help extends React.Component {
   }
 
   render() {
+    const { features } = this.props.homeData
+    const { routeName } = this.props.navigation.state
+    const title = features && features[routeName.toUpperCase()] || ''
+    const { receiverName = '' } = this.state.replyData || {}
     return (
       <View
+        style={styles.container}
         onStartShouldSetResponderCapture={(e) => {
           let target = e.nativeEvent.target
           if (target !== findNodeHandle(this._replyInput)
@@ -257,36 +287,48 @@ class Help extends React.Component {
               this._replyInput && this._replyInput.blur();
           }
         }}
-        style={{flex: 1, paddingTop: 10}}>
-        <View
-          style={{
-            borderBottomStyle: 'solid',
-            borderBottomColor: '#cccccc',
-            borderBottomWidth: 1
-          }}
-        >
+      >
+        <View style={styles.header}>
+          <Text style={styles.logo}>{ title }</Text>
           <TouchableOpacity
-            onPress={() => this.setModalVisible(true)}
             style={{
-              flexDirection: 'row',
-              padding: 10
+              justifyContent: 'center',
+              paddingHorizontal: 10,
+              height: 42,
             }}
+            onPress={() => this.props.navigation.navigate('Friend')}
           >
-            <TYicon name='bi' size={24} color='#333333'></TYicon>
-            <Text style={{ 
-              fontSize: 14,
-              color: '#999999',
-              height: 24,
-              lineHeight: 24,
-              marginLeft: 10
-            }}>{this.state.troubleHolder}</Text>
+            <Text style={{
+              alignItems: 'center', 
+              color: '#666666', 
+              textAlign: 'center',
+              color: 'rgb(112, 148, 183)'
+            }}>知己</Text>
           </TouchableOpacity>
         </View>
+        <View style={globalStyles.headerBottomLine}></View>
+        <TouchableOpacity
+          onPress={() => this.setModalVisible(true)}
+          style={{
+            padding: 10,
+            flexDirection: 'row',
+            alignItems: 'center'
+          }}
+        >
+          <TYicon name='bi' size={18} color='#666'></TYicon>
+          <Text style={{
+            fontSize: 14,
+            color: '#999999',
+            height: 24,
+            lineHeight: 24,
+            marginLeft: 10
+          }}>{this.state.troubleHolder}</Text>
+        </TouchableOpacity>
+        <View style={globalStyles.splitLine}></View>
         {this.state.helps.length ? <FlatList
           style={{
-            paddingTop: 20,
-            paddingHorizontal: 10,
-            paddingBottom: 10
+            paddingHorizontal: 15,
+            paddingBottom: 15
           }}
           data={this.state.helps}
           renderItem={({item, index}) => <HelpItem 
@@ -339,7 +381,7 @@ class Help extends React.Component {
           </SafeAreaView>
         </Modal>
         {this.state.replyVisible ? (<KeyboardAvoidingView
-          keyboardVerticalOffset={52}
+          keyboardVerticalOffset={20}
           contentContainerStyle={{
             flexDirection: 'row',
             padding: 10,
@@ -368,7 +410,7 @@ class Help extends React.Component {
               backgroundColor: 'white',
               marginRight: 8
             }}
-            placeholder="回复..."
+            placeholder={receiverName ? "回复" + receiverName : "回复..."}
             placeholderTextColor="#cccccc"
             allowFontScaling={false}
             autoCapitalize="none"
@@ -391,7 +433,32 @@ class Help extends React.Component {
   }
 }
 
-const mapStateToProps = null
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    height: 42,
+    paddingLeft: 10
+  },
+  logo: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: '#FF0140'
+  },
+  slogan: {
+    textAlign: 'center',
+    color: 'orange'
+  },
+})
+
+const mapStateToProps = (state) => {
+  const { homeData } = state
+  return { homeData }
+}
 
 const mapDispatchToProps = dispatch => (
   bindActionCreators({

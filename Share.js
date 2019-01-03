@@ -6,8 +6,10 @@ import { layoutHomeData } from './HomeActions'
 import { get, del, post } from './request'
 import globalStyles from './globalStyles'
 import TYicon from './TYicon'
-import { getUserInfo, updateUser } from './request'
-import { toast } from './Toast';
+import { getUserInfo } from './request'
+import { createFriendModal } from './GlobalModal'
+import Report from './Report'
+import PannameEditor from './PannameEditor'
 
 let noDataTips = '当前没有内容'
 
@@ -20,7 +22,7 @@ class ShareItem extends React.Component {
     this._animated = new Animated.Value(1)
   }
 
-  async removeHelp(id) {
+  async removeShare(id) {
     const res = await del(`share/${id}`)
     if (res.success) {
       this.onRemove()
@@ -51,10 +53,11 @@ class ShareItem extends React.Component {
     return (
       <Animated.View style={rowStyles}>
         <View style={{
-          paddingTop: 5,
-          paddingBottom: 5,
+          paddingTop: 15,
+          paddingBottom: 10,
         }}>
           <TouchableOpacity
+            activeOpacity={title ? 0 : 1}
             onPress={
               title
               ? () => this.props.navigation.navigate('ShareDetail', {
@@ -62,51 +65,57 @@ class ShareItem extends React.Component {
               })
               : null}
           >
-          <Text style={{ 
-            fontSize: 16,
-            lineHeight: 32
-          }}>{author && author.panname || ''}：</Text>
             { title ?
               <Text style={{ 
               fontSize: 16,
-              color: '#7094b7',
-              lineHeight: 32
+              color: '#333',
+              lineHeight: 24
             }}>{title}</Text> : null
             }
             <Text style={{ 
               fontSize: 14,
               color: '#4d4d4d',
-              lineHeight: 24
+              lineHeight: 24,
+              marginTop: 10
             }}>{summary}</Text>
           </TouchableOpacity>
           <View style={{
+            marginTop: 5,
             flexDirection: 'row',
-            justifyContent: 'flex-end',
+            alignItems: 'center'
           }}>
+            <Text 
+              style={{
+                flex: 1,
+                fontSize: 14,
+                color: '#666'
+              }}
+              numberOfLines={1}
+            >作者：{author && author.panname || ''}</Text>
           {isThanked
             ? (<Text style={{
                 color: '#999', 
-                fontSize: 12,
-                height: 27,
-                lineHeight: 27,
-                paddingRight: 14
+                fontSize: 14,
+                padding: 10
               }}>已赞叹</Text>)
             : (<TouchableOpacity
+                  style={{
+                    padding: 10
+                  }}
                   onPress={() => this.thank(_id)}
                 >
                   <Text style={{ 
-                    fontSize: 12,
-                    color: '#7094b7',
-                    height: 27,
-                    lineHeight: 27,
-                    paddingRight: 14
+                    fontSize: 14,
+                    color: '#666'
                   }}>赞叹</Text>
                 </TouchableOpacity>)}
             {
               curUserId && curUserId === creator_id
                ? (<TouchableOpacity
+                    style={{
+                      padding: 10
+                    }}
                     onPress={() => {
-                      console.log(_id)
                       this.props.navigation.navigate('ShareEditor', {
                         itemId: _id,
                         itemColumn: column_id,
@@ -115,11 +124,8 @@ class ShareItem extends React.Component {
                     }
                   >
                     <Text style={{ 
-                    fontSize: 12,
-                    color: '#7094b7',
-                    height: 27,
-                    lineHeight: 27,
-                    paddingRight: 14
+                    fontSize: 14,
+                    color: '#666',
                     }}>编辑</Text>
                   </TouchableOpacity>)
               : null
@@ -127,27 +133,27 @@ class ShareItem extends React.Component {
             {
               curUserId && curUserId === creator_id
                ? (<TouchableOpacity
-                    onPress={() => this.removeHelp(_id)}
+                    style={{
+                      padding: 10
+                    }}
+                    onPress={() => this.removeShare(_id)}
                   >
                     <Text style={{ 
-                    fontSize: 12,
-                    color: '#7094b7',
-                    height: 27,
-                    lineHeight: 27,
-                    paddingRight: 14
+                    fontSize: 14,
+                    color: '#666'
                     }}>删除</Text>
                   </TouchableOpacity>)
               : null
             }
             <TouchableOpacity
+              style={{
+                padding: 10
+              }}
               onPress={() => this.props.onReport()}
             >
               <Text style={{ 
-                fontSize: 12,
-                color: '#7094b7',
-                height: 27,
-                lineHeight: 27,
-                paddingRight: 14
+                fontSize: 14,
+                color: '#666'
               }}>举报</Text>
             </TouchableOpacity>
           </View>
@@ -157,6 +163,11 @@ class ShareItem extends React.Component {
   }
 }
 
+const ShareModal = createFriendModal({
+  Report,
+  PannameEditor
+})
+
 class Share extends React.Component {
 
   constructor(props) {
@@ -165,41 +176,16 @@ class Share extends React.Component {
     this.state = {
       refreshing: false,
       shares: [],
-      noDataTips,
-      modalVisible: false,
-      panname: ''
+      loading: true,
+      noDataTips
     }
   }
 
   refresh() {
-    this.loadData()
-  }
-
-  setModalVisible(modalType, visible) {
     this.setState({
-      modalType,
-      modalVisible: visible
+      refreshing: true
     })
-  }
-
-  async createPanname() {
-    let { panname } = this.state
-    panname = panname.trim()
-    if (!panname) {
-      toast('笔名不能填空。')
-      return
-    }
-
-    const res = await post('panname', {
-      panname
-    })
-    if (res.success) {
-      let userInfo = getUserInfo()
-      userInfo.panname = panname
-      updateUser(userInfo)
-      this.setModalVisible('panname', false)
-      this.props.navigation.navigate('ShareEditor')
-    }
+    this.loadData()
   }
 
   async updateShares(id) {
@@ -223,6 +209,12 @@ class Share extends React.Component {
 
   async loadData() {
     let data = await get('features/share')
+    if (this.state.loading) {
+      this.setState({
+        loading: false,
+        refreshing: false,
+      })
+    }
     let { appName, slogan, features, success, shares = [], noDataTips = noDataTips} = data
     if (success) {
       this.props.layoutHomeData({
@@ -230,11 +222,9 @@ class Share extends React.Component {
         slogan,
         features
       })
-      console.log('refresh finish...', data)
+      console.log('refresh finish...')
       this.setState({
-        refreshing: false,
         shares,
-        modalType: 'panname',
         noDataTips
       })
     }
@@ -245,17 +235,21 @@ class Share extends React.Component {
   }
 
   render() {
-    let { shares, modalType } = this.state
+    let { shares } = this.state
+    const { features } = this.props.homeData
     const { userId = '' } = this.props.loginData
+    const { routeName } = this.props.navigation.state
+    const title = features && features[routeName.toUpperCase()] || ''
     
     return (
-      <View style={{flex: 1, paddingTop: 20}}>
+      <View style={styles.container}>
+        <View style={ styles.header }>
+          <Text style={styles.logo}>{ title }</Text>
+        </View>
+        <View style={globalStyles.headerBottomLine}></View>
         {this.state.shares.length ? <FlatList
           style={{
-            paddingTop: 3,
-            paddingLeft: 7,
-            paddingRight: 7,
-            paddingBottom: 4
+            padding: 10
           }}
           data={this.state.shares}
           refreshing={this.state.refreshing}
@@ -272,16 +266,13 @@ class Share extends React.Component {
             }} 
             onRefresh={() => this.refresh()}
             updateShares={this.updateShares.bind(this)}
-            onReport={() => this.setModalVisible('report', true)}
+            onReport={() => this._modal.open('Report')}
           />}
           ItemSeparatorComponent={() => <View style={globalStyles.separator} />}
           keyExtractor={item => (item._id)}
         /> : (<View>
-          <Text style={{
-            color: '#333333',
-            textAlign: 'center'
-          }}>
-            {this.state.noDataTips}
+          <Text style={globalStyles.noDataText}>
+            {!this.state.loading ? this.state.noDataTips : '加载中...'}
           </Text>
         </View>)}
         <TouchableOpacity 
@@ -292,14 +283,14 @@ class Share extends React.Component {
                 onGoBack: () => this.refresh()
               })
             } else {
-              this.setModalVisible('panname', true)
+              this._modal.open('PannameEditor')
             }
           }}
           style={{
             position: 'absolute',
             width: 48,
             height: 48,
-            backgroundColor: 'red',
+            backgroundColor: '#FF0140',
             bottom: 20,
             right: 20,
             borderRadius: 24,
@@ -313,106 +304,41 @@ class Share extends React.Component {
           }}
         >
           <TYicon name='xiezi' size={32} color='white'></TYicon>
-          {/*<Text
-            style={{
-            color: '#ffffff',
-            fontSize: 20,
-            fontWeight: 'bold',
-            textAlign: 'center',
-            lineHeight: 48,
-          }}></Text>*/}
         </TouchableOpacity>
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={this.state.modalVisible}
-        >
-          <View style={{
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'rgba(0,0,0,0.5)'
-          }}>
-            <View style={{
-              width: 250,
-              backgroundColor: 'white',
-              borderRadius: 3,
-              padding: 10
-            }}>
-            { modalType === 'panname'
-              ? (<Text>抱歉，需要您给自己取一个对外的笔名，以保护您的隐私</Text>) 
-              : null }
-              <TextInput
-                autoFocus={true}
-                style={{
-                  borderColor: '#cccccc', 
-                  borderWidth: 1,
-                  paddingTop: 3,
-                  paddingHorizontal: 7,
-                  paddingBottom: 4,
-                  borderRadius: 3,
-                  marginTop: 10,
-                  minHeight: modalType === 'panname' ? 36 : 50
-                }}
-                placeholder={modalType === 'panname' ? '您的笔名' : '请填写你举报的理由'}
-                placeholderTextColor="#cccccc"
-                autoCapitalize="none"
-                multiline={modalType === 'report'}
-                onChangeText={(panname) => this.setState({panname})}
-                value={this.state.panname}
-              />
-              <View style={{
-                flexDirection: 'row'
-              }}>
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={modalType === 'panname'
-                    ? () => this.createPanname()
-                    : () => {
-                    this.setModalVisible('report', !this.state.modalVisible);
-                  }}>
-                  <Text style={styles.buttonText}>提交</Text>
-                </TouchableOpacity>
-                <View style={{ width: 10 }} />
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={() => {
-                    this.setModalVisible('report', !this.state.modalVisible);
-                  }}>
-                  <Text style={styles.buttonText}>取消</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Modal>
+        <ShareModal 
+          navigation={this.props.navigation}
+          ref={ref => this._modal = ref}
+        />
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  button: {
+  container: {
     flex: 1,
-    borderColor: '#dddddd', 
-    borderWidth: 1, 
-    borderRadius: 3,
-    justifyContent: 'center',
-    height: 36,
-    paddingTop: 3,
-    paddingHorizontal: 7,
-    paddingBottom: 4,
-    marginTop: 10
   },
-  buttonText: {
-    alignItems: 'center', 
-    color: '#666666', 
-    textAlign: 'center'
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    height: 42,
+    paddingLeft: 10
+  },
+  logo: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: '#FF0140'
+  },
+  slogan: {
+    textAlign: 'center',
+    color: 'orange'
   },
 })
 
 const mapStateToProps = (state) => {
-  const { loginData } = state
-  return { loginData }
+  const { loginData, homeData } = state
+  return { loginData, homeData }
 }
 
 const mapDispatchToProps = dispatch => (

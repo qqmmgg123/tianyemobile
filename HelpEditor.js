@@ -1,6 +1,7 @@
 import React from 'react'
 import {
   View,
+  KeyboardAvoidingView,
   TextInput,
   TouchableOpacity,
   Text
@@ -30,13 +31,15 @@ export default class HelpEditor extends React.Component {
 
   render() {
     return (
-      <View
+      <KeyboardAvoidingView
+        keyboardVerticalOffset={20}
         style={{
           flex: 1,
           paddingTop: 3,
           paddingHorizontal: 7,
           paddingBottom: 100,
         }}
+        behavior='position'
       >
         <TextInput
           onChangeText={(content) => this.setState({content})}
@@ -97,7 +100,7 @@ export default class HelpEditor extends React.Component {
             textAlign: 'center'
           }}>诉出</Text>
         </TouchableOpacity>
-      </View>
+      </KeyboardAvoidingView>
     )
   }
 }

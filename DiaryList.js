@@ -70,7 +70,7 @@ class DiaryItem extends React.Component {
             >
               <Text style={{ 
               fontSize: 12,
-              color: '#7094b7',
+              color: '#FF0140',
               height: 27,
               lineHeight: 27,
               paddingRight: 14
@@ -89,6 +89,7 @@ class DiaryList extends React.Component {
     super(props)
     this.state = {
       diarys: [],
+      loading: true,
       noDataTips
     }
   }
@@ -99,8 +100,18 @@ class DiaryList extends React.Component {
 
   async loaderData() {
     let data = await get('features/diary')
-    let { appName, slogan, features, success, diarys = [], noDataTips = noDataTips } = data
-    console.log(data, diarys)
+    if (this.state.loading) {
+      this.setState({
+        loading: false
+      })
+    }
+    let { 
+      appName, 
+      slogan, 
+      features, 
+      success, 
+      diarys = [], 
+      noDataTips = noDataTips } = data
     if (success) {
       this.props.layoutHomeData({
         appName,
@@ -141,11 +152,8 @@ class DiaryList extends React.Component {
           ItemSeparatorComponent={() => <View style={globalStyles.separator} />}
           keyExtractor={(item) => (item._id)}
         /> : (<View>
-          <Text style={{
-            color: '#333333',
-            textAlign: 'center'
-          }}>
-            {this.state.noDataTips}
+          <Text style={globalStyles.noDataText}>
+            {!this.state.loading ? this.state.noDataTips : '加载中...'}
           </Text>
         </View>)}
       </View>

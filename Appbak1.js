@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   logo: {
     fontSize: 20,
     textAlign: 'center',
-    color: 'red',
+    color: '#FF0140',
     margin: 10,
   },
   slogan: {

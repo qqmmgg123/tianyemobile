@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
 import { connect } from 'react-redux'
+import TYicon from './TYicon'
 
 const { width } = Dimensions.get('window');
 
@@ -50,11 +51,23 @@ class TabBar extends React.Component {
             style={{ 
               textAlign: 'center',
               lineHeight: 54,
-              color: this.state.curTab === feature[0] ? 'red' : null
+              color: this.state.curTab === feature[0] ? '#FF0140' : null
             }}
           >{feature[1]}</Text>
         </TouchableOpacity>
       ))}
+        <TouchableOpacity
+          key='MORE'
+          style={{ 
+            height: 54,
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+          onPress={this.onPressTab.bind(this, 'MORE')}
+          >
+          <TYicon name='ellipsis' size={16} color={this.state.curTab === 'MORE' ? '#FF0140' : '#333'}></TYicon>
+        </TouchableOpacity>
       </View>
     )
   }

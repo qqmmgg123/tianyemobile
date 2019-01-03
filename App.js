@@ -1,128 +1,35 @@
 import React from 'react'
 import { Provider } from 'react-redux'
-import {
-  View,
-  ScrollView,
-  TouchableOpacity,
-  Text
-} from 'react-native'
 import { 
   createAppContainer, 
   createStackNavigator,
-  createDrawerNavigator,
-  DrawerItems, 
   SafeAreaView
 } from 'react-navigation'
-import { get, getUserInfo, removeUser, setCurRoute, getCurRoute, removeCurRoute } from './request'
-import Home from './Home'
-import Friend from './Friend'
-import Login from './Login'
+import { getUserInfo, setCurRoute } from './request'
+import Tab from './Tab'
 import HelpEditor from './HelpEditor'
 import HelpDetail from './HelpDetail'
+import HelpSelect from './HelpSelect'
 import ShareEditor from './ShareEditor'
 import ShareDetail from './ShareDetail'
 import ClassicDetail from './ClassicDetail'
 import DiaryList from './DiaryList'
+import Friend from './Friend'
+import Login from './Login'
 import NavigatorService from './services/navigator'
 import { store } from './Store'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import { changeLoginState } from './HomeActions';
-
-class DrawerList extends React.Component {
-
-  async postLogout() {
-    let res = await get('logout')
-    if (res.success) {
-      this.props.navigation.closeDrawer()
-      let curRoute = getCurRoute()
-      if (curRoute) {
-        this.props.navigation.navigate('Classic')
-      }
-      this.props.changeLoginState({
-        need_login: true,
-        userId: ''
-      })
-      await removeUser()
-    }
-  }
-
-  render() {
-    let { need_login } = this.props.loginData
-
-    return (
-      <View>
-        <ScrollView>
-          <DrawerItems
-            {...this.props}
-            getLabel = {(scene) => {
-              if (scene.route.key !== 'Login' || need_login) {
-                return (<Text 
-                  style={{
-                    height: 36,
-                    lineHeight: 36,
-                    paddingHorizontal: 10
-                  }}>{this.props.getLabel(scene)}</Text>)
-              } else {
-                return null
-              }
-            }}
-          />
-          </ScrollView>
-          {!need_login
-            ? (<TouchableOpacity
-                onPress={this.postLogout.bind(this)}
-              >
-                <Text 
-                  style={{ 
-                    height: 36,
-                    lineHeight: 36,
-                    paddingHorizontal: 10
-                  }}>登出</Text>
-              </TouchableOpacity>)
-            : null}
-        </View>
-      )
-  }
-}
-
-const mapStateToProps = (state) => {
-  const { loginData } = state
-  return { loginData }
-}
-
-const mapDispatchToProps = dispatch => (
-  bindActionCreators({
-    changeLoginState,
-  }, dispatch)
-)
-
-const DrawerComponent =  connect(mapStateToProps, mapDispatchToProps)(DrawerList)
-
-const AppDrawerNavigator = createDrawerNavigator({
-  Home: {
-    screen: Home,
-  },
-  Friend: {
-    screen: Friend,
-  },
-  Login: {
-    screen: Login,
-  }
-}, {
-  contentComponent: DrawerComponent
-})
-
-const DrawerContainer = createAppContainer(AppDrawerNavigator)
 
 const AppNav = createStackNavigator({
-  DrawerList: DrawerContainer,
+  Tab,
   ClassicDetail,
   ShareDetail,
   HelpDetail,
   HelpEditor,
+  HelpSelect,
   ShareEditor,
   DiaryList,
+  Friend,
+  Login
 }, {
   headerMode: 'none',
 })

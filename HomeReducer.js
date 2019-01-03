@@ -23,7 +23,10 @@ const homeReducer = (state = {
 const loginReducer = (state = {
   loginData: {
     need_login: true,
-    userId: ''
+    userId: '',
+    username: '',
+    panname: '',
+    email: ''
   }
 }, action) => {
   console.log(action)

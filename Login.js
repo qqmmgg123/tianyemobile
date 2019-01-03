@@ -6,6 +6,7 @@ import {
   TouchableOpacity
 } from 'react-native'
 import { post, getCurRoute } from './request'
+import Back from './component/Back'
 
 
 export default class Login extends Component {
@@ -18,10 +19,6 @@ export default class Login extends Component {
     }
   }
 
-  static navigationOptions = {
-    drawerLabel: '登录'
-  };
-
   async postLogin() {
     const { username, password } = this.state
     let res = await post('login', {
@@ -30,7 +27,6 @@ export default class Login extends Component {
     })
     console.log(res)
     if (res.success) {
-      this.props.navigation.closeDrawer()
       let curRoute = getCurRoute()
       if (curRoute) {
         this.props.navigation.navigate(curRoute)
@@ -47,11 +43,7 @@ export default class Login extends Component {
           paddingBottom: 4
         }}
       >
-        <TouchableOpacity
-          onPress={() => this.props.navigation.navigate('Home')}
-        >
-          <Text>返回首页</Text>
-        </TouchableOpacity>
+        <Back navigation={this.props.navigation} />
         <TextInput
           onChangeText={(username) => this.setState({username})}
           value={this.state.username}

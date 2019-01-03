@@ -1,96 +1,202 @@
-/* import React, { Component } from 'react'
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity
-} from 'react-native'
-import Back from './component/Back'
-
-export default class Friend extends Component {
-
-  constructor(props) {
-    super(props)
-    this.state = { 
-      query: ''
-    }
-  }
-
-  static navigationOptions = {
-    drawerLabel: '知己',
-  };
-
-  render() {
-    return (
-      <View style={{
-        paddingHorizontal: 10,
-        paddingBottom: 20
-      }}>
-        <Back 
-          navigation={this.props.navigation}
-          name='返回首页'
-          routeName='Home'
-        />
-        <View style={{
-          flexDirection: 'row', 
-          alignItems: 'center',
-          marginTop: 20
-        }}>
-          <TextInput
-            style={{
-              borderColor: '#cccccc', 
-              borderWidth: 1,
-              height: 36,
-              paddingTop: 3,
-              paddingHorizontal: 7,
-              paddingBottom: 4,
-              borderRadius: 3,
-              flex: 1
-            }}
-            placeholder="请输入对方用户名或邮箱"
-            placeholderTextColor="#cccccc"
-            allowFontScaling={false}
-            onChangeText={(query) => this.setState({query})}
-            value={this.state.query}
-          />
-          <TouchableOpacity
-            style={{
-              borderColor: '#dddddd', 
-              borderWidth: 1, 
-              borderRadius: 3,
-              justifyContent: 'center',
-              height: 36,
-              paddingTop: 3,
-              paddingHorizontal: 7,
-              paddingBottom: 4,
-              marginLeft: 10
-            }}
-          >
-            <Text style={{alignItems: 'center', color: '#666666'}}>查找</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    )
-  }
-} */
 
 import React from 'react'
 import { 
+  KeyboardAvoidingView,
   View, 
+  ScrollView,
   FlatList, 
   TouchableOpacity, 
   TextInput, 
   Text,
   Animated,
-  Modal
 } from 'react-native'
-import { get, del, put } from './request'
+import { createStackNavigator } from 'react-navigation'
+import { get, del, put, post } from './request'
 import globalStyles from './globalStyles'
 import Back from './component/Back'
+import { connect } from 'react-redux'
+import { createFriendModal } from './GlobalModal'
 
 let noDataTips = '当前没有内容'
 
 const ANIMATION_DURATION = 250
+
+class AcceptPrompt extends React.Component {
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      remark: ''
+    }
+  }
+
+  async requestConfirm() {
+    const id = this.props.modal.getParam('friendId')
+    let res = await post(`friend/${id}/send`, {
+      content: this.state.content,
+      remark: this.state.remark,
+    })
+    if (res) {
+      const { success } = res
+      if (success) {
+        this.props.onAdd()
+      }
+    }
+  }
+
+  async acceptConfirm() {
+    const id = this.props.modal.getParam('friendId')
+    const res = await put(`friend/${id}/accept`, {
+      content: this.state.content
+    })
+    if (res) {
+      const { success } = res
+      if (success) {
+        this.props.listRefresh()
+      }
+    }
+  }
+
+  async denyConfirm() {
+    const id = this.props.modal.getParam('friendId')
+    const onDenyConfirm = this.props.modal.getParam('onDenyConfirm')
+    const res = await del(`/friend/${id}/remove`, {
+      remark: this.state.remark
+    })
+    if (res) {
+      const { success } = res
+      if (success) {
+        onDenyConfirm()
+      }
+    }
+  }
+
+  async remarkConfirm() {
+    const id = this.props.modal.getParam('friendId')
+    const res = await put(`/friend/${id}/remark`, {
+      remark: this.state.remark
+    })
+    if (res) {
+      const { success } = res
+      if (success) {
+        this.props.listRefresh()
+      }
+    }
+  }
+
+  resetState() {
+    this.setState({
+      remark: '',
+      content: ''
+    })
+  }
+
+  render() {
+    const status = this.props.modal.getParam('status')
+
+    return (
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior='height'
+      >
+        <TouchableOpacity 
+          activeOpacity={1} 
+          onPressOut={() => this.props.modal.close()}
+          style={{
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'rgba(0,0,0,0.5)'
+          }}
+        >
+          <View style={{
+            width: 250,
+            backgroundColor: 'white',
+            borderRadius: 3,
+            padding: 10
+          }}>
+            {status === 'add' || status === 'deny' ? (<TextInput
+              autoFocus={true}
+              style={{
+                borderColor: '#cccccc', 
+                borderWidth: 1,
+                paddingTop: 3,
+                paddingHorizontal: 7,
+                paddingBottom: 4,
+                borderRadius: 3,
+                marginTop: 10,
+                minHeight: 36
+              }}
+              placeholder='说点什么...'
+              placeholderTextColor="#cccccc"
+              autoCapitalize="none"
+              onChangeText={(content) => {
+                this.setState({content})
+              }}
+              value={this.state.content}
+            />) : null}
+            {status === 'add' || status === 'accept' || status === 'remark' ? (<TextInput
+              autoFocus={true}
+              style={{
+                borderColor: '#cccccc', 
+                borderWidth: 1,
+                paddingTop: 3,
+                paddingHorizontal: 7,
+                paddingBottom: 4,
+                borderRadius: 3,
+                marginTop: 10,
+                minHeight: 36
+              }}
+              placeholder='备注名'
+              placeholderTextColor="#cccccc"
+              autoCapitalize="none"
+              onChangeText={(remark) => {
+                this.setState({remark})
+              }}
+              value={this.state.remark}
+            />) : null}
+            <View style={{
+              marginTop: 10,
+              flexDirection: 'row'
+            }}>
+              <TouchableOpacity
+                style={[globalStyles.button, { 
+                  flex: 1,
+                }]}
+                onPress={() => {
+                  switch (status) {
+                    case 'add':
+                      this.requestConfirm()
+                      break
+                    case 'accept':
+                      this.acceptConfirm()
+                      break
+                    case 'deny':
+                      this.denyConfirm()
+                      break
+                    case 'remark':
+                      this.remarkConfirm()
+                      break
+                  }
+                  this.props.modal.close()
+                }}>
+                <Text style={globalStyles.buttonText}>{status === 'add'? '送出' : '确定'}</Text>
+              </TouchableOpacity>
+              <View style={{ width: 10 }} />
+              <TouchableOpacity
+                style={[globalStyles.button, { flex: 1 }]}
+                onPress={() => {
+                  this.props.modal.close()
+                }}>
+                <Text style={globalStyles.buttonText}>取消</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </TouchableOpacity>
+      </KeyboardAvoidingView>
+    )
+  }
+}
 
 class FriendItem extends React.Component {
 
@@ -99,10 +205,13 @@ class FriendItem extends React.Component {
     this._animated = new Animated.Value(1);
   }
 
-  async removeDiary(id) {
-    const res = await del(`diary/${id}`)
-    if (res.success) {
-      this.onRemove()
+  async removeFriend(id) {
+    let res = await del(`friend/${id}/remove`)
+    if (res) {
+      const { success } = res
+      if (success) {
+        this.onRemove()
+      }
     }
   }
 
@@ -110,6 +219,22 @@ class FriendItem extends React.Component {
     const { onAccpect } = this.props
     if (onAccpect) {
       onAccpect(id)
+    }
+  }
+
+  friendDeny(id) {
+    const { onDeny } = this.props
+    if (onDeny) {
+      onDeny(id, () => {
+        this.onRemove()
+      })
+    }
+  }
+
+  friendRemarkt(id) {
+    const { onRemark } = this.props
+    if (onRemark) {
+      onRemark(id)
     }
   }
 
@@ -139,13 +264,25 @@ class FriendItem extends React.Component {
     let state = ''
     let message = ''
     let btns = null
-    if (status === 1 && recipient_status === 2) {
+    if (status === 1 && recipient_status === 0) {
+      state ='拒绝了你的申请...'
+      btns = (
+        <View>
+          <TouchableOpacity
+            style={globalStyles.button}
+            onPress={() => this.removeFriend(recipient_id)}
+          >
+            <Text style={globalStyles.buttonText}>删除</Text>
+          </TouchableOpacity>
+        </View>
+      )
+    } else if (status === 1 && recipient_status === 2) {
       state ='等待对方验证...'
       btns = (
         <View>
           <TouchableOpacity
             style={globalStyles.button}
-            onPress={() => this.removeDiary(_id)}
+            onPress={() => this.removeFriend(recipient_id)}
           >
             <Text style={globalStyles.buttonText}>取消</Text>
           </TouchableOpacity>
@@ -167,7 +304,7 @@ class FriendItem extends React.Component {
           </TouchableOpacity>
           <TouchableOpacity
             style={globalStyles.button}
-            onPress={() => this.removeDiary(_id)}
+            onPress={() => this.friendDeny(recipient_id)}
           >
             <Text style={globalStyles.buttonText}>拒绝</Text>
           </TouchableOpacity>
@@ -181,13 +318,13 @@ class FriendItem extends React.Component {
         }}>
           <TouchableOpacity
             style={globalStyles.button}
-            onPress={() => this.friendAccept()}
+            onPress={() => this.friendRemarkt(recipient_id)}
           >
             <Text style={globalStyles.buttonText}>修改备注名</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={globalStyles.button}
-            onPress={() => this.removeDiary(_id)}
+            onPress={() => this.removeFriend(recipient_id)}
           >
             <Text style={globalStyles.buttonText}>删除</Text>
           </TouchableOpacity>
@@ -233,22 +370,17 @@ class FriendItem extends React.Component {
   }
 }
 
-export default class FriendList extends React.Component {
+const AcceptModal = createFriendModal({ AcceptPrompt })
+
+class FriendList extends React.Component {
 
   constructor(props) {
     super(props)
     this.state = {
       friends: [],
       noDataTips,
-      friendId: '',
-      remark: '',
-      modalVisible: false
     }
   }
-
-  static navigationOptions = {
-    drawerLabel: '知己',
-  };
 
   refresh() {
     this.loaderData()
@@ -257,7 +389,6 @@ export default class FriendList extends React.Component {
   async loaderData() {
     let data = await get('friend')
     let { success, friends } = data
-    console.log(friends)
     if (success) {
       this.setState({
         friends,
@@ -266,26 +397,8 @@ export default class FriendList extends React.Component {
     }
   }
 
-  setModalVisible(visible) {
-    this.setState({
-      modalVisible: visible
-    })
-  }
-
   componentWillMount() {
     this.loaderData()
-  }
-
-  async acceptConfirm(id) {
-    const res = await put(`friend/${id}/accept`, {
-      remark: this.state.remark
-    })
-    if (res) {
-      const { success } = res
-      if (success) {
-        this.refresh()
-      }
-    }
   }
 
   render() {
@@ -293,7 +406,126 @@ export default class FriendList extends React.Component {
 
     return (
       <View style={{flex: 1}}>
-        <Back navigation={this.props.navigation} />
+        <Back routeName='Help' navigation={this.props.navigation} />
+        <View style={{
+          flexDirection: 'row', 
+          alignItems: 'center',
+          marginTop: 10,
+          padding: 10
+        }}>
+          <TouchableOpacity
+            onPress={() => this.props.navigation.navigate('UserSearch', {
+              onGoBack: () => this.refresh()
+            })}
+            style={{
+              borderColor: '#cccccc', 
+              borderWidth: 1,
+              height: 36,
+              paddingTop: 3,
+              paddingHorizontal: 7,
+              paddingBottom: 4,
+              borderRadius: 3,
+              justifyContent: 'center',
+              flex: 1
+            }}
+          >
+            <Text style={{
+              color: '#ccc'
+            }}>查找您要添加的知己...</Text>
+          </TouchableOpacity>
+        </View>
+        {this.state.friends.length ? <FlatList
+          style={{
+            marginTop: 10
+          }}
+          data={this.state.friends}
+          renderItem={({item, index}) => <FriendItem 
+            {...item} 
+            onRemove={() => {
+              friends.splice(index, 1)
+              this.setState({
+                friends
+              })
+            }} 
+            onAccpect={(friendId) => {
+              this._modal.open()
+              this._modal.setParams({
+                friendId,
+                status: 'accept'
+              })
+            }}
+            onDeny={(friendId, animateFun) => {
+              this._modal.open()
+              this._modal.setParams({
+                friendId,
+                status: 'deny',
+                onDenyConfirm: () => {
+                  animateFun()
+                }
+              })
+            }}
+            onRemark={(friendId) => {
+              this._modal.open()
+              this._modal.setParams({
+                friendId,
+                status: 'remark'
+              })
+            }}
+          />}
+          ItemSeparatorComponent={() => <View style={globalStyles.separator} />}
+          keyExtractor={(item) => (item._id)}
+        /> : (<View>
+          <Text style={globalStyles.noDataText}>
+            {this.state.noDataTips}
+          </Text>
+        </View>)}
+        <AcceptModal 
+          ref={ref => this._modal = ref}
+          listRefresh={() => this.refresh()}
+        />
+      </View>
+    )
+  }
+}
+
+class UserSearch extends React.Component {
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      query: '',
+      users: [],
+      noUserResult: '',
+      modalVisible: false
+    }
+  }
+
+  async searchUser() {
+    let res = await get('user/search', {
+      username: this.state.query.trim()
+    })
+    if (res) {
+      const { success, users = [], noUserResult = '' } = res
+      if (success) {
+        this.setState({
+          users,
+          noUserResult
+        })
+      }
+    }
+  }
+
+  render() {
+    let { users, noUserResult } = this.state
+    let { userId } = this.props.loginData
+
+    return (
+      <View 
+        style={{
+          flex: 1
+        }}
+      >
+        <Back goBack={() => this.props.navigation.goBack()} />
         <View style={{
           flexDirection: 'row', 
           alignItems: 'center',
@@ -311,12 +543,13 @@ export default class FriendList extends React.Component {
               borderRadius: 3,
               flex: 1
             }}
-            placeholder="请输入对方用户名或邮箱"
+            placeholder="请输入对方用户名或邮箱..."
             placeholderTextColor="#cccccc"
             allowFontScaling={false}
             autoCapitalize="none"
             onChangeText={(query) => this.setState({query})}
             value={this.state.query}
+            autoFocus={true}
           />
           <TouchableOpacity
             style={{
@@ -330,108 +563,68 @@ export default class FriendList extends React.Component {
               paddingBottom: 4,
               marginLeft: 10
             }}
+            onPress={() => this.searchUser()}
           >
             <Text style={{alignItems: 'center', color: '#666666'}}>查找</Text>
           </TouchableOpacity>
         </View>
-        {this.state.friends.length ? <FlatList
-          style={{
-            marginTop: 10
-          }}
-          data={this.state.friends}
-          renderItem={({item, index}) => <FriendItem 
-            {...item} 
-            onRemove={() => {
-              friends.splice(index, 1)
-              this.setState({
-                friends
-              })
-            }} 
-            onAccpect={(friendId) => {
-              this.setModalVisible(!this.state.modalVisible)
-              this.setState({
-                friendId,
-                remark: ''
-              })
-            }}
-          />}
-          ItemSeparatorComponent={() => <View style={globalStyles.separator} />}
-          keyExtractor={(item) => (item._id)}
-        /> : (<View>
-          <Text style={{
-            marginTop: 10,
-            color: '#666666',
-            textAlign: 'center',
-            fontSize: 14,
-            padding: 10
-          }}>
-            {this.state.noDataTips}
-          </Text>
-        </View>)}
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={this.state.modalVisible}
-          onRequestClose={() => {this.setModalVisible(false)}}
-        >
-          <TouchableOpacity 
-            activeOpacity={1} 
-            onPressOut={() => this.setModalVisible(false)}
-            style={{
-              flex: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: 'rgba(0,0,0,0.5)'
-            }}
-          >
-            <View style={{
-              width: 250,
-              backgroundColor: 'white',
-              borderRadius: 3,
-              padding: 10
-            }}>
-              <TextInput
-                autoFocus={true}
-                style={{
-                  borderColor: '#cccccc', 
-                  borderWidth: 1,
-                  paddingTop: 3,
-                  paddingHorizontal: 7,
-                  paddingBottom: 4,
-                  borderRadius: 3,
-                  marginTop: 10,
-                  minHeight: 36
-                }}
-                placeholder='备注名'
-                placeholderTextColor="#cccccc"
-                autoCapitalize="none"
-                onChangeText={(remark) => this.setState({remark})}
-                value={this.state.remark}
-              />
-              <View style={{
+        <ScrollView style={{
+          padding: 10
+        }}>
+          {users && users.length ? users.map(item => (
+            <View 
+              key={item._id} 
+              style={{
                 flexDirection: 'row'
-              }}>
+              }}
+            >
+              <Text numberOfLines={1} style={{
+                flex: 1
+              }}>{item.username}</Text>
+              {item.isfriend ? (<Text>知己</Text>) : (userId !== item._id ? (
                 <TouchableOpacity
-                  style={[globalStyles.button, { flex: 1 }]}
+                  style={globalStyles.button}
                   onPress={() => {
-                    this.acceptConfirm(this.state.friendId)
-                    this.setModalVisible(false)
-                  }}>
-                  <Text style={globalStyles.buttonText}>确定</Text>
+                    this._modal.open()
+                    this._modal.setParams({
+                      friendId: item._id,
+                      status: 'add'
+                    })
+                  }}
+                >
+                  <Text style={globalStyles.buttonText}>添加</Text>
                 </TouchableOpacity>
-                <View style={{ width: 10 }} />
-                <TouchableOpacity
-                  style={[globalStyles.button, { flex: 1 }]}
-                  onPress={() => {
-                    this.setModalVisible(false)
-                  }}>
-                  <Text style={globalStyles.buttonText}>取消</Text>
-                </TouchableOpacity>
-              </View>
+              ) : null)}
             </View>
-          </TouchableOpacity>
-        </Modal>
+          )) : (
+            <View>
+              <Text style={globalStyles.noDataText}>{noUserResult}</Text>
+            </View>
+          )}
+        </ScrollView>
+        <AcceptModal 
+          ref={ref => this._modal = ref}
+          onAdd={() => {
+            this.props.navigation.goBack()
+            this.props.navigation.state.params.onGoBack();
+          }}
+        />
       </View>
     )
   }
 }
+
+const mapStateToProps = (state) => {
+  const { loginData } = state
+  return { loginData }
+}
+
+const UserSearchScreen = connect(mapStateToProps)(UserSearch)
+
+export default createStackNavigator({
+  FriendList,
+  UserSearch: UserSearchScreen
+}, {
+  headerMode: 'none',
+  mode: 'modal'
+})

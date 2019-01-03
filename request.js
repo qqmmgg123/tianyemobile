@@ -6,6 +6,7 @@ import { changeLoginState } from './HomeActions'
 import { toast } from './Toast'
 
 export const rootUrl = 'http://192.168.1.6:8080'
+// export const rootUrl = 'http://192.168.0.101:8080'
 let userInfo = null
 let curRoute = ''
 
@@ -109,7 +110,11 @@ function request(api, method, data, headers = {}) {
           NavigatorService.navigate('Login')
           store.dispatch(changeLoginState({
             need_login: true,
-            userId: ''
+            userId: '',
+            userId: '',
+            username: '',
+            panname: '',
+            email: ''
           }))
           removeUser()
           break
@@ -122,7 +127,10 @@ function request(api, method, data, headers = {}) {
       if (user && !userInfo) {
         store.dispatch(changeLoginState({
           need_login: false,
-          userId: user._id
+          userId: user._id,
+          username: user.username,
+          panname: user.panname,
+          email: user.email
         }))
         _saveUser(user)
       }

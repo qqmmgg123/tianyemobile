@@ -5,12 +5,14 @@ import Classic from './Classic'
 import Share from './Share'
 import Help from './Help'
 import Diary from './Diary'
+import More from './More'
   
 const TabNavigator = createBottomTabNavigator({
   Classic,
   Share,
   Help,
-  Diary
+  Diary,
+  More,
 }, {
   tabBarComponent: ({navigation}) => <TabBar navigation={navigation} />,
 })

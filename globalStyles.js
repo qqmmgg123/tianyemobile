@@ -10,8 +10,12 @@ export default StyleSheet.create({
     backgroundColor: '#cccccc',
   },
   headerBottomLine: {
+    height: 1,
+    backgroundColor: '#cccccc',
+  },
+  splitLine: {
     height: StyleSheet.hairlineWidth,
-    backgroundColor: '#c4c4c4',
+    backgroundColor: '#cccccc',
   },
   button: {
     // flex: 1,
@@ -30,4 +34,11 @@ export default StyleSheet.create({
     color: '#666666', 
     textAlign: 'center'
   },
+  noDataText: {
+    marginTop: 10,
+    color: '#666666',
+    textAlign: 'center',
+    fontSize: 14,
+    padding: 10
+  }
 })

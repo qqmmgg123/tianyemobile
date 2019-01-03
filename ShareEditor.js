@@ -1,5 +1,6 @@
 import React from 'react'
 import {
+  KeyboardAvoidingView,
   View,
   ScrollView,
   TextInput,
@@ -11,6 +12,7 @@ import { get, post, put } from './request'
 import { toast } from './Toast'
 import TYicon from './TYicon'
 import Back from './component/Back'
+import globalStyles from './globalStyles'
 
 const Permission = (props) => {
   return (
@@ -107,10 +109,8 @@ class SentenceEditor extends React.Component {
       <View
         style={{
           flex: 1,
-          height: '100%',
           paddingTop: 3,
-          paddingHorizontal: 7,
-          paddingBottom: 100
+          paddingHorizontal: 7
         }}
       >
         <TextInput
@@ -119,8 +119,6 @@ class SentenceEditor extends React.Component {
           value={this.state.content}
           style={{
             flex: 1,
-            borderColor: '#cccccc', 
-            borderWidth: 1,
             paddingTop: 3,
             paddingHorizontal: 7,
             paddingBottom: 4,
@@ -129,7 +127,7 @@ class SentenceEditor extends React.Component {
             minHeight: 80
           }}
           placeholder="内容"
-          placeholderTextColor="#cccccc"
+          placeholderTextColor="#999"
           autoCapitalize="none"
           multiline={true}
         />
@@ -211,7 +209,7 @@ class LiteratureEditor extends React.Component {
           content
         })
       } else {
-        lres = await post('share', {
+        res = await post('share', {
           column_id,
           title,
           content
@@ -220,7 +218,13 @@ class LiteratureEditor extends React.Component {
       if (res) {
         const { success } = res
         if (success) {
-          this.props.navigation.navigate('Share')
+          if (_id) {
+            this.props.navigation.navigate('ShareDetail', {
+              itemId: _id
+            })
+          } else {
+            this.props.navigation.navigate('Share')
+          }
           this.props.navigation.state.params.onGoBack();
         } else {
           const { info } = res
@@ -239,43 +243,45 @@ class LiteratureEditor extends React.Component {
           flex: 1,
           paddingTop: 3,
           paddingHorizontal: 7,
-          paddingBottom: 100
         }}
       >
         <TextInput
           onChangeText={(title) => this.setState({title})}
           value={this.state.title}
           style={{
-            borderColor: '#cccccc', 
-            borderWidth: 1,
-            height: 36,
-            paddingTop: 3,
-            paddingHorizontal: 7,
-            paddingBottom: 4,
-            borderRadius: 3,
-            marginTop: 10
-          }}
-          placeholder="标题"
-          placeholderTextColor="#cccccc"
-          allowFontScaling={false}
-          autoCapitalize="none"
-        />
-        <TextInput
-          onChangeText={(content) => this.setState({content})}
-          value={this.state.content}
-          style={{
-            flex: 1,
-            borderColor: '#cccccc', 
-            borderWidth: 1,
+            height: 42,
             paddingTop: 3,
             paddingHorizontal: 7,
             paddingBottom: 4,
             borderRadius: 3,
             marginTop: 10,
-            minHeight: 80
+            fontSize: 20,
+            lineHeight: 32,
+            // textAlign: 'center',
+          }}
+          placeholder="标题"
+          placeholderTextColor="#999"
+          // allowFontScaling={false}
+          autoCapitalize="none"
+        />
+        <View style={globalStyles.splitLine}></View>
+        <TextInput
+          onChangeText={(content) => this.setState({content})}
+          value={this.state.content}
+          style={{
+            flex: 1,
+            paddingTop: 3,
+            paddingHorizontal: 7,
+            paddingBottom: 4,
+            borderRadius: 3,
+            marginTop: 10,
+            minHeight: 80,
+            color: '#333333',
+            fontSize: 16,
+            lineHeight: 28
           }}
           placeholder="内容"
-          placeholderTextColor="#cccccc"
+          placeholderTextColor="#999"
           autoCapitalize="none"
           multiline={true}
         />
@@ -315,7 +321,7 @@ let navOptions = {
       width: 20,
       left: '25%',
       marginLeft: -10,
-      backgroundColor: 'red'
+      backgroundColor: '#FF0140'
     },
     style: {
       backgroundColor: '#ffffff',
@@ -339,6 +345,12 @@ export default class ShareEditor extends React.Component {
   }
 
   static router = ShareEditorNav.router
+
+  static navigationOptions = {
+    cardStack: {
+      gesturesEnabled: false
+    }
+  }
 
   async componentWillMount() {
     const { navigation } = this.props
@@ -364,12 +376,17 @@ export default class ShareEditor extends React.Component {
   render() {
     let { share } = this.state
     return (
-      <View style={{flex: 1}}>
-        <Back navigation={this.props.navigation} />
-        <ShareEditorNav screenProps={{
-          share
-        }} navigation={this.props.navigation} />
-      </View>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior='padding'
+      >
+        <View style={{flex: 1}}>
+          <Back navigation={this.props.navigation} />
+          <ShareEditorNav screenProps={{
+            share
+          }} navigation={this.props.navigation} />
+        </View>
+      </KeyboardAvoidingView>
     )
   } 
 }
