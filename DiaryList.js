@@ -7,6 +7,7 @@ import { get, del } from './request'
 import globalStyles from './globalStyles'
 import { getDate } from './utils'
 import Back from './component/Back'
+import { Empty, Footer } from './component/ListLoad'
 
 let noDataTips = '当前没有内容'
 
@@ -40,40 +41,60 @@ class DiaryItem extends React.Component {
     const rowStyles = [
       { opacity: this._animated }
     ]
-    const { content, created_date, _id } = this.props
+    const { content, updated_date, _id } = this.props
 
     return (
       <Animated.View style={rowStyles}>
         <View style={{
           padding: 10
         }}>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              this.props.navigation.navigate('Diary', {
+                itemId: _id,
+              })
+            }}
+          >
             <Text style={{ 
               fontSize: 16,
               color: '#333333',
               lineHeight: 24
               }}>{content}</Text>
           </TouchableOpacity>
-          <Text style={{ 
-            fontSize: 12,
-            color: '#999999',
-            lineHeight: 24
-          }}>
-            {getDate(new Date(created_date))}
-          </Text>
           <View style={{
             flexDirection: 'row',
-            justifyContent: 'flex-end',
+            justifyContent: 'space-between',
+            alignItems: 'center'
           }}>
+            <Text style={{ 
+              fontSize: 14,
+              color: '#999999',
+              flex: 1,
+            }}>
+              {getDate(new Date(updated_date))}
+            </Text>
+            <TouchableOpacity
+              style={{
+                padding: 10
+              }}
+              onPress={() => {
+                this.props.navigation.navigate('Diary', {
+                  itemId: _id,
+                })
+              }}
+            >
+              <Text style={{ 
+              fontSize: 14,
+              color: '#666',
+              }}>编辑</Text>
+            </TouchableOpacity>
             <TouchableOpacity
               onPress={() => this.removeDiary(_id)}
             >
               <Text style={{ 
-              fontSize: 12,
-              color: '#FF0140',
-              height: 27,
-              lineHeight: 27,
-              paddingRight: 14
+                fontSize: 14,
+                color: '#666',
+                padding: 10
               }}>删除</Text>
             </TouchableOpacity>
           </View>
@@ -88,28 +109,21 @@ class DiaryList extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      refreshing: false,
       diarys: [],
       loading: true,
-      noDataTips
+      noDataTips,
+      page: 1
     }
   }
 
-  refresh() {
-    this.loaderData()
-  }
-
-  async loaderData() {
-    let data = await get('features/diary')
-    if (this.state.loading) {
-      this.setState({
-        loading: false
-      })
-    }
+  layoutData(data) {
     let { 
       appName, 
       slogan, 
       features, 
       success, 
+      pageInfo,
       diarys = [], 
       noDataTips = noDataTips } = data
     if (success) {
@@ -119,43 +133,107 @@ class DiaryList extends React.Component {
         features
       })
       this.setState({
-        diarys,
+        page: pageInfo.nextPage || 0,
+        diarys: [...this.state.diarys, ...diarys],
         noDataTips
       })
     }
   }
 
+  async loadData() {
+    const { page, loading, refreshing } =  this.state
+    let data = await get('features/diary', {
+      perPage: 20,
+      page
+    })
+    if (loading) {
+      this.setState({
+        loading: false
+      }, () => {
+        data && this.layoutData(data)
+      })
+    }
+    if (refreshing) {
+      this.setState({
+        refreshing: false,
+        diarys: []
+      }, () => {
+        data && this.layoutData(data)
+      })
+    }
+  }
+
+  refresh = () => {
+    this.setState({
+      page: 1,
+      refreshing: true
+    }, () => {
+      this.loadData()
+    })
+  }
+
+  loadMore = () => {
+    const { page, loading } = this.state
+    if (!page || loading) return
+    this.setState({
+      loading: true 
+    }, () => {
+      this.loadData()
+    })
+  }
+
+  removeItem(index) {
+    let { diarys } = this.state
+    diarys.splice(index, 1)
+    this.setState({
+      diarys
+    })
+  }
+
   componentWillMount() {
-    this.loaderData()
+    this.loadData()
   }
 
   render() {
-    let { diarys } = this.state
+    let { 
+      diarys, 
+      refreshing, 
+      loading, 
+      noDataTips, 
+      page 
+    } = this.state
 
     return (
       <View style={{flex: 1}}>
         <Back navigation={this.props.navigation} />
-        {this.state.diarys.length ? <FlatList
+        <FlatList
           style={{
-            marginTop: 10
+            padding: 10
           }}
-          data={this.state.diarys}
+          data={diarys}
+          refreshing={refreshing}
+          onRefresh={this.refresh}
+          onEndReached={this.loadMore}
+          onEndReachedThreshold={100}
           renderItem={({item, index}) => <DiaryItem 
             {...item} 
-            onRemove={() => {
-              diarys.splice(index, 1)
-              this.setState({
-                diarys
-              })
-            }} 
+            navigation={this.props.navigation}
+            onRemove={this.removeItem.bind(this, index)} 
+          />}
+          ListEmptyComponent={<Empty 
+            loading={loading}
+            noDataTips={noDataTips}
+          />}
+          ListFooterComponent={<Footer 
+            data={diarys} 
+            onLoadMore={this.loadMore} 
+            loading={loading}
+            page={page}
+            noDataTips={noDataTips}
           />}
           ItemSeparatorComponent={() => <View style={globalStyles.separator} />}
           keyExtractor={(item) => (item._id)}
-        /> : (<View>
-          <Text style={globalStyles.noDataText}>
-            {!this.state.loading ? this.state.noDataTips : '加载中...'}
-          </Text>
-        </View>)}
+        />
       </View>
     )
   }

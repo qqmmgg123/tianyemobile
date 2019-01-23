@@ -1,5 +1,5 @@
 import { Platform } from 'react-native'
-import Toast from 'react-native-toast-native'
+import Toast from 'react-native-simple-toast'
 
 let style = {
   backgroundColor: "#000000",
@@ -14,5 +14,5 @@ let style = {
 }
 
 export function toast(msg) {
-  Toast.show(msg, Toast.SHORT, Toast.CENTER, style);
+  Toast.showWithGravity(msg, Toast.LONG, Toast.CENTER)
 }

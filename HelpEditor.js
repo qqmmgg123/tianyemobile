@@ -3,11 +3,12 @@ import {
   View,
   KeyboardAvoidingView,
   TextInput,
-  TouchableOpacity,
-  Text
+  Text,
+  findNodeHandle
 } from 'react-native'
 import { post } from './request'
 import TYicon from './TYicon'
+import globalStyles from './globalStyles'
 
 export default class HelpEditor extends React.Component {
 
@@ -30,77 +31,68 @@ export default class HelpEditor extends React.Component {
   }
 
   render() {
+    let { onInputChange } = this.props
     return (
-      <KeyboardAvoidingView
-        keyboardVerticalOffset={20}
-        style={{
-          flex: 1,
-          paddingTop: 3,
-          paddingHorizontal: 7,
-          paddingBottom: 100,
-        }}
-        behavior='position'
-      >
-        <TextInput
-          onChangeText={(content) => this.setState({content})}
-          autoFocus={true}
-          value={this.state.content}
-          ref={ref => {
-            this._input = ref
-          }}
-          style={{
-            flex: 1,
-            paddingTop: 3,
-            paddingHorizontal: 7,
-            paddingBottom: 4,
-            marginTop: 10,
-            minHeight: 250
-          }}
-          placeholder={this.props.placeholder}
-          placeholderTextColor="#999999"
-          autoCapitalize="none"
-          multiline={true}
-        />
-        <View
-          style={{
-            borderRadius: 3,
-            backgroundColor: '#f2f2f2',
-            borderColor: '#e6e6e6',
-            borderStyle: 'solid',
-            borderWidth: 1,
-            paddingVertical: 10,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginTop: 10
-          }}
+        <KeyboardAvoidingView
+          keyboardVerticalOffset={20}
+          style={{ flex: 1 }}
+          behavior='padding'
         >
-          <Text style={{
-            color: '#adadad',
-            fontSize: 12,
-            marginRight: 10
-          }}>仅知己可见</Text>
-          <TYicon name='suoding' size={16} color='#b8b8b8'></TYicon>
-        </View>
-        <TouchableOpacity
-          style={{
-            borderColor: '#dddddd', 
-            borderWidth: 1, 
-            borderRadius: 3,
-            justifyContent: 'center',
-            height: 36,
-            paddingVertical: 10,
-            marginTop: 10
-          }}
-          onPress={() => this.postHelp()}
-        >
-          <Text style={{
-            alignItems: 'center', 
-            color: '#666666', 
-            textAlign: 'center'
-          }}>诉出</Text>
-        </TouchableOpacity>
-      </KeyboardAvoidingView>
+          <View
+            style={{flex: 1}}
+            onStartShouldSetResponderCapture={(e) => {
+              let target = e.nativeEvent.target
+              if (target !== findNodeHandle(this._input)
+                && (target !== findNodeHandle(this._button))
+                && (target !== findNodeHandle(this._buttonText))) {
+                  this._input && this._input.blur();
+              }
+            }}
+          >
+            <TextInput
+              onChangeText={(content) => {
+                this.setState({content}, () => {
+                  onInputChange(!this.state.content.trim())
+                })
+              }}
+              autoFocus={true}
+              value={this.state.content}
+              ref={ref => {
+                this._input = ref
+              }}
+              style={{
+                flex: 1,
+                color: '#333',
+                padding: 10,
+                marginTop: 10,
+                fontSize: 16,
+                textAlignVertical: 'top'
+              }}
+              placeholder={this.props.placeholder}
+              placeholderTextColor="#999999"
+              autoCapitalize="none"
+              multiline={true}
+            />
+            <View style={globalStyles.splitLine}></View>
+            <View
+              style={{
+                paddingVertical: 10,
+                height: 42,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Text style={{
+                color: '#adadad',
+                fontSize: 12,
+                marginRight: 10
+              }}>知己可见</Text>
+              <TYicon name='suoding' size={16} color='#b8b8b8'></TYicon>
+            </View>
+            <View style={globalStyles.splitLine}></View>
+          </View>
+        </KeyboardAvoidingView>
     )
   }
 }

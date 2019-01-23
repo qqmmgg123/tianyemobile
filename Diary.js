@@ -1,12 +1,22 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { View, findNodeHandle, TouchableOpacity, Text, TextInput, KeyboardAvoidingView, ScrollView, StyleSheet } from 'react-native'
+import { 
+  View, 
+  findNodeHandle, 
+  TouchableOpacity, 
+  Text, 
+  TextInput, 
+  KeyboardAvoidingView, 
+  ActivityIndicator, 
+  StyleSheet,
+  Picker,
+} from 'react-native'
+import { NavigationEvents } from 'react-navigation'
 import TYicon from './TYicon'
-import { get, post } from './request'
+import { get, post, put } from './request'
 import { toast } from './Toast'
 import globalStyles from './globalStyles'
 import { getDate } from './utils'
-import Spinner from 'react-native-loading-spinner-overlay'
 
 class DiaryEditor extends React.Component {
 
@@ -15,7 +25,10 @@ class DiaryEditor extends React.Component {
     this.state = { 
       spinner: false,
       latestDiary: null,
-      content: ''
+      mode: 'create',
+      _id: null,
+      content: '',
+      permission: '仅自己可见'
     }
   }
 
@@ -39,12 +52,28 @@ class DiaryEditor extends React.Component {
     }
   }
 
+  async loadCurrentDiary() {
+    const { navigation } = this.props
+    const diaryId = navigation.getParam('itemId')
+    if (diaryId) {
+      let data = await get(`diary/${diaryId}`)
+      let { success, diary } = data
+      if (success) {
+        this.setState({
+          _id: diary._id || null,
+          content: diary.content || '',
+          mode: 'update'
+        })
+      }
+    }
+  }
+
   componentWillMount() {
     this.loadLatestDiary()
   }
 
-  async postDiary() {
-    const { content } = this.state
+  postDiary = async () => {
+    const { mode, _id, content } = this.state
 
     if (!content.trim()) {
       toast('您没有输入内容。');
@@ -53,21 +82,39 @@ class DiaryEditor extends React.Component {
     this.setState({
       spinner: true
     })
-    let res = await post('diary', {
-      content
-    })
-    if (res.success) {
-      this._input.blur()
-      const info = '已记录。'
-      this.setState({
-        spinner: false,
-        content: '',
-        latestDiary: res.diary
-      })
-      toast(info)
-    } else {
-      const { info } = res
-      toast(info)
+    try {
+      let res = null
+      let info = ''
+      switch(mode) {
+        case 'update':
+          res = await put(`diary/${_id}`, {
+            content
+          })
+          info = '已更新。'
+          break
+        case 'create':
+          res = await post('diary', {
+            content
+          })
+          info = '已保存。'
+          break
+        default:
+          break
+      }
+
+      if (res.success) {
+        this._input.blur()
+        this.setState({
+          spinner: false,
+          latestDiary: res.diary
+        })
+        toast(info)
+      } else {
+        const { info } = res
+        toast(info)
+      }
+    } catch (err) {
+      toast(err.message)
     }
   }
 
@@ -75,7 +122,7 @@ class DiaryEditor extends React.Component {
     const { features } = this.props.homeData
     const { routeName } = this.props.navigation.state
     const title = features && features[routeName.toUpperCase()] || ''
-    const { latestDiary } = this.state
+    const { latestDiary, spinner, mode } = this.state
 
     return (
       <KeyboardAvoidingView
@@ -85,6 +132,11 @@ class DiaryEditor extends React.Component {
         }}
         behavior='padding'
       >
+        <NavigationEvents
+          onWillFocus={payload => {
+            this.loadCurrentDiary()
+          }}
+        />
         <View
           style={styles.container}
           onStartShouldSetResponderCapture={(e) => {
@@ -95,29 +147,41 @@ class DiaryEditor extends React.Component {
                 this._input && this._input.blur();
             }
           }}
-        >
-          <Spinner
-            visible={this.state.spinner}
-            color='#666'
-            overlayColor='rgba(255,255,255, 0.25)'
-          />
+        > 
           <View style={styles.header}>
-            <Text style={styles.logo}>{ title }</Text>
-            {this.state.content.trim() ? <TouchableOpacity
+            <Text style={[styles.logo, {
+              textAlign: 'left',
+              flex: 1
+            }]}>{ title }</Text>
+            <TouchableOpacity
+              onPress={() => this.setState({
+                content: '',
+                mode: 'create'
+              })}
               style={{
-                justifyContent: 'center',
-                paddingHorizontal: 10,
-                height: 42,
+                padding: 10
               }}
-              onPress={this.postDiary.bind(this)}
             >
-              <Text style={{
-                alignItems: 'center', 
-                color: '#666666', 
-                textAlign: 'center',
-                color: 'rgb(112, 148, 183)'
-              }}>保存</Text>
-            </TouchableOpacity> : null}
+              <TYicon 
+                style={{
+                  marginRight: 10
+                }}
+                name='tianjia' 
+                size={24} 
+                color='#666'></TYicon>
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={this.state.content.trim() ? 0.6 : 1}
+              style={[globalStyles.button, !this.state.content.trim() ? globalStyles.buttonDis : null, {
+                marginVertical: 5,
+                marginHorizontal: 10
+              }]}
+              onPress={this.state.content.trim() ? this.postDiary : null}
+            >
+              <Text style={[globalStyles.buttonText, !this.state.content.trim() ? globalStyles.buttonDisText : null]}>
+                {mode === 'update' ? '更新' : '保存'}
+              </Text>
+            </TouchableOpacity>
           </View>
           <View style={globalStyles.headerBottomLine}></View>
           {latestDiary ? (<TouchableOpacity
@@ -152,7 +216,7 @@ class DiaryEditor extends React.Component {
                   fontSize: 12
                 }}
               >
-                {getDate(new Date(latestDiary.created_date)) + ' 记录'}
+                {getDate(new Date(latestDiary.updated_date)) + ' 记录'}
               </Text>
             <TYicon 
               style={{
@@ -163,16 +227,15 @@ class DiaryEditor extends React.Component {
               name='fanhui' 
               size={16} 
               color='#ccc'></TYicon>
-          </TouchableOpacity>) : null}
+          </TouchableOpacity>) : (spinner ? <ActivityIndicator style={{
+              padding: 10,
+              height: 42
+            }} /> : null)}
           <View style={globalStyles.splitLine}></View>
-  
             <View
               style={{
                 flex: 1
               }}
-              /*onScroll={() => {
-                this._input.blur()
-              }}*/
             >
               <TextInput
                 onChangeText={(content) => this.setState({content})}
@@ -210,6 +273,13 @@ class DiaryEditor extends React.Component {
                   marginRight: 10
                 }}>仅自己可见</Text>
                 <TYicon name='suoding' size={16} color='#b8b8b8'></TYicon>
+                <Picker
+                  selectedValue={this.state.permission}
+                  style={{ height: 50, width: 100 }}
+                  onValueChange={(itemValue, itemIndex) => this.setState({permission: itemValue})}>
+                  <Picker.Item label="Java" value="java" />
+                  <Picker.Item label="JavaScript" value="js" />
+                </Picker>
               </View>
               <View style={globalStyles.splitLine}></View>
             </View>

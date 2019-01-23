@@ -29,10 +29,16 @@ export default StyleSheet.create({
     paddingBottom: 4,
     // marginTop: 10
   },
+  buttonDis: {
+    borderColor: '#eee', 
+  },
   buttonText: {
     alignItems: 'center', 
     color: '#666666', 
     textAlign: 'center'
+  },
+  buttonDisText: {
+    color: '#adadad',
   },
   noDataText: {
     marginTop: 10,

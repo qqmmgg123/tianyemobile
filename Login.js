@@ -3,38 +3,69 @@ import {
   View,
   Text,
   TextInput,
-  TouchableOpacity
+  TouchableOpacity,
+  Alert,
 } from 'react-native'
+import { connect } from 'react-redux'
+import Spinner from 'react-native-loading-spinner-overlay'
+import globalStyles from './globalStyles'
 import { post, getCurRoute } from './request'
 import Back from './component/Back'
 
+function alert(msg) {
+  Alert.alert(
+    null,
+    msg,
+    [
+      {text: '确定'},
+    ],
+    { cancelable: true }
+  )
+}
 
-export default class Login extends Component {
+class Login extends Component {
 
   constructor(props) {
     super(props)
     this.state = { 
       username: '',
-      password: ''
+      password: '',
+      spinner: false,
+      spinnerText: '',
     }
   }
 
   async postLogin() {
     const { username, password } = this.state
+    this.setState({
+      spinner: true,
+      spinnerText: '',
+    })
     let res = await post('login', {
       username,
       password
     })
-    console.log(res)
-    if (res.success) {
-      let curRoute = getCurRoute()
-      if (curRoute) {
-        this.props.navigation.navigate(curRoute)
+    this.setState({
+      spinner: false,
+      spinnerText: '',
+    })
+    if (res) {
+      const { success } = res
+      if (success) {
+        let curRoute = getCurRoute()
+        if (curRoute) {
+          this.props.navigation.navigate(curRoute)
+        }
       }
     }
   }
 
   render() {
+    let { loginData } = this.props
+    let { need_login } = loginData
+    let { username = '', password = '', spinner, spinnerText } = this.state
+    const submitBtnDis = !username.trim() || !password.trim()
+
     return (
       <View
         style={{
@@ -43,7 +74,22 @@ export default class Login extends Component {
           paddingBottom: 4
         }}
       >
-        <Back navigation={this.props.navigation} />
+        <Spinner
+          visible={spinner}
+          textContent={spinnerText}
+          textStyle={{
+            color: '#333'
+          }}
+          color='#666'
+          overlayColor='rgba(255,255,255, 0.25)'
+        />
+        <Back 
+          navigation={this.props.navigation}
+          rightButton={need_login ? {
+            name: '注册',
+            routeName: 'Signup'
+          } : null}
+        />
         <TextInput
           onChangeText={(username) => this.setState({username})}
           value={this.state.username}
@@ -84,26 +130,38 @@ export default class Login extends Component {
           value={this.state.password}
         />
         <TouchableOpacity
-          style={{
-            borderColor: '#dddddd', 
-            borderWidth: 1, 
-            borderRadius: 3,
-            justifyContent: 'center',
-            height: 36,
-            paddingTop: 3,
-            paddingHorizontal: 7,
-            paddingBottom: 4,
-            marginTop: 10
-          }}
-          onPress={this.postLogin.bind(this)}
+          activeOpacity={submitBtnDis 
+            ? 1
+            : 0.6}
+          style={[
+            globalStyles.button, 
+            submitBtnDis 
+              ? globalStyles.buttonDis 
+              : null, 
+            {
+              marginTop: 10
+            }
+          ]}
+          onPress={submitBtnDis 
+            ? null
+            : this.postLogin.bind(this)}
         >
-          <Text style={{
-            alignItems: 'center', 
-            color: '#666666', 
-            textAlign: 'center'
-          }}>登录</Text>
+          <Text style={[
+            globalStyles.buttonText, 
+            submitBtnDis 
+              ? globalStyles.buttonDisText 
+              : null
+            ]}
+          >登录</Text>
         </TouchableOpacity>
       </View>
     )
   }
 }
+
+const mapStateToProps = (state) => {
+  const { loginData } = state
+  return { loginData }
+}
+
+export default connect(mapStateToProps)(Login)

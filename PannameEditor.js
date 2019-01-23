@@ -1,20 +1,25 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { View, TouchableOpacity, TextInput, Text } from 'react-native'
+import { bindActionCreators } from 'redux'
+import Spinner from 'react-native-loading-spinner-overlay'
+import { changeLoginState } from './HomeActions'
+import { KeyboardAvoidingView, View, TouchableOpacity, TextInput, Text } from 'react-native'
 import globalStyles from './globalStyles'
 import { toast } from './Toast'
-import { updateUser } from './request'
+import { post, updateUser, getUserInfo } from './request'
 
 class PannnameEditor extends Component {
 
   constructor(props) {
     super(props)
     this.state = {
-      panname: ''
+      panname: '',
+      spinner: false,
+      spinnerText: ''
     }
   }
 
-  async createPanname() {
+  createPanname = async () => {
     let { panname } = this.state
     panname = panname.trim()
     if (!panname) {
@@ -22,8 +27,16 @@ class PannnameEditor extends Component {
       return
     }
 
+    this.setState({
+      spinner: true,
+      spinnerText: '',
+    })
     const res = await post('panname', {
       panname
+    })
+    this.setState({
+      spinner: false,
+      spinnerText: '',
     })
     if (res.success) {
       let userInfo = getUserInfo()
@@ -38,11 +51,22 @@ class PannnameEditor extends Component {
   }
   
   render() {
+    const { panname = '', spinner, spinnerText } = this.state
+
     return (
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior='height'
       >
+        <Spinner
+          visible={spinner}
+          textContent={spinnerText}
+          textStyle={{
+            color: '#333'
+          }}
+          color='#666'
+          overlayColor='rgba(255,255,255, 0.25)'
+        />
         <TouchableOpacity
           activeOpacity={1}
           onPressOut={() => this.props.modal.close()}
@@ -59,7 +83,11 @@ class PannnameEditor extends Component {
             borderRadius: 3,
             padding: 10
           }}>
-            <Text>抱歉，需要您给自己取一个对外的笔名，以保护您的隐私</Text>
+            <Text style={{
+              color: '#666',
+              fontSize: 14,
+              lineHeight: 24
+            }}>抱歉，为保护您的隐私，需要您给自己取一个，仅对外的笔名。</Text>
             <TextInput
               autoFocus={true}
               style={{
@@ -82,14 +110,27 @@ class PannnameEditor extends Component {
               flexDirection: 'row'
             }}>
               <TouchableOpacity
-                style={globalStyles.button}
-                onPress={() => this.createPanname()}
+                style={[
+                  globalStyles.button, 
+                  !panname.trim() ? globalStyles.buttonDis : null, 
+                  { 
+                    marginTop: 10,
+                    flex: 1 
+                  }
+                ]}
+                onPress={!panname.trim() ? null : this.createPanname}
               >
-                <Text style={globalStyles.buttonText}>提交</Text>
+                <Text style={[
+                  globalStyles.buttonText, 
+                  !panname.trim() ? globalStyles.buttonDisText : null
+                ]}>确定</Text>
               </TouchableOpacity>
               <View style={{ width: 10 }} />
               <TouchableOpacity
-                style={globalStyles.button}
+                style={[globalStyles.button, { 
+                  marginTop: 10,
+                  flex: 1 
+                }]}
                 onPress={() => {
                   this.props.modal.close()
                 }}>

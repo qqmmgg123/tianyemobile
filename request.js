@@ -1,12 +1,22 @@
 
-import { AsyncStorage } from 'react-native'
+import { AsyncStorage, Alert } from 'react-native'
 import NavigatorService from './services/navigator'
 import { store } from './Store'
 import { changeLoginState } from './HomeActions'
-import { toast } from './Toast'
 
-export const rootUrl = 'http://192.168.1.6:8080'
-// export const rootUrl = 'http://192.168.0.101:8080'
+function alert(msg) {
+  Alert.alert(
+    null,
+    msg,
+    [
+      {text: '确定'},
+    ],
+    { cancelable: true }
+  )
+}
+
+export const rootUrl = 'http://192.168.1.7'
+// export const rootUrl = 'http://192.168.1.6:3000'
 let userInfo = null
 let curRoute = ''
 
@@ -89,52 +99,71 @@ export function removeCurRoute() {
 }
 
 function request(api, method, data, headers = {}) {
-  return fetch([rootUrl, api].join('/'), {
-    method, // *GET, POST, PUT, DELETE, etc.
-    mode: "cors", // no-cors, cors, *same-origin
-    cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-    headers: Object.assign({
-      'Content-Type': 'application/json',
-      'X-Requested-With': 'XMLHttpRequest'
-    }, headers),
-    credentials: "same-origin",
-    redirect: "follow", // manual, *follow, error
-    referrer: "no-referrer", // no-referrer, *client
-    body: JSON.stringify(data), // body data type must match "Content-Type" header
-  }).then(function(response) {
-    return response.json()
-  }).then(function(res) {
-    if (!res.success) {
-      switch (res.code) {
-        case 1002:
-          NavigatorService.navigate('Login')
+  const FETCH_TIMEOUT = 5000;
+  let didTimeOut = false;
+  
+  return new Promise(function(resolve, reject) {
+    const timeout = setTimeout(function() {
+      didTimeOut = true;
+      reject(new Error('Request timed out'));
+    }, FETCH_TIMEOUT)
+
+    fetch([rootUrl, api].join('/'), {
+      method, // *GET, POST, PUT, DELETE, etc.
+      mode: "cors", // no-cors, cors, *same-origin
+      cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+      headers: Object.assign({
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      }, headers),
+      credentials: "same-origin",
+      redirect: "follow", // manual, *follow, error
+      referrer: "no-referrer", // no-referrer, *client
+      body: JSON.stringify(data), // body data type must match "Content-Type" header
+    }).then(function(response) {
+      return response.json()
+    }).then(function(res) {
+      if (!res.success) {
+        switch (res.code) {
+          case 1002:
+            NavigatorService.navigate('Login')
+            store.dispatch(changeLoginState({
+              need_login: true,
+              userId: '',
+              userId: '',
+              username: '',
+              panname: '',
+              email: ''
+            }))
+            removeUser()
+            break
+          default:
+            setTimeout( () => {
+              alert(res.info || res.message || '异常错误')
+            }, 0)
+            break
+        }
+      } else {
+        let { user } = res
+        if (user && !userInfo) {
           store.dispatch(changeLoginState({
-            need_login: true,
-            userId: '',
-            userId: '',
-            username: '',
-            panname: '',
-            email: ''
+            need_login: false,
+            userId: user._id,
+            username: user.username,
+            panname: user.panname,
+            email: user.email
           }))
-          removeUser()
-          break
-        default:
-          toast(res.info || res.message || '异常错误')
-          break
+          _saveUser(user)
+        }
       }
-    } else {
-      let { user } = res
-      if (user && !userInfo) {
-        store.dispatch(changeLoginState({
-          need_login: false,
-          userId: user._id,
-          username: user.username,
-          panname: user.panname,
-          email: user.email
-        }))
-        _saveUser(user)
-      }
-    }
-    return res
+      clearTimeout(timeout);
+      resolve(res)
+    }).catch(function(err) {
+      setTimeout( () => {
+        alert(err.message || '异常错误')
+      }, 0)
+      if(didTimeOut) return;
+      reject(err);
+    })
   })
 }

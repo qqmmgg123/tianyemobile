@@ -2,9 +2,7 @@ import React from 'react'
 import {
   KeyboardAvoidingView,
   View,
-  ScrollView,
   TextInput,
-  TouchableOpacity,
   Text,
 } from 'react-native'
 import { createMaterialTopTabNavigator } from 'react-navigation'
@@ -13,29 +11,29 @@ import { toast } from './Toast'
 import TYicon from './TYicon'
 import Back from './component/Back'
 import globalStyles from './globalStyles'
+import { NavigationEvents } from "react-navigation"
 
 const Permission = (props) => {
   return (
-    <View
-      style={{
-        borderRadius: 3,
-        backgroundColor: '#f2f2f2',
-        borderColor: '#e6e6e6',
-        borderStyle: 'solid',
-        borderWidth: 1,
-        paddingVertical: 10,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: 10
-      }}
-    >
-      <Text style={{
-        color: '#adadad',
-        fontSize: 12,
-        marginRight: 10
-      }}>所有人可见</Text>
-      <TYicon name='jiesuo' size={16} color='#b8b8b8'></TYicon>
+    <View>
+      <View style={globalStyles.splitLine}></View>
+        <View
+          style={{
+            paddingVertical: 10,
+            height: 42,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Text style={{
+            color: '#adadad',
+            fontSize: 12,
+            marginRight: 10
+          }}>所有人可见</Text>
+          <TYicon name='jiesuo' size={16} color='#b8b8b8'></TYicon>
+        </View>
+      <View style={globalStyles.splitLine}></View>
     </View>
   )
 }
@@ -51,6 +49,12 @@ class SentenceEditor extends React.Component {
     }
   }
 
+  componentDidMount() {
+    let { screenProps } = this.props
+    let { onCompInit } = screenProps
+    onCompInit('SentenceEditor', this)
+  }
+
   componentWillReceiveProps(nextProps) {
     let { screenProps } = nextProps
     let share = screenProps.share
@@ -60,17 +64,17 @@ class SentenceEditor extends React.Component {
       this.setState({
         _id: share._id,
         // column_id: share.column_id,
-        content: share.content
+        content: share.content || ''
       })
     }
   }
 
   static navigationOptions = {
-    title: '鸡汤句子'
+    title: '句子'
   };
 
   async postShare() {
-    const { _id, column_id, content } = this.state
+    const { _id, column_id, content = '' } = this.state
     if (!content.trim()) {
       toast('抱歉，您输入的是空内容。')
       return
@@ -105,26 +109,37 @@ class SentenceEditor extends React.Component {
   }
 
   render() {
+    let { screenProps } = this.props
+    let { onInputChange, onScreenChange } = screenProps
+
     return (
       <View
         style={{
-          flex: 1,
-          paddingTop: 3,
-          paddingHorizontal: 7
+          flex: 1
         }}
       >
+        <NavigationEvents
+          onWillFocus={payload => {
+            onScreenChange('SentenceEditor', !this.state.content.trim())
+          }}
+        />
         <TextInput
-          onChangeText={(content) => this.setState({content})}
+          onChangeText={(content) => {
+            this.setState({content}, () => {
+              onInputChange(!this.state.content.trim())
+            })
+          }}
           autoFocus={true}
           value={this.state.content}
           style={{
             flex: 1,
-            paddingTop: 3,
-            paddingHorizontal: 7,
-            paddingBottom: 4,
+            padding: 10,
             borderRadius: 3,
             marginTop: 10,
-            minHeight: 80
+            minHeight: 80,
+            color: '#333333',
+            fontSize: 16,
+            lineHeight: 28
           }}
           placeholder="内容"
           placeholderTextColor="#999"
@@ -132,26 +147,6 @@ class SentenceEditor extends React.Component {
           multiline={true}
         />
         <Permission />
-        <TouchableOpacity
-          style={{
-            borderColor: '#dddddd', 
-            borderWidth: 1, 
-            borderRadius: 3,
-            justifyContent: 'center',
-            height: 36,
-            paddingTop: 3,
-            paddingHorizontal: 7,
-            paddingBottom: 4,
-            marginTop: 10
-          }}
-          onPress={this.postShare.bind(this)}
-        >
-          <Text style={{
-            alignItems: 'center', 
-            color: '#666666', 
-            textAlign: 'center'
-          }}>{this.state._id ? '更新' : '分享'}</Text>
-        </TouchableOpacity>
       </View>
     )
   }
@@ -169,6 +164,12 @@ class LiteratureEditor extends React.Component {
     }
   }
 
+  componentDidMount() {
+    let { screenProps } = this.props
+    let { onCompInit } = screenProps
+    onCompInit('LiteratureEditor', this)
+  }
+
   componentWillReceiveProps(nextProps) {
     let { screenProps } = nextProps
     let share = screenProps.share
@@ -178,18 +179,18 @@ class LiteratureEditor extends React.Component {
       this.setState({
         _id: share._id,
         // column_id: share.column_id,
-        title: share.title,
-        content: share.content
+        title: share.title || '',
+        content: share.content || ''
       })
     }
   }
 
   static navigationOptions = {
-    title: '散文诗歌'
+    title: '文章'
   };
 
   async postShare() {
-    const { _id, column_id, title, content } = this.state
+    const { _id, column_id, title = '', content = '' } = this.state
     if (!title.trim()) {
       toast('抱歉，您没有输入标题。')
       return
@@ -237,26 +238,33 @@ class LiteratureEditor extends React.Component {
   }
 
   render() {
+    let { screenProps } = this.props
+    let { onInputChange, onScreenChange } = screenProps
+
     return (
       <View
         style={{
-          flex: 1,
-          paddingTop: 3,
-          paddingHorizontal: 7,
+          flex: 1
         }}
       >
+        <NavigationEvents
+          onWillFocus={payload => {
+            console.log(this.state.title, this.state.content)
+            onScreenChange('LiteratureEditor', !this.state.title.trim() || !this.state.content.trim())
+          }}
+        />
         <TextInput
-          onChangeText={(title) => this.setState({title})}
+          onChangeText={(title) => {
+            this.setState({title}, () => {
+              onInputChange(!this.state.title.trim() || !this.state.content.trim())
+            })
+          }}
           value={this.state.title}
           style={{
-            height: 42,
-            paddingTop: 3,
-            paddingHorizontal: 7,
-            paddingBottom: 4,
+            paddingVertical: 15,
+            paddingHorizontal: 10,
             borderRadius: 3,
-            marginTop: 10,
             fontSize: 20,
-            lineHeight: 32,
             // textAlign: 'center',
           }}
           placeholder="标题"
@@ -266,13 +274,15 @@ class LiteratureEditor extends React.Component {
         />
         <View style={globalStyles.splitLine}></View>
         <TextInput
-          onChangeText={(content) => this.setState({content})}
+          onChangeText={(content) => {
+            this.setState({content}, () => {
+              onInputChange(!this.state.title.trim() || !this.state.content.trim())
+            })
+          }}
           value={this.state.content}
           style={{
             flex: 1,
-            paddingTop: 3,
-            paddingHorizontal: 7,
-            paddingBottom: 4,
+            padding: 10,
             borderRadius: 3,
             marginTop: 10,
             minHeight: 80,
@@ -286,33 +296,12 @@ class LiteratureEditor extends React.Component {
           multiline={true}
         />
         <Permission />
-        <TouchableOpacity
-          style={{
-            borderColor: '#dddddd', 
-            borderWidth: 1, 
-            borderRadius: 3,
-            justifyContent: 'center',
-            height: 36,
-            paddingTop: 3,
-            paddingHorizontal: 7,
-            paddingBottom: 4,
-            marginTop: 10
-          }}
-          onPress={this.postShare.bind(this)}
-        >
-          <Text style={{
-            alignItems: 'center', 
-            color: '#666666', 
-            textAlign: 'center'
-          }}>{this.state._id ? '更新' : '分享'}</Text>
-        </TouchableOpacity>
       </View>
     )
   }
 }
 
 let navOptions = {
-  // initialRouteName: 'LiteratureEditor',
   tabBarOptions: {
     labelStyle: {
       color: '#333333'
@@ -338,9 +327,10 @@ export default class ShareEditor extends React.Component {
 
   constructor(props) {
     super(props)
-
+    this.navs = {}
     this.state = {
-      share: null
+      share: null,
+      currentScreen: 'SentenceEditor'
     }
   }
 
@@ -367,24 +357,42 @@ export default class ShareEditor extends React.Component {
       let { success, share } = data
       if (success) {
         this.setState({
-          share
+          share,
+          btnDis: true
         })
       }
     }
   }
 
   render() {
-    let { share } = this.state
+    let { share, btnDis, currentScreen } = this.state
     return (
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior='padding'
       >
         <View style={{flex: 1}}>
-          <Back navigation={this.props.navigation} />
-          <ShareEditorNav screenProps={{
-            share
-          }} navigation={this.props.navigation} />
+          <Back 
+            navigation={this.props.navigation} 
+            rightButton={{
+              name: share && share._id ? '更新' : '分享',
+              btnDis,
+              onPress: () => {
+                this.navs[currentScreen].postShare()
+              }
+            }}
+          />
+          <ShareEditorNav
+            screenProps={{
+              share,
+              onInputChange: (btnDis) => this.setState({ btnDis }),
+              onScreenChange: (currentScreen, btnDis) => this.setState({ currentScreen, btnDis }),
+              onCompInit: (key, comp) => {
+                this.navs[key] = comp
+              }
+            }} 
+            navigation={this.props.navigation} 
+          />
         </View>
       </KeyboardAvoidingView>
     )

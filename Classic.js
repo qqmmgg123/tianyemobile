@@ -1,5 +1,13 @@
 import React from 'react'
-import { SafeAreaView, View, FlatList, TouchableOpacity, Text, TextInput, StyleSheet } from 'react-native'
+import { 
+  SafeAreaView, 
+  View, 
+  FlatList, 
+  TouchableOpacity, 
+  Text, 
+  TextInput, 
+  StyleSheet,
+} from 'react-native'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { layoutHomeData } from './HomeActions';
@@ -7,6 +15,7 @@ import { get, post } from './request'
 import globalStyles from './globalStyles'
 import { createFriendModal } from './GlobalModal'
 import Back from './component/Back'
+import { Empty, Footer } from './component/ListLoad'
 import { toast } from './Toast'
 
 let noDataTips = '当前没有内容'
@@ -181,33 +190,21 @@ class Classic extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      refreshing: false,
       classics: [],
       loading: true,
       noDataTips,
-      modalVisible: false
+      page: 1
     }
   }
 
-  refresh() {
-    this.setState({
-      refreshing: true
-    })
-    this.loaderData()
-  }
-
-  async loaderData() {
-    let data = await get('features/classic')
-    if (this.state.loading) {
-      this.setState({
-        loading: false,
-        refreshing: false,
-      })
-    }
+  layoutData(data) {
     let { 
       appName, 
       slogan, 
       features, 
       success, 
+      pageInfo,
       classics = [], 
       noDataTips = noDataTips } = data
     if (success) {
@@ -217,26 +214,70 @@ class Classic extends React.Component {
         features
       })
       this.setState({
-        classics,
+        page: pageInfo.nextPage || 0,
+        classics: [...this.state.classics, ...classics],
         noDataTips
       })
     }
   }
 
-  setModalVisible(visible) {
+  async loadData() {
+    const { page, loading, refreshing } =  this.state
+    let data = await get('features/classic', {
+      perPage: 20,
+      page
+    })
+    if (loading) {
+      this.setState({
+        loading: false
+      }, () => {
+        data && this.layoutData(data)
+      })
+    }
+    if (refreshing) {
+      this.setState({
+        refreshing: false,
+        classics: []
+      }, () => {
+        data && this.layoutData(data)
+      })
+    }
+  }
+
+  refresh = () => {
     this.setState({
-      modalVisible: visible
+      page: 1,
+      refreshing: true
+    }, () => {
+      this.loadData()
+    })
+  }
+
+  loadMore = () => {
+    const { page, loading } = this.state
+    if (!page || loading) return
+    this.setState({
+      loading: true 
+    }, () => {
+      this.loadData()
     })
   }
 
   componentWillMount() {
-    this.loaderData()
+    this.loadData()
   }
 
   render() {
     const { features } = this.props.homeData
     const { routeName } = this.props.navigation.state
     const title = features && features[routeName.toUpperCase()] || ''
+    let { 
+      classics, 
+      refreshing, 
+      loading, 
+      noDataTips, 
+      page 
+    } = this.state
 
     return (
       <View style={styles.container}>
@@ -244,16 +285,15 @@ class Classic extends React.Component {
           <Text style={styles.logo}>{ title }</Text>
         </View>
         <View style={globalStyles.headerBottomLine}></View>
-        {this.state.classics.length ? <FlatList
+        <FlatList
           style={{
-            paddingTop: 3,
-            paddingLeft: 7,
-            paddingRight: 7,
-            paddingBottom: 4
+            padding: 10
           }}
-          data={this.state.classics}
-          refreshing={this.state.refreshing}
-          onRefresh={this.refresh.bind(this)}
+          data={classics}
+          refreshing={refreshing}
+          onRefresh={this.refresh}
+          onEndReached={this.loadMore}
+          onEndReachedThreshold={100}
           renderItem={({item}) => {
             return (
               <View style={{
@@ -298,13 +338,20 @@ class Classic extends React.Component {
               </View>
             )
           }}
+          ListEmptyComponent={<Empty 
+            loading={loading}
+            noDataTips={noDataTips}
+          />}
+          ListFooterComponent={<Footer 
+            data={classics} 
+            onLoadMore={this.loadMore} 
+            loading={loading}
+            page={page}
+            noDataTips={noDataTips}
+          />}
           ItemSeparatorComponent={() => <View style={globalStyles.separator} />}
           keyExtractor={(item) => (item._id)}
-        /> :  (<View>
-          <Text style={globalStyles.noDataText}>
-            {!this.state.loading ? this.state.noDataTips : '加载中...'}
-          </Text>
-        </View>)}
+        />
         <RecommendModal 
           navigation={this.props.navigation}
           ref={ ref => this._modal = ref }

@@ -10,6 +10,7 @@ import {
 import TYicon from './TYicon'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
+import Spinner from 'react-native-loading-spinner-overlay'
 import { changeLoginState } from './HomeActions'
 import { get, post, removeUser, getCurRoute, getUserInfo, updateUser } from './request'
 import globalStyles from './globalStyles'
@@ -18,9 +19,28 @@ import { toast } from './Toast'
 
 let routes = [
   {
+    key: 'Friend',
+    params: {
+      routeName: 'More'
+    },
+    label: '知己',
+    visible: 'login'
+  },
+  {
+    key: 'Signup',
+    label: '注册',
+    visible: 'unlogin'
+  },
+  {
     key: 'Login',
-    label: '登录'
-  }
+    label: '登录',
+    visible: 'unlogin'
+  },
+  {
+    key: 'Login',
+    label: '切换账号',
+    visible: 'login'
+  },
 ]
 
 class NameModify extends React.Component {
@@ -28,20 +48,29 @@ class NameModify extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      panname: ''
+      panname: '',
+      spinner: false,
+      spinnerText: ''
     }
   }
 
-  async confirm() {
+  confirm = async () => {
     let { panname } = this.state
     panname = panname.trim()
     if (!panname) {
       toast('笔名不能填空。')
       return
     }
-
+    this.setState({
+      spinner: true,
+      spinnerText: '',
+    })
     const res = await post('panname', {
       panname
+    })
+    this.setState({
+      spinner: false,
+      spinnerText: '',
     })
     if (res.success) {
       let userInfo = getUserInfo()
@@ -55,11 +84,22 @@ class NameModify extends React.Component {
   }
 
   render() {
+    const { panname = '', spinner, spinnerText } = this.state
+
     return (
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior='height'
       >
+        <Spinner
+          visible={spinner}
+          textContent={spinnerText}
+          textStyle={{
+            color: '#333'
+          }}
+          color='#666'
+          overlayColor='rgba(255,255,255, 0.25)'
+        />
         <TouchableOpacity 
           activeOpacity={1} 
           onPressOut={() => this.props.modal.close()}
@@ -96,13 +136,20 @@ class NameModify extends React.Component {
             autoFocus={true}
           />
           <TouchableOpacity
-            onPress={() => this.confirm()}
-            style={[globalStyles.button, {
-              marginTop: 10
-            }]}
+            onPress={!panname.trim() ? null : this.confirm}
+            style={[
+              globalStyles.button, 
+              !panname.trim() ? globalStyles.buttonDis : null, 
+              { 
+                marginTop: 10,
+              }
+            ]}
           >
             <Text
-              style={globalStyles.buttonText}
+              style={[
+                globalStyles.buttonText, 
+                !panname.trim() ? globalStyles.buttonDisText : null
+              ]}
             >确定修改</Text>
           </TouchableOpacity>
           </View>
@@ -136,7 +183,8 @@ class MoreList extends React.Component {
   }
 
   render() {
-    let { need_login, username, panname, email } = this.props.loginData
+    let { loginData } = this.props
+    let { need_login, username, panname, email } = loginData
     let userInfos = [
       { key: 'username', name: '用户名', value: username },
       { key: 'panname', name: '笔名', value: panname },
@@ -148,7 +196,8 @@ class MoreList extends React.Component {
         style={styles.container}
       >
         <View style={styles.header}>
-          <TYicon name='ellipsis' size={20} color='#FF0140'></TYicon>
+          {/*<TYicon name='ellipsis' size={20} color='#FF0140'></TYicon>*/}
+          <Text style={styles.logo}>其他</Text>
         </View>
         <View style={globalStyles.headerBottomLine}></View>
         {userInfos.map((info, index) => (
@@ -161,6 +210,7 @@ class MoreList extends React.Component {
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
+                flexWrap: 'nowrap',
                 padding: 20
               }}
             >
@@ -169,9 +219,13 @@ class MoreList extends React.Component {
                   flex: 1
                 }}
               >{info.name}</Text>
-              <Text style={{
-                color: '#666'
-              }}>{info.value}</Text>
+              <Text 
+                style={{
+                  maxWidth: '50%',
+                  color: '#666'
+                }}
+                numberOfLines={1}
+              >{info.value}</Text>
               {info.key === 'panname' ? (<TYicon 
                 style={{
                   transform: [{ rotate: '180deg'}],
@@ -186,7 +240,10 @@ class MoreList extends React.Component {
         </View>) : null
         ))}
         {routes.map(scene => {
-          return (
+          return ((!need_login && scene.visible === 'login') 
+            || (need_login && scene.visible === 'unlogin')
+            || scene.visible === 'allways') 
+            ? (
             <View
               key={scene.key}>
               <TouchableOpacity
@@ -195,13 +252,13 @@ class MoreList extends React.Component {
                   alignItems: 'center',
                   padding: 20
                 }}
-                onPress={() => this.props.navigation.navigate(scene.key)}
+                onPress={() => this.props.navigation.navigate(scene.key, scene.params || null)}
               >
                 <Text 
                   style={{
                     flex: 1
                   }}
-                >{scene.key === 'Login' && need_login ? scene.label : '切换账号'}</Text>
+                >{scene.label}</Text>
                 <TYicon 
                   style={{
                     transform: [{ rotate: '180deg'}],
@@ -214,8 +271,7 @@ class MoreList extends React.Component {
               </TouchableOpacity>
               <View style={globalStyles.splitLine}></View>
             </View>
-          )
-        })}
+          ) : null})}
         {!need_login
           ? (<View style={{
             padding: 15

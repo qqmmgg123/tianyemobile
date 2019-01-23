@@ -10,6 +10,7 @@ import { getUserInfo } from './request'
 import { createFriendModal } from './GlobalModal'
 import Report from './Report'
 import PannameEditor from './PannameEditor'
+import { Empty, Footer } from './component/ListLoad'
 
 let noDataTips = '当前没有内容'
 
@@ -20,12 +21,35 @@ class ShareItem extends React.Component {
   constructor(props) {
     super(props)
     this._animated = new Animated.Value(1)
+    this.state = {
+      loading: false,
+      text: props.summary,
+      content: '',
+      summary: props.summary,
+      expand: false
+    }
   }
 
   async removeShare(id) {
     const res = await del(`share/${id}`)
     if (res.success) {
       this.onRemove()
+    }
+  }
+
+  async loadShare(shareId) {
+    let data = await get(`share/${shareId}`)
+    if (data) {
+      let { success, share } = data
+      let { content } = share
+      if (success) {
+        this.setState({
+          content: content,
+          text: content,
+          expand: true,
+          loading: false
+        })
+      }
     }
   }
 
@@ -48,8 +72,8 @@ class ShareItem extends React.Component {
     const rowStyles = [
       { opacity: this._animated }
     ]
-    const { title = '', summary = '', curUserId, creator_id, _id, isThanked, author, column_id } = this.props
-
+    const { title = '', curUserId, creator_id, _id, isThanked, author, column_id, is_extract } = this.props
+    const { text, content, expand } = this.state
     return (
       <Animated.View style={rowStyles}>
         <View style={{
@@ -57,7 +81,7 @@ class ShareItem extends React.Component {
           paddingBottom: 10,
         }}>
           <TouchableOpacity
-            activeOpacity={title ? 0 : 1}
+            activeOpacity={title ? 0.6 : 1}
             onPress={
               title
               ? () => this.props.navigation.navigate('ShareDetail', {
@@ -72,26 +96,64 @@ class ShareItem extends React.Component {
               lineHeight: 24
             }}>{title}</Text> : null
             }
-            <Text style={{ 
-              fontSize: 14,
-              color: '#4d4d4d',
+            <Text style={{
+              fontSize: title ? 14 : 16,
+              color: title ? '#4d4d4d' : '#333',
               lineHeight: 24,
               marginTop: 10
-            }}>{summary}</Text>
+            }}>{text}</Text>
           </TouchableOpacity>
+          {column_id === 'sentence' && is_extract ? <TouchableOpacity
+            onPress={() => {
+              let { content, expand, summary } = this.state
+              if (content) {
+                this.setState({
+                  expand: !expand,
+                  text: expand ? summary : content
+                })
+              } else {
+                this.setState({
+                  loading: true
+                }, () => {
+                  this.loadShare(_id)
+                })
+              }
+            }}
+            style={{
+              marginTop: 5
+            }}
+          >
+            <Text
+              style={{
+                color: '#666'
+              }}
+            >{content && expand ? '收起' : '展开全文'}</Text>
+          </TouchableOpacity> : null}
           <View style={{
             marginTop: 5,
             flexDirection: 'row',
             alignItems: 'center'
           }}>
+          <TouchableOpacity
+            onPress={() => this.props.navigation.navigate('Profile', {
+              itemId: author._id
+            })}
+            style={{
+              flex: 1,
+              paddingVertical: 10,
+              paddingRight: 10
+            }}
+          >
             <Text 
               style={{
-                flex: 1,
                 fontSize: 14,
                 color: '#666'
               }}
               numberOfLines={1}
-            >作者：{author && author.panname || ''}</Text>
+            >
+              作者：{author && author.panname || ''}
+            </Text>
+          </TouchableOpacity>
           {isThanked
             ? (<Text style={{
                 color: '#999', 
@@ -172,20 +234,13 @@ class Share extends React.Component {
 
   constructor(props) {
     super(props)
-
     this.state = {
       refreshing: false,
       shares: [],
       loading: true,
-      noDataTips
+      noDataTips,
+      page: 1
     }
-  }
-
-  refresh() {
-    this.setState({
-      refreshing: true
-    })
-    this.loadData()
   }
 
   async updateShares(id) {
@@ -207,27 +262,78 @@ class Share extends React.Component {
     }
   }
 
-  async loadData() {
-    let data = await get('features/share')
-    if (this.state.loading) {
-      this.setState({
-        loading: false,
-        refreshing: false,
-      })
-    }
-    let { appName, slogan, features, success, shares = [], noDataTips = noDataTips} = data
+  layoutData(data) {
+    let { 
+      appName, 
+      slogan, 
+      features, 
+      success, 
+      pageInfo,
+      shares = [], 
+      noDataTips = noDataTips} = data
     if (success) {
       this.props.layoutHomeData({
         appName,
         slogan,
         features
       })
-      console.log('refresh finish...')
       this.setState({
-        shares,
+        page: pageInfo.nextPage || 0,
+        shares: [...this.state.shares, ...shares],
         noDataTips
       })
     }
+  }
+
+  async loadData() {
+    const { page, loading, refreshing } =  this.state
+    let data = await get('features/share',  {
+      perPage: 20,
+      page
+    })
+    if (loading) {
+      this.setState({
+        loading: false,
+        refreshing: false,
+      }, () => {
+        data && this.layoutData(data)
+      })
+    }
+    if (refreshing) {
+      this.setState({
+        refreshing: false,
+        shares: []
+      }, () => {
+        data && this.layoutData(data)
+      })
+    }
+  }
+
+  refresh = () => {
+    this.setState({
+      page: 1,
+      refreshing: true
+    }, () => {
+      this.loadData()
+    })
+  }
+
+  loadMore = () => {
+    const { page, loading } = this.state
+    if (!page || loading) return
+    this.setState({
+      loading: true 
+    }, () => {
+      this.loadData()
+    })
+  }
+
+  removeItem(index) {
+    let { shares } = this.state
+    shares.splice(index, 1)
+    this.setState({
+      shares
+    })
   }
 
   componentWillMount() {
@@ -235,11 +341,18 @@ class Share extends React.Component {
   }
 
   render() {
-    let { shares } = this.state
     const { features } = this.props.homeData
     const { userId = '' } = this.props.loginData
     const { routeName } = this.props.navigation.state
     const title = features && features[routeName.toUpperCase()] || ''
+
+    let { 
+      shares, 
+      refreshing, 
+      loading, 
+      noDataTips, 
+      page 
+    } = this.state
     
     return (
       <View style={styles.container}>
@@ -247,34 +360,38 @@ class Share extends React.Component {
           <Text style={styles.logo}>{ title }</Text>
         </View>
         <View style={globalStyles.headerBottomLine}></View>
-        {this.state.shares.length ? <FlatList
+        <FlatList
           style={{
             padding: 10
           }}
-          data={this.state.shares}
-          refreshing={this.state.refreshing}
-          onRefresh={this.refresh.bind(this)}
+          data={shares}
+          refreshing={refreshing}
+          onRefresh={this.refresh}
+          onEndReached={this.loadMore}
+          onEndReachedThreshold={100}
           renderItem={({item, index}) => <ShareItem
             navigation={this.props.navigation}
             {...item} 
             curUserId={userId}
-            onRemove={() => {
-              shares.splice(index, 1)
-              this.setState({
-                shares
-              })
-            }} 
+            onRemove={this.removeItem.bind(this, index)} 
             onRefresh={() => this.refresh()}
             updateShares={this.updateShares.bind(this)}
             onReport={() => this._modal.open('Report')}
           />}
+          ListEmptyComponent={<Empty 
+            loading={loading}
+            noDataTips={noDataTips}
+          />}
+          ListFooterComponent={<Footer 
+            data={shares} 
+            onLoadMore={this.loadMore} 
+            loading={loading}
+            page={page}
+            noDataTips={noDataTips}
+          />}
           ItemSeparatorComponent={() => <View style={globalStyles.separator} />}
           keyExtractor={item => (item._id)}
-        /> : (<View>
-          <Text style={globalStyles.noDataText}>
-            {!this.state.loading ? this.state.noDataTips : '加载中...'}
-          </Text>
-        </View>)}
+        />
         <TouchableOpacity 
           onPress={() => {
             let userInfo = getUserInfo()
@@ -283,7 +400,11 @@ class Share extends React.Component {
                 onGoBack: () => this.refresh()
               })
             } else {
-              this._modal.open('PannameEditor')
+              if (userInfo) {
+                this._modal.open('PannameEditor')
+              } else {
+                this.props.navigation.navigate('Login')
+              }
             }
           }}
           style={{

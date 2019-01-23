@@ -20,7 +20,7 @@ class ShareDetail extends Component {
   }
 
   refresh() {
-    this.loginData()
+    this.loadData()
   }
 
   async thank() {
@@ -42,10 +42,10 @@ class ShareDetail extends Component {
   }
 
   componentWillMount() {
-    this.loginData()
+    this.loadData()
   }
 
-  async loginData() {
+  async loadData() {
     const shareId = this.props.navigation.getParam('itemId')
     let data = await get(`share/${shareId}`)
     let { success, share } = data
@@ -65,14 +65,10 @@ class ShareDetail extends Component {
       <View style={{ flex: 1 }}>
         <Back routeName='Share' navigation={this.props.navigation} />
         <View style={{ flex: 1 }}>
-          <ScrollView style={{
-            marginTop: 20,
-            height: 200
-          }}>
+          <ScrollView>
             <View style={{
               flex: 1,
-              marginTop: 20,
-              paddingHorizontal: 10,
+              padding: 10,
             }}>
               <Text
                 style={{
@@ -84,12 +80,11 @@ class ShareDetail extends Component {
             </View>
             <View style={{
               flex: 1,
-              marginTop: 20,
+              marginTop: 10,
               paddingHorizontal: 10,
               paddingBottom: 20
             }}>
               <Text style={{
-                flex: 1,
                 color: '#333333',
                 fontSize: 16,
                 lineHeight: 28

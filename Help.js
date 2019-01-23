@@ -1,13 +1,15 @@
 import React from 'react'
-import { View, FlatList, TouchableOpacity, Text, TextInput, SafeAreaView, Modal, KeyboardAvoidingView, Animated, findNodeHandle, StyleSheet } from 'react-native'
+import { View, FlatList, TouchableOpacity, Text, TextInput, Modal, KeyboardAvoidingView, Animated, findNodeHandle, StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
+import { SafeAreaView } from 'react-navigation'
 import { layoutHomeData } from './HomeActions';
 import { get, post, del, getUserInfo } from './request'
 import globalStyles from './globalStyles'
 import TYicon from './TYicon'
 import HelpEditor from './HelpEditor'
 import Back from './component/Back'
+import { Empty, Footer } from './component/ListLoad'
 
 let noDataTips = '当前没有内容'
 
@@ -45,17 +47,28 @@ class HelpItem extends React.Component {
             itemId: id
           })}
           style={{
-            padding: 10
+            padding: 10,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center'
           }}
         >
           <Text style={{ 
-          fontSize: 14,
-          color: '#FF0140',
-          height: 27,
-          lineHeight: 27,
-          paddingRight: 14,
-          textAlign: 'center'
-        }}>更多 {reply_count - 5} 条回复</Text>
+            fontSize: 14,
+            color: '#666',
+            height: 27,
+            lineHeight: 27,
+            paddingRight: 14,
+          }}>还有 {reply_count - 5} 条回复</Text>
+          <TYicon 
+            style={{
+              transform: [{ rotate: '180deg'}],
+              marginBottom: 2
+            }}
+            name='fanhui' 
+            size={16} 
+            color='#ccc'
+          ></TYicon>
         </TouchableOpacity>
       )
     } else {
@@ -67,8 +80,13 @@ class HelpItem extends React.Component {
     const rowStyles = [
       { opacity: this._animated }
     ]
-    const { content = '', replies, _id, creator_id, reply_count, remark = [], username = '' } = this.props
-    console.log(remark)
+    const { 
+      content = '', 
+      replies, _id, 
+      creator_id, 
+      reply_count, 
+      remark = [], 
+      username = '' } = this.props
     return (
       <Animated.View style={rowStyles}>
         <View 
@@ -81,11 +99,11 @@ class HelpItem extends React.Component {
             <Text style={{ 
               fontSize: 14,
               color: '#333',
-              lineHeight: 24
+              lineHeight: 28
               }}>{remark[0] || username}：</Text>
             <Text style={{ 
               marginTop: 5,
-              fontSize: 14,
+              fontSize: 16,
               color: '#333',
               lineHeight: 24
               }}>{content}</Text>
@@ -108,7 +126,7 @@ class HelpItem extends React.Component {
             >
               <Text style={{ 
               fontSize: 14,
-              color: '#FF0140',
+              color: '#666',
               }}>回复</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -119,8 +137,8 @@ class HelpItem extends React.Component {
             >
               <Text style={{ 
               fontSize: 14,
-              color: '#FF0140'
-              }}>已排解</Text>
+              color: '#666'
+              }}>已解</Text>
             </TouchableOpacity>
           </View>
           <View style={{
@@ -148,18 +166,35 @@ class HelpItem extends React.Component {
                 >
                   <Text style={{
                     fontSize: 14,
+                    lineHeight: 24,
                     color: '#333'
                   }}>
                     {replyName + (reply.reply_type === 'reply' ? '@' + (reply.rremark && reply.rremark[0] || reply.receivername) : '') + '：' + (reply.content || '')}
                   </Text>
-                  <TouchableOpacity
-                    onPress={() => this.props.navigation.navigate('ClassicDetail', {
-                      itemId: reply.ref_id
-                    })}
-                  >
-                    <Text>{reply.ref_title || ''}</Text>
-                    <Text>{reply.ref_summary || ''}</Text>
-                  </TouchableOpacity>
+                  {reply.ref_id && reply.ref_id[0] ? (
+                    <TouchableOpacity
+                      onPress={() => this.props.navigation.navigate('ClassicDetail', {
+                        itemId: reply.ref_id
+                      })}
+                      style={{
+                        borderLeftColor: '#ccc',
+                        borderLeftWidth: 3,
+                        backgroundColor: '#eaeaea',
+                        padding: 10,
+                        marginTop: 10
+                      }}
+                    >
+                      <Text style={{
+                        color: '#666',
+                        fontSize: 14
+                      }}>{reply.ref_title || ''}</Text>
+                      <Text style={{
+                        color: '#999',
+                        marginTop: 5,
+                        fontSize: 12
+                      }}>{reply.ref_summary || ''}</Text>
+                    </TouchableOpacity>
+                  ) : null}
                 </TouchableOpacity>
               )
             })}
@@ -176,13 +211,17 @@ class Help extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      refreshing: false,
       helps: [],
+      loading: true,
       noDataTips,
+      page: 1,
       troubleHolder: '',
       modalVisible: false,
       reply: '',
       replyVisible: false,
-      replyData: null
+      replyData: null,
+      btnDis: true
     }
   }
 
@@ -202,7 +241,6 @@ class Help extends React.Component {
       if (success) {
         let user = getUserInfo()
         let help = helps.find(item => item._id === parentId)
-        help.reply_count += 1
         let { reply } = res
         reply.username = user.username
         if (replyType === 'reply') {
@@ -210,6 +248,7 @@ class Help extends React.Component {
           reply.receivername = replyTo.remark[0] || replyTo.username[0] || ''
         }
         if (help) {
+          help.reply_count += 1
           help.replies.unshift(reply)
           this.setState({
             helps
@@ -239,13 +278,16 @@ class Help extends React.Component {
     }
   }
 
-  refresh() {
-    this.loadData()
-  }
-
-  async loadData() {
-    let data = await get('features/help')
-    let { appName, slogan, features, success, helps = [], noDataTips = noDataTips, troubleHolder = '' } = data
+  layoutData(data) {
+    let { 
+      appName, 
+      slogan, 
+      features, 
+      success, 
+      pageInfo,
+      helps = [], 
+      noDataTips = noDataTips, 
+      troubleHolder = '' } = data
     if (success) {
       this.props.layoutHomeData({
         appName,
@@ -253,11 +295,62 @@ class Help extends React.Component {
         features
       })
       this.setState({
-        helps,
+        page: pageInfo.nextPage || 0,
+        helps: [...this.state.helps, ...helps],
         noDataTips,
         troubleHolder,
       })
     }
+  }
+
+  async loadData() {
+    const { page, loading, refreshing } =  this.state
+    let data = await get('features/help', {
+      perPage: 20,
+      page
+    })
+    if (loading) {
+      this.setState({
+        loading: false
+      }, () => {
+        data && this.layoutData(data)
+      })
+    }
+    if (refreshing) {
+      this.setState({
+        refreshing: false,
+        helps: []
+      }, () => {
+        data && this.layoutData(data)
+      })
+    }
+  }
+
+  refresh = () => {
+    this.setState({
+      page: 1,
+      refreshing: true
+    }, () => {
+      this.loadData()
+    })
+  }
+
+  loadMore = () => {
+    const { page, loading } = this.state
+    if (!page || loading) return
+    this.setState({
+      loading: true 
+    }, () => {
+      this.loadData()
+    })
+  }
+
+  removeItem(index) {
+    let { helps } = this.state
+    helps.splice(index, 1)
+    this.setState({
+      helps
+    })
   }
 
   componentWillMount() {
@@ -276,6 +369,20 @@ class Help extends React.Component {
     const { routeName } = this.props.navigation.state
     const title = features && features[routeName.toUpperCase()] || ''
     const { receiverName = '' } = this.state.replyData || {}
+
+    let { 
+      helps, 
+      refreshing, 
+      loading, 
+      noDataTips, 
+      page,
+      troubleHolder,
+      modalVisible,
+      replyVisible,
+      reply,
+      btnDis
+    } = this.state
+
     return (
       <View
         style={styles.container}
@@ -296,13 +403,16 @@ class Help extends React.Component {
               paddingHorizontal: 10,
               height: 42,
             }}
-            onPress={() => this.props.navigation.navigate('Friend')}
+            onPress={() => this.props.navigation.navigate('Friend', {
+              routeName: 'Help'
+            })}
           >
             <Text style={{
               alignItems: 'center', 
-              color: '#666666', 
+              color: '#333', 
               textAlign: 'center',
-              color: 'rgb(112, 148, 183)'
+              fontSize: 16,
+
             }}>知己</Text>
           </TouchableOpacity>
         </View>
@@ -322,42 +432,41 @@ class Help extends React.Component {
             height: 24,
             lineHeight: 24,
             marginLeft: 10
-          }}>{this.state.troubleHolder}</Text>
+          }}>{troubleHolder}</Text>
         </TouchableOpacity>
         <View style={globalStyles.splitLine}></View>
-        {this.state.helps.length ? <FlatList
+        <FlatList
           style={{
-            paddingHorizontal: 15,
-            paddingBottom: 15
+            padding: 10
           }}
-          data={this.state.helps}
+          data={helps}
+          refreshing={refreshing}
+          onRefresh={this.refresh}
+          onEndReached={this.loadMore}
+          onEndReachedThreshold={100}
           renderItem={({item, index}) => <HelpItem 
             navigation={this.props.navigation}
             onReply={this.onReply.bind(this)} 
             {...item} 
-            onRemove={() => {
-              let { helps } = this.state
-              helps.splice(index, 1)
-              this.setState({
-                helps
-              })
-            }} 
+            onRemove={this.removeItem.bind(this, index)}
+          />}
+          ListEmptyComponent={<Empty 
+            loading={loading}
+            noDataTips={noDataTips}
+          />}
+          ListFooterComponent={<Footer 
+            data={helps} 
+            onLoadMore={this.loadMore} 
+            loading={loading}
+            page={page}
+            noDataTips={noDataTips}
           />}
           ItemSeparatorComponent={() => <View style={globalStyles.separator} />}
           keyExtractor={(item) => (item._id)}
-        /> : (<View>
-          <Text style={{
-            color: '#333333',
-            textAlign: 'center',
-            paddingTop: 20
-          }}>
-            {this.state.noDataTips}
-          </Text>
-        </View>)}
+        />
         <Modal
           animationType='slide'
-          // transparent={true}
-          visible={this.state.modalVisible}
+          visible={modalVisible}
           onBackButtonPress={() => this.setModalVisible(false)}
         >
           <SafeAreaView
@@ -369,18 +478,29 @@ class Help extends React.Component {
                 flex: 1
               }}
             >
-              <Back goBack={() => this.setModalVisible(false)} />
+              <Back 
+                goBack={() => this.setModalVisible(false)} 
+                rightButton={{
+                  name: '送出',
+                  btnDis,
+                  onPress: () => this._editor.postHelp()
+                }}
+              />
               <HelpEditor 
+                ref={ref => this._editor = ref}
                 listRefresh={() => {
                   this.setModalVisible(false)
                   this.refresh()
                 }} 
-                placeholder={this.state.troubleHolder} 
+                placeholder={troubleHolder} 
+                onInputChange={(btnDis) => this.setState({
+                  btnDis
+                })}
               />
             </View>
           </SafeAreaView>
         </Modal>
-        {this.state.replyVisible ? (<KeyboardAvoidingView
+        {replyVisible ? (<KeyboardAvoidingView
           keyboardVerticalOffset={20}
           contentContainerStyle={{
             flexDirection: 'row',
@@ -418,7 +538,7 @@ class Help extends React.Component {
             onChangeText={text => this.setState({ reply: text })}
             onBlur={() => this.inputBlur()}
           />
-          {this.state.reply.trim() ? (<TouchableOpacity 
+          {reply.trim() ? (<TouchableOpacity 
             ref={ref => this._replyButton = ref}
             style={globalStyles.button}
             onPress={this.replyConfirm.bind(this)}

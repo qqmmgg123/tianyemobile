@@ -7,6 +7,7 @@ import { get, post, del, getUserInfo } from './request'
 import globalStyles from './globalStyles'
 import TYicon from './TYicon'
 import Back from './component/Back'
+import { Empty, Footer } from './component/ListLoad'
 
 let noDataTips = '当前没有内容'
 
@@ -17,7 +18,14 @@ class HelpItem extends React.Component {
   }
 
   render() {
-    const { content = '', replies, _id, creator_id, reply_count, remark = [], username = '' } = this.props
+    const { 
+      content = '', 
+      replies, 
+      _id, 
+      creator_id, 
+      reply_count, 
+      remark = [], 
+      username = '' } = this.props
     return (
         <TouchableOpacity 
           onPress={() => {
@@ -52,26 +60,69 @@ class Help extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      refreshing: false,
       helps: [],
+      loading: true,
       noDataTips,
+      page: 1
     }
   }
 
-  refresh() {
-    this.loadData()
+  layoutData(data) {
+    let { 
+      success,
+      pageInfo, 
+      helps = [], 
+      noDataTips = noDataTips } = data
+    if (success) {
+      this.setState({
+        page: pageInfo.nextPage || 0,
+        helps: [...this.state.helps, ...helps],
+        noDataTips
+      })
+    }
   }
 
   async loadData() {
-    let res = await get(`recommend/helps`)
-    if (res) {
-      let { success, helps = [], noDataTips = noDataTips } = res
-      if (success) {
-        this.setState({
-          helps,
-          noDataTips
-        })
-      }
+    const { page, loading, refreshing } =  this.state
+    let data = await get(`recommend/helps`, {
+      perPage: 20,
+      page
+    })
+    if (loading) {
+      this.setState({
+        loading: false
+      }, () => {
+        data && this.layoutData(data)
+      })
     }
+    if (refreshing) {
+      this.setState({
+        refreshing: false,
+        helps: []
+      }, () => {
+        data && this.layoutData(data)
+      })
+    }
+  }
+
+  refresh = () => {
+    this.setState({
+      page: 1,
+      refreshing: true
+    }, () => {
+      this.loadData()
+    })
+  }
+
+  loadMore = () => {
+    const { page, loading } = this.state
+    if (!page || loading) return
+    this.setState({
+      loading: true 
+    }, () => {
+      this.loadData()
+    })
   }
 
   componentWillMount() {
@@ -79,59 +130,49 @@ class Help extends React.Component {
   }
 
   render() {
+    let { 
+      helps, 
+      refreshing, 
+      loading, 
+      noDataTips, 
+      page 
+    } = this.state
+
     return (
-      <View
-        style={styles.container}
-      >
+      <View style={{flex: 1}}>
         <Back navigation={this.props.navigation} />
         <View style={globalStyles.splitLine}></View>
-        {this.state.helps.length ? <FlatList
+        <FlatList
           style={{
-            paddingHorizontal: 15,
-            paddingBottom: 15
+            padding: 10
           }}
-          data={this.state.helps}
-          renderItem={({item, index}) => <HelpItem 
+          data={helps}
+          refreshing={refreshing}
+          onRefresh={this.refresh}
+          onEndReached={this.loadMore}
+          onEndReachedThreshold={100}
+          renderItem={({item}) => <HelpItem 
             navigation={this.props.navigation}
             {...item} 
           />}
+          ListEmptyComponent={<Empty 
+            loading={loading}
+            noDataTips={noDataTips}
+          />}
+          ListFooterComponent={<Footer 
+            data={helps} 
+            onLoadMore={this.loadMore} 
+            loading={loading}
+            page={page}
+            noDataTips={noDataTips}
+          />}
           ItemSeparatorComponent={() => <View style={globalStyles.separator} />}
           keyExtractor={(item) => (item._id)}
-        /> : (<View>
-          <Text style={{
-            color: '#333333',
-            textAlign: 'center',
-            paddingTop: 20
-          }}>
-            {this.state.noDataTips}
-          </Text>
-        </View>)}
+        />
       </View>
-    );
+    )
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    height: 42,
-    paddingLeft: 10
-  },
-  logo: {
-    fontSize: 16,
-    textAlign: 'center',
-    color: '#FF0140'
-  },
-  slogan: {
-    textAlign: 'center',
-    color: 'orange'
-  },
-})
 
 const mapStateToProps = (state) => {
   const { homeData } = state
