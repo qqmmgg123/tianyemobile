@@ -1,0 +1,1222 @@
+
+> Configure project :app
+WARNING: The specified Android SDK Build Tools version (28.0.2) is ignored, as it is below the minimum supported version (28.0.3) for Android Gradle Plugin 3.2.1.
+Android SDK Build Tools 28.0.3 will be used.
+To suppress this warning, remove "buildToolsVersion '28.0.2'" from your build.gradle file, as each version of the Android Gradle Plugin now has a default version of the build tools.
+
+> Configure project :react-native-cardview
+WARNING: Configuration 'compile' is obsolete and has been replaced with 'implementation' and 'api'.
+It will be removed at the end of 2018. For more information see: http://d.android.com/r/tools/update-dependency-configurations.html
+WARNING: The specified Android SDK Build Tools version (27.0.3) is ignored, as it is below the minimum supported version (28.0.3) for Android Gradle Plugin 3.2.1.
+Android SDK Build Tools 28.0.3 will be used.
+To suppress this warning, remove "buildToolsVersion '27.0.3'" from your build.gradle file, as each version of the Android Gradle Plugin now has a default version of the build tools.
+
+> Configure project :react-native-gesture-handler
+WARNING: The specified Android SDK Build Tools version (28.0.2) is ignored, as it is below the minimum supported version (28.0.3) for Android Gradle Plugin 3.2.1.
+Android SDK Build Tools 28.0.3 will be used.
+To suppress this warning, remove "buildToolsVersion '28.0.2'" from your build.gradle file, as each version of the Android Gradle Plugin now has a default version of the build tools.
+
+> Configure project :react-native-svg
+WARNING: The specified Android SDK Build Tools version (28.0.2) is ignored, as it is below the minimum supported version (28.0.3) for Android Gradle Plugin 3.2.1.
+Android SDK Build Tools 28.0.3 will be used.
+To suppress this warning, remove "buildToolsVersion '28.0.2'" from your build.gradle file, as each version of the Android Gradle Plugin now has a default version of the build tools.
+
+> Configure project :react-native-vector-icons
+WARNING: The specified Android SDK Build Tools version (28.0.2) is ignored, as it is below the minimum supported version (28.0.3) for Android Gradle Plugin 3.2.1.
+Android SDK Build Tools 28.0.3 will be used.
+To suppress this warning, remove "buildToolsVersion '28.0.2'" from your build.gradle file, as each version of the Android Gradle Plugin now has a default version of the build tools.
+
+> Task :app:checkReleaseClasspath UP-TO-DATE
+> Task :app:preBuild UP-TO-DATE
+> Task :react-native-cardview:preBuild UP-TO-DATE
+> Task :react-native-cardview:preReleaseBuild UP-TO-DATE
+> Task :react-native-cardview:checkReleaseManifest UP-TO-DATE
+> Task :react-native-cardview:processReleaseManifest UP-TO-DATE
+> Task :react-native-gesture-handler:preBuild UP-TO-DATE
+> Task :react-native-gesture-handler:preReleaseBuild UP-TO-DATE
+> Task :react-native-gesture-handler:checkReleaseManifest UP-TO-DATE
+> Task :react-native-gesture-handler:processReleaseManifest UP-TO-DATE
+> Task :react-native-svg:preBuild UP-TO-DATE
+> Task :react-native-svg:preReleaseBuild UP-TO-DATE
+> Task :react-native-svg:checkReleaseManifest UP-TO-DATE
+> Task :react-native-svg:processReleaseManifest UP-TO-DATE
+> Task :react-native-vector-icons:preBuild UP-TO-DATE
+> Task :react-native-vector-icons:preReleaseBuild UP-TO-DATE
+> Task :react-native-vector-icons:checkReleaseManifest UP-TO-DATE
+> Task :react-native-vector-icons:processReleaseManifest UP-TO-DATE
+> Task :app:preReleaseBuild UP-TO-DATE
+> Task :react-native-cardview:compileReleaseAidl NO-SOURCE
+> Task :react-native-gesture-handler:compileReleaseAidl NO-SOURCE
+> Task :react-native-svg:compileReleaseAidl NO-SOURCE
+> Task :react-native-vector-icons:compileReleaseAidl NO-SOURCE
+> Task :app:compileReleaseAidl NO-SOURCE
+> Task :react-native-cardview:packageReleaseRenderscript NO-SOURCE
+> Task :react-native-gesture-handler:packageReleaseRenderscript NO-SOURCE
+> Task :react-native-svg:packageReleaseRenderscript NO-SOURCE
+> Task :react-native-vector-icons:packageReleaseRenderscript NO-SOURCE
+> Task :app:compileReleaseRenderscript UP-TO-DATE
+> Task :app:checkReleaseManifest UP-TO-DATE
+> Task :app:generateReleaseBuildConfig UP-TO-DATE
+> Task :app:prepareLintJar UP-TO-DATE
+> Task :app:mainApkListPersistenceRelease UP-TO-DATE
+
+> Task :app:bundleReleaseJsAndAssets
+warning: the transform cache was reset.
+Loading dependency graph, done.
+bundle: Writing bundle output to: /Users/qiuminggang/work/project/tianyemobile/android/app/build/generated/assets/react/release/index.android.bundle
+bundle: Done writing bundle output
+bundle: Copying 6 asset files
+bundle: Done copying assets
+
+> Task :app:generateReleaseResValues UP-TO-DATE
+> Task :app:generateReleaseResources UP-TO-DATE
+> Task :react-native-cardview:compileReleaseRenderscript UP-TO-DATE
+> Task :react-native-cardview:generateReleaseResValues UP-TO-DATE
+> Task :react-native-cardview:generateReleaseResources UP-TO-DATE
+> Task :react-native-cardview:packageReleaseResources UP-TO-DATE
+> Task :react-native-gesture-handler:compileReleaseRenderscript UP-TO-DATE
+> Task :react-native-gesture-handler:generateReleaseResValues UP-TO-DATE
+> Task :react-native-gesture-handler:generateReleaseResources UP-TO-DATE
+> Task :react-native-gesture-handler:packageReleaseResources UP-TO-DATE
+> Task :react-native-svg:compileReleaseRenderscript UP-TO-DATE
+> Task :react-native-svg:generateReleaseResValues UP-TO-DATE
+> Task :react-native-svg:generateReleaseResources UP-TO-DATE
+> Task :react-native-svg:packageReleaseResources UP-TO-DATE
+> Task :react-native-vector-icons:compileReleaseRenderscript UP-TO-DATE
+> Task :react-native-vector-icons:generateReleaseResValues UP-TO-DATE
+> Task :react-native-vector-icons:generateReleaseResources UP-TO-DATE
+> Task :react-native-vector-icons:packageReleaseResources UP-TO-DATE
+> Task :app:mergeReleaseResources UP-TO-DATE
+> Task :app:createReleaseCompatibleScreenManifests UP-TO-DATE
+> Task :app:processReleaseManifest UP-TO-DATE
+> Task :app:splitsDiscoveryTaskRelease UP-TO-DATE
+> Task :react-native-cardview:generateReleaseRFile UP-TO-DATE
+> Task :react-native-gesture-handler:generateReleaseRFile UP-TO-DATE
+> Task :react-native-svg:generateReleaseRFile UP-TO-DATE
+> Task :react-native-vector-icons:generateReleaseRFile UP-TO-DATE
+> Task :app:processReleaseResources UP-TO-DATE
+> Task :app:generateReleaseSources UP-TO-DATE
+> Task :react-native-cardview:generateReleaseBuildConfig UP-TO-DATE
+> Task :react-native-cardview:prepareLintJar UP-TO-DATE
+> Task :react-native-cardview:generateReleaseSources UP-TO-DATE
+> Task :react-native-cardview:javaPreCompileRelease UP-TO-DATE
+> Task :react-native-cardview:compileReleaseJavaWithJavac UP-TO-DATE
+> Task :react-native-cardview:processReleaseJavaRes NO-SOURCE
+> Task :react-native-cardview:transformClassesAndResourcesWithPrepareIntermediateJarsForRelease UP-TO-DATE
+> Task :react-native-gesture-handler:generateReleaseBuildConfig UP-TO-DATE
+> Task :react-native-gesture-handler:prepareLintJar UP-TO-DATE
+> Task :react-native-gesture-handler:generateReleaseSources UP-TO-DATE
+> Task :react-native-gesture-handler:javaPreCompileRelease UP-TO-DATE
+> Task :react-native-gesture-handler:compileReleaseJavaWithJavac UP-TO-DATE
+> Task :react-native-gesture-handler:processReleaseJavaRes NO-SOURCE
+> Task :react-native-gesture-handler:transformClassesAndResourcesWithPrepareIntermediateJarsForRelease UP-TO-DATE
+> Task :react-native-svg:generateReleaseBuildConfig UP-TO-DATE
+> Task :react-native-svg:prepareLintJar UP-TO-DATE
+> Task :react-native-svg:generateReleaseSources UP-TO-DATE
+> Task :react-native-svg:javaPreCompileRelease UP-TO-DATE
+> Task :react-native-svg:compileReleaseJavaWithJavac UP-TO-DATE
+> Task :react-native-svg:processReleaseJavaRes NO-SOURCE
+> Task :react-native-svg:transformClassesAndResourcesWithPrepareIntermediateJarsForRelease UP-TO-DATE
+> Task :react-native-vector-icons:generateReleaseBuildConfig UP-TO-DATE
+> Task :react-native-vector-icons:prepareLintJar UP-TO-DATE
+> Task :react-native-vector-icons:generateReleaseSources UP-TO-DATE
+> Task :react-native-vector-icons:javaPreCompileRelease UP-TO-DATE
+> Task :react-native-vector-icons:compileReleaseJavaWithJavac UP-TO-DATE
+> Task :react-native-vector-icons:processReleaseJavaRes NO-SOURCE
+> Task :react-native-vector-icons:transformClassesAndResourcesWithPrepareIntermediateJarsForRelease UP-TO-DATE
+> Task :app:javaPreCompileRelease UP-TO-DATE
+> Task :app:compileReleaseJavaWithJavac UP-TO-DATE
+> Task :app:compileReleaseNdk NO-SOURCE
+> Task :app:compileReleaseSources UP-TO-DATE
+> Task :app:lintVitalRelease
+> Task :app:mergeReleaseShaders UP-TO-DATE
+> Task :app:compileReleaseShaders UP-TO-DATE
+> Task :app:generateReleaseAssets UP-TO-DATE
+> Task :react-native-cardview:mergeReleaseShaders UP-TO-DATE
+> Task :react-native-cardview:compileReleaseShaders UP-TO-DATE
+> Task :react-native-cardview:generateReleaseAssets UP-TO-DATE
+> Task :react-native-cardview:packageReleaseAssets UP-TO-DATE
+> Task :react-native-gesture-handler:mergeReleaseShaders UP-TO-DATE
+> Task :react-native-gesture-handler:compileReleaseShaders UP-TO-DATE
+> Task :react-native-gesture-handler:generateReleaseAssets UP-TO-DATE
+> Task :react-native-gesture-handler:packageReleaseAssets UP-TO-DATE
+> Task :react-native-svg:mergeReleaseShaders UP-TO-DATE
+> Task :react-native-svg:compileReleaseShaders UP-TO-DATE
+> Task :react-native-svg:generateReleaseAssets UP-TO-DATE
+> Task :react-native-svg:packageReleaseAssets UP-TO-DATE
+> Task :react-native-vector-icons:mergeReleaseShaders UP-TO-DATE
+> Task :react-native-vector-icons:compileReleaseShaders UP-TO-DATE
+> Task :react-native-vector-icons:generateReleaseAssets UP-TO-DATE
+> Task :react-native-vector-icons:packageReleaseAssets UP-TO-DATE
+> Task :app:mergeReleaseAssets UP-TO-DATE
+> Task :app:copyReleaseBundledJs UP-TO-DATE
+> Task :app:transformClassesWithDexBuilderForRelease UP-TO-DATE
+> Task :app:transformDexArchiveWithExternalLibsDexMergerForRelease UP-TO-DATE
+> Task :app:transformDexArchiveWithDexMergerForRelease UP-TO-DATE
+> Task :app:mergeReleaseJniLibFolders UP-TO-DATE
+> Task :react-native-cardview:compileReleaseNdk NO-SOURCE
+> Task :react-native-cardview:mergeReleaseJniLibFolders UP-TO-DATE
+> Task :react-native-cardview:transformNativeLibsWithMergeJniLibsForRelease UP-TO-DATE
+> Task :react-native-cardview:transformNativeLibsWithIntermediateJniLibsForRelease UP-TO-DATE
+> Task :react-native-gesture-handler:compileReleaseNdk NO-SOURCE
+> Task :react-native-gesture-handler:mergeReleaseJniLibFolders UP-TO-DATE
+> Task :react-native-gesture-handler:transformNativeLibsWithMergeJniLibsForRelease UP-TO-DATE
+> Task :react-native-gesture-handler:transformNativeLibsWithIntermediateJniLibsForRelease UP-TO-DATE
+> Task :react-native-svg:compileReleaseNdk NO-SOURCE
+> Task :react-native-svg:mergeReleaseJniLibFolders UP-TO-DATE
+> Task :react-native-svg:transformNativeLibsWithMergeJniLibsForRelease UP-TO-DATE
+> Task :react-native-svg:transformNativeLibsWithIntermediateJniLibsForRelease UP-TO-DATE
+> Task :react-native-vector-icons:compileReleaseNdk NO-SOURCE
+> Task :react-native-vector-icons:mergeReleaseJniLibFolders UP-TO-DATE
+> Task :react-native-vector-icons:transformNativeLibsWithMergeJniLibsForRelease UP-TO-DATE
+> Task :react-native-vector-icons:transformNativeLibsWithIntermediateJniLibsForRelease UP-TO-DATE
+> Task :app:transformNativeLibsWithMergeJniLibsForRelease UP-TO-DATE
+> Task :app:checkReleaseLibraries UP-TO-DATE
+> Task :app:processReleaseJavaRes NO-SOURCE
+> Task :app:transformResourcesWithMergeJavaResForRelease UP-TO-DATE
+> Task :app:validateSigningRelease UP-TO-DATE
+> Task :app:packageRelease UP-TO-DATE
+> Task :app:assembleRelease
+> Task :react-native-cardview:extractReleaseAnnotations UP-TO-DATE
+> Task :react-native-cardview:mergeReleaseConsumerProguardFiles UP-TO-DATE
+> Task :react-native-cardview:transformResourcesWithMergeJavaResForRelease UP-TO-DATE
+> Task :react-native-cardview:transformClassesAndResourcesWithSyncLibJarsForRelease UP-TO-DATE
+> Task :react-native-cardview:transformNativeLibsWithSyncJniLibsForRelease UP-TO-DATE
+> Task :react-native-cardview:bundleReleaseAar UP-TO-DATE
+> Task :react-native-cardview:compileReleaseSources UP-TO-DATE
+> Task :react-native-cardview:mergeReleaseResources UP-TO-DATE
+> Task :react-native-cardview:verifyReleaseResources FAILED
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':react-native-cardview:verifyReleaseResources'.
+> java.util.concurrent.ExecutionException: com.android.builder.internal.aapt.v2.Aapt2Exception: Android resource linking failed
+  Output:  /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/merged/release/values-v28/values-v28.xml:7: error: resource android:attr/dialogCornerRadius not found.
+  /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/merged/release/values-v28/values-v28.xml:11: error: resource android:attr/dialogCornerRadius not found.
+  /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/merged/release/values/values.xml:963: error: resource android:attr/fontVariationSettings not found.
+  /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/merged/release/values/values.xml:964: error: resource android:attr/ttcIndex not found.
+  error: failed linking references.
+  
+  Command: /Users/qiuminggang/.gradle/caches/transforms-1/files-1.1/aapt2-3.2.1-4818971-osx.jar/3d22c727692d7c56dde4cb03cf92823c/aapt2-3.2.1-4818971-osx/aapt2 link -I\
+          /Users/qiuminggang/Library/Android/sdk/platforms/android-27/android.jar\
+          --manifest\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/aapt_friendly_merged_manifests/release/processReleaseManifest/aapt/AndroidManifest.xml\
+          -o\
+          /var/folders/pl/s011c_rn2sgggh8t3pbwhhdc0000gn/T/aapt-1730530004415639319-out\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_ic_menu_selectall_mtrl_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_notification_action_tombstone.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-ur_values-ur.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_abc_screen_toolbar.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_notification_icon_background.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-pa_values-pa.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-pt-rBR_values-pt-rBR.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-as_values-as.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_popup_background_mtrl_mult.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-fi_values-fi.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_btn_switch_to_on_mtrl_00001.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_text_select_handle_right_mtrl_dark.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_ratingbar_small_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-ldrtl-xxhdpi-v17_abc_spinner_mtrl_am_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-uk_values-uk.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_btn_switch_to_on_mtrl_00012.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_abc_tooltip.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/anim_catalyst_slide_down.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/anim_abc_popup_exit.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_list_selector_disabled_holo_light.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_seekbar_thumb_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_cab_background_top_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_notification_template_part_time.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-ka_values-ka.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/anim_abc_tooltip_exit.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_ic_menu_cut_mtrl_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_ic_menu_share_mtrl_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_redbox_item_frame.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_textfield_search_default_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-iw_values-iw.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_notify_panel_notification_icon_bg.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-bs_values-bs.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color_abc_background_cache_hint_selector_material_light.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-ldrtl-xxxhdpi-v17_abc_ic_menu_cut_mtrl_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color_switch_thumb_material_light.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-watch-v21_values-watch-v21.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxxhdpi-v4_abc_switch_track_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_ic_commit_search_api_mtrl_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color-v23_abc_tint_seek_thumb.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-mk_values-mk.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_list_pressed_holo_light.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_btn_switch_to_on_mtrl_00012.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/anim_abc_slide_out_top.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxxhdpi-v4_abc_ic_star_half_black_16dp.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_ratingbar_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_notification_bg_low.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-h720dp-v13_values-h720dp-v13.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_select_dialog_multichoice_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_tab_indicator_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-in_values-in.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-zu_values-zu.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_text_select_handle_right_mtrl_light.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_ab_share_pack_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-mr_values-mr.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-v21_abc_list_divider_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_abc_activity_chooser_view.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-sw600dp-v13_values-sw600dp-v13.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_tab_indicator_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_notification_bg_low_normal.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_btn_borderless_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-hr_values-hr.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-en-rAU_values-en-rAU.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_cab_background_internal_bg.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxxhdpi-v4_abc_ic_menu_copy_mtrl_am_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-v28_values-v28.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_tab_indicator_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color_abc_tint_default.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-sk_values-sk.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color_abc_primary_text_disable_only_material_light.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_ab_share_pack_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_text_cursor_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_btn_radio_to_on_mtrl_000.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_scrubber_control_to_pressed_mtrl_005.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_list_divider_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_list_longpressed_holo.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-xlarge-v4_values-xlarge-v4.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_text_select_handle_middle_mtrl_light.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_abc_list_menu_item_radio.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_ic_star_black_16dp.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_notification_action.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_abc_screen_content_include.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color-v23_abc_tint_btn_checkable.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_scrubber_control_off_mtrl_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_list_selector_disabled_holo_dark.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color-v23_abc_tint_spinner.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-v21_notification_action_background.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/anim_catalyst_fade_in.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_textfield_activated_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-th_values-th.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-sr_values-sr.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_btn_check_to_on_mtrl_000.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_list_pressed_holo_dark.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-km_values-km.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_btn_check_to_on_mtrl_015.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-af_values-af.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-pt_values-pt.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-es-rUS_values-es-rUS.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/anim_abc_fade_out.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-fr-rCA_values-fr-rCA.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_textfield_default_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_abc_action_mode_close_item_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_textfield_search_activated_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_abc_action_menu_layout.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color_abc_hint_foreground_material_dark.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_cab_background_top_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_ic_star_half_black_16dp.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_btn_check_to_on_mtrl_000.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-gl_values-gl.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_ic_star_black_16dp.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_abc_list_menu_item_layout.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-watch-v20_values-watch-v20.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color_abc_tint_seek_thumb.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_select_dialog_item_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_btn_radio_to_on_mtrl_015.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout-v21_notification_action_tombstone.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_btn_radio_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_text_select_handle_middle_mtrl_light.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_ic_menu_copy_mtrl_am_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_btn_radio_to_on_mtrl_000.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-gu_values-gu.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-kk_values-kk.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_scrubber_control_to_pressed_mtrl_005.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_abc_action_bar_title_item.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_btn_switch_to_on_mtrl_00001.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_ic_menu_copy_mtrl_am_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_ic_search_api_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-zh-rHK_values-zh-rHK.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_popup_background_mtrl_mult.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxxhdpi-v4_abc_tab_indicator_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_ic_star_black_36dp.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_list_longpressed_holo.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_ic_star_half_black_48dp.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_dialog_material_background.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/anim_abc_slide_in_bottom.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_ic_star_black_16dp.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color_abc_secondary_text_material_light.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-te_values-te.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxxhdpi-v4_abc_ic_menu_selectall_mtrl_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_btn_default_mtrl_shape.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-ml_values-ml.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-ky_values-ky.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color_abc_tint_edittext.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-ar_values-ar.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_menu_hardkey_panel_mtrl_mult.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/anim_catalyst_slide_up.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_notify_panel_notification_icon_bg.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-v22_values-v22.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_scrubber_control_off_mtrl_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_scrubber_control_to_pressed_mtrl_000.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-ldrtl-mdpi-v17_abc_ic_menu_cut_mtrl_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxxhdpi-v4_abc_btn_check_to_on_mtrl_000.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-en-rIN_values-en-rIN.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_ic_menu_cut_mtrl_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-da_values-da.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-ldrtl-xhdpi-v17_abc_spinner_mtrl_am_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_list_focused_holo.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_abc_expanded_menu_layout.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_ic_star_half_black_36dp.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_ic_star_black_48dp.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-am_values-am.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-ms_values-ms.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_btn_switch_to_on_mtrl_00012.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-ldrtl-xxhdpi-v17_abc_ic_menu_cut_mtrl_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color-v23_abc_tint_switch_track.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-v21_abc_dialog_material_background.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_dev_loading_view.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_textfield_activated_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color-v23_abc_btn_colored_text_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-zh-rTW_values-zh-rTW.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_ic_star_half_black_16dp.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_scrubber_control_to_pressed_mtrl_000.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color_abc_primary_text_material_dark.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_textfield_search_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_abc_action_mode_bar.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_tab_indicator_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-en-rGB_values-en-rGB.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/anim_abc_fade_in.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-v23_values-v23.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_tooltip_frame_light.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_textfield_search_default_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_list_pressed_holo_light.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxxhdpi-v4_abc_btn_radio_to_on_mtrl_000.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_spinner_mtrl_am_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color_abc_hint_foreground_material_light.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_abc_select_dialog_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-hy_values-hy.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_ic_menu_share_mtrl_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-zh-rCN_values-zh-rCN.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-nl_values-nl.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color_abc_primary_text_material_light.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxxhdpi-v4_abc_text_select_handle_right_mtrl_light.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_btn_switch_to_on_mtrl_00001.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_scrubber_primary_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_notification_template_part_chronometer.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-ro_values-ro.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_ic_ab_back_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_list_focused_holo.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_btn_check_to_on_mtrl_015.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_text_select_handle_left_mtrl_dark.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_list_pressed_holo_dark.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_btn_colored_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout-v21_notification_template_icon_group.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_cab_background_top_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-my_values-my.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-lv_values-lv.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_abc_screen_simple_overlay_action_mode.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_abc_popup_menu_header_item_layout.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_ab_share_pack_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_fps_view.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_abc_cascading_menu_item_layout.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_popup_background_mtrl_mult.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_abc_popup_menu_item_layout.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_ic_star_half_black_48dp.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxxhdpi-v4_abc_scrubber_control_to_pressed_mtrl_005.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxxhdpi-v4_abc_text_select_handle_left_mtrl_dark.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-pl_values-pl.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-v21_abc_btn_colored_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color_abc_btn_colored_text_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/anim_catalyst_push_up_out.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-lo_values-lo.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_ic_star_half_black_36dp.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_text_select_handle_middle_mtrl_dark.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-ldrtl-xhdpi-v17_abc_ic_menu_cut_mtrl_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_ic_menu_cut_mtrl_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-ldrtl-mdpi-v17_abc_spinner_mtrl_am_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_switch_track_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_menu_hardkey_panel_mtrl_mult.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_switch_thumb_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_select_dialog_singlechoice_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxxhdpi-v4_abc_ic_star_black_36dp.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_ic_go_search_api_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-ldrtl-hdpi-v17_abc_spinner_mtrl_am_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_ic_menu_overflow_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values_values.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-v18_values-v18.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_ic_arrow_drop_right_black_24dp.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_textfield_default_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_textfield_search_activated_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_item_background_holo_light.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_abc_search_dropdown_item_icons_2line.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color-v23_abc_color_highlight_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-bg_values-bg.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_text_select_handle_left_mtrl_dark.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_btn_radio_to_on_mtrl_015.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_spinner_mtrl_am_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_ic_commit_search_api_mtrl_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_text_select_handle_left_mtrl_light.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_btn_check_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxxhdpi-v4_abc_ic_star_black_48dp.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_ic_menu_copy_mtrl_am_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-night-v8_values-night-v8.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-sl_values-sl.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_redbox_item_title.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_list_pressed_holo_light.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/anim_catalyst_push_up_in.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color_abc_tint_btn_checkable.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-v21_values-v21.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-en-rCA_values-en-rCA.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-hu_values-hu.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout-watch-v20_abc_alert_dialog_button_bar_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxxhdpi-v4_abc_ic_menu_paste_mtrl_am_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-v21_abc_edit_text_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout-watch-v20_abc_alert_dialog_title_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-v25_values-v25.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_ic_menu_paste_mtrl_am_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_ic_menu_share_mtrl_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_spinner_textfield_background_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_ic_star_black_16dp.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_ic_star_black_36dp.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-vi_values-vi.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-ldltr-v21_values-ldltr-v21.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_text_select_handle_middle_mtrl_light.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-en-rXC_values-en-rXC.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_scrubber_control_to_pressed_mtrl_005.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-ru_values-ru.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_spinner_mtrl_am_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout-v21_notification_template_custom_big.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/anim_abc_shrink_fade_out_from_bottom.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_notification_bg_normal.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_ic_star_black_48dp.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_ic_star_half_black_16dp.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_text_select_handle_middle_mtrl_dark.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_text_select_handle_right_mtrl_dark.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_list_selector_holo_light.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_ratingbar_indicator_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_ic_voice_search_api_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_text_select_handle_middle_mtrl_dark.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/anim_abc_tooltip_enter.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_scrubber_track_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_item_background_holo_dark.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-hdpi-v4_values-hdpi-v4.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_seekbar_track_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_scrubber_control_off_mtrl_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-pt-rPT_values-pt-rPT.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-fr_values-fr.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_list_selector_background_transition_holo_dark.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_redbox_view.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-v24_values-v24.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_ab_share_pack_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_ic_star_half_black_36dp.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_list_focused_holo.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/anim_abc_slide_in_top.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-et_values-et.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-bn_values-bn.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-ca_values-ca.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_text_select_handle_middle_mtrl_dark.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_text_select_handle_left_mtrl_dark.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_scrubber_control_to_pressed_mtrl_005.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_ic_star_half_black_48dp.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_notification_bg_low_pressed.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_switch_track_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_abc_activity_chooser_view_list_item.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_abc_alert_dialog_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_ic_menu_paste_mtrl_am_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-ldrtl-mdpi-v17_abc_ic_menu_copy_mtrl_am_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color-v23_abc_tint_edittext.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-is_values-is.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_text_select_handle_middle_mtrl_light.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_ic_menu_share_mtrl_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_ic_clear_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_list_divider_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_ic_menu_selectall_mtrl_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_notification_bg_normal_pressed.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/anim_catalyst_fade_out.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_abc_screen_simple.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_scrubber_primary_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color-v23_abc_tint_default.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_list_pressed_holo_dark.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-ldrtl-xxxhdpi-v17_abc_ic_menu_copy_mtrl_am_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_btn_check_to_on_mtrl_015.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color_abc_background_cache_hint_selector_material_dark.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-sv_values-sv.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-ldrtl-xhdpi-v17_abc_ic_menu_copy_mtrl_am_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-tl_values-tl.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_ic_menu_cut_mtrl_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_menu_hardkey_panel_mtrl_mult.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_notification_template_icon_group.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_list_focused_holo.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_cab_background_top_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color_abc_tint_spinner.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_scrubber_track_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_ic_star_half_black_16dp.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_support_simple_spinner_dropdown_item.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_list_selector_disabled_holo_dark.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-fa_values-fa.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_btn_radio_to_on_mtrl_015.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-uz_values-uz.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_list_selector_background_transition_holo_light.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_btn_radio_to_on_mtrl_000.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_text_select_handle_left_mtrl_light.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color_abc_secondary_text_material_dark.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_abc_action_bar_up_container.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_tab_indicator_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_abc_alert_dialog_title_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_btn_switch_to_on_mtrl_00012.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxxhdpi-v4_abc_text_select_handle_left_mtrl_light.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxxhdpi-v4_abc_ic_menu_cut_mtrl_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_text_select_handle_left_mtrl_light.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_scrubber_track_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-ko_values-ko.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_notify_panel_notification_icon_bg.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_btn_radio_to_on_mtrl_015.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_abc_action_menu_item_layout.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-v26_values-v26.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxxhdpi-v4_abc_ic_star_black_16dp.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color_abc_search_url_text.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-hi_values-hi.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_abc_dialog_title_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_list_divider_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-ldrtl-hdpi-v17_abc_ic_menu_copy_mtrl_am_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_ic_menu_paste_mtrl_am_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_btn_check_to_on_mtrl_000.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_ic_menu_selectall_mtrl_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_abc_alert_dialog_button_bar_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxxhdpi-v4_abc_scrubber_control_to_pressed_mtrl_000.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_notification_bg_normal_pressed.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_list_divider_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-b+sr+Latn_values-b+sr+Latn.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_text_select_handle_left_mtrl_dark.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_ic_commit_search_api_mtrl_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_textfield_search_default_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_notification_bg_normal.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-port_values-port.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_btn_check_to_on_mtrl_015.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-si_values-si.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_list_pressed_holo_dark.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxxhdpi-v4_abc_btn_switch_to_on_mtrl_00012.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-ne_values-ne.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-it_values-it.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_tooltip_frame_dark.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/anim_abc_slide_out_bottom.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-de_values-de.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color_switch_thumb_material_dark.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout-v21_notification_action.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_edit_text_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_abc_search_view.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-ta_values-ta.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color_abc_btn_colored_borderless_text_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxxhdpi-v4_abc_spinner_mtrl_am_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-es_values-es.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color-v21_abc_btn_colored_borderless_text_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_text_select_handle_right_mtrl_dark.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-ldrtl-xxhdpi-v17_abc_ic_menu_copy_mtrl_am_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxxhdpi-v4_abc_btn_radio_to_on_mtrl_015.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_ic_menu_copy_mtrl_am_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color_abc_primary_text_disable_only_material_dark.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxxhdpi-v4_abc_text_select_handle_right_mtrl_dark.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-v21_abc_action_bar_item_background_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_notification_bg.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-land_values-land.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_textfield_activated_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_redbox_top_border_background.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_list_selector_holo_dark.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_textfield_search_activated_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-el_values-el.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_list_divider_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_vector_test.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_text_select_handle_right_mtrl_dark.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_scrubber_track_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_switch_track_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_notification_bg_low_pressed.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-ldrtl-hdpi-v17_abc_ic_menu_cut_mtrl_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxxhdpi-v4_abc_ic_star_half_black_48dp.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/anim_abc_popup_enter.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-mn_values-mn.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout-v16_notification_template_custom_big.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_list_longpressed_holo.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-eu_values-eu.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_notification_tile_bg.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxxhdpi-v4_abc_btn_check_to_on_mtrl_015.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_textfield_default_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_scrubber_control_off_mtrl_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxxhdpi-v4_abc_ic_star_half_black_36dp.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_menu_hardkey_panel_mtrl_mult.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_ic_star_black_36dp.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_btn_radio_to_on_mtrl_000.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-cs_values-cs.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_ic_menu_paste_mtrl_am_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-nb_values-nb.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_list_pressed_holo_light.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_notification_bg_low_normal.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-az_values-az.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_textfield_search_activated_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-v16_values-v16.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_text_select_handle_right_mtrl_light.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_spinner_mtrl_am_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxxhdpi-v4_abc_ic_menu_share_mtrl_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_abc_list_menu_item_icon.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_scrubber_primary_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout-v26_abc_screen_toolbar.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-be_values-be.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxxhdpi-v4_abc_btn_switch_to_on_mtrl_00001.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_list_selector_disabled_holo_light.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_ic_star_black_48dp.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_list_selector_disabled_holo_light.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-sw_values-sw.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_ic_commit_search_api_mtrl_alpha.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_list_selector_disabled_holo_dark.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_notification_bg_normal.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/layout_abc_list_menu_item_checkbox.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_scrubber_control_to_pressed_mtrl_000.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color_abc_tint_switch_track.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-watch-v20_abc_dialog_material_background.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_scrubber_control_to_pressed_mtrl_000.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable_abc_seekbar_tick_mark_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-tr_values-tr.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_ic_star_half_black_36dp.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-ldrtl-xxxhdpi-v17_abc_spinner_mtrl_am_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_ic_star_black_36dp.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_notification_bg_low_pressed.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_switch_track_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_list_selector_disabled_holo_dark.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_text_select_handle_left_mtrl_light.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/anim_abc_grow_fade_in_from_bottom.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_textfield_activated_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_list_selector_disabled_holo_light.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_btn_check_to_on_mtrl_000.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-v17_values-v17.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_cab_background_top_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_popup_background_mtrl_mult.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-or_values-or.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_btn_switch_to_on_mtrl_00001.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_ic_star_black_48dp.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_ic_star_half_black_48dp.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_scrubber_primary_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_list_longpressed_holo.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_abc_text_select_handle_right_mtrl_light.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-sq_values-sq.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xxhdpi-v4_abc_text_select_handle_right_mtrl_light.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/color-v23_abc_btn_colored_borderless_text_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-mdpi-v4_abc_textfield_default_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-large-v4_values-large-v4.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_textfield_search_default_mtrl_alpha.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-kn_values-kn.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-lt_values-lt.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-hdpi-v4_notification_bg_low_normal.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/values-ja_values-ja.arsc.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-v23_abc_control_background_material.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/xml_preferences.xml.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_notification_bg_normal_pressed.9.png.flat\
+          -R\
+          /Users/qiuminggang/work/project/tianyemobile/node_modules/react-native-cardview/android/build/intermediates/res/compiled/release/drawable-xhdpi-v4_abc_ic_menu_selectall_mtrl_alpha.png.flat\
+          --auto-add-overlay\
+          --non-final-ids\
+          -0\
+          apk\
+          --no-version-vectors
+  Daemon:  AAPT2 aapt2-3.2.1-4818971-osx Daemon #0
+
+* Try:
+Run with --stacktrace option to get the stack trace. Run with --info or --debug option to get more log output. Run with --scan to get full insights.
+
+* Get more help at https://help.gradle.org
+
+BUILD FAILED in 49s
+106 actionable tasks: 3 executed, 103 up-to-date
