@@ -1,0 +1,2 @@
+export const HOME_DATA_LOADED = 'HOME_DATA_LOADED'
+export const NEED_LOGIN = 'NEED_LOGIN'
