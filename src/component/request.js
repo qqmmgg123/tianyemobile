@@ -15,8 +15,7 @@ function alert(msg) {
   )
 }
 
-// export const rootUrl = 'http://192.168.1.6'
-export const rootUrl = 'http://192.168.1.3:3000'
+export const rootUrl = 'http://192.168.1.3'
 let userInfo = null
 let curRoute = ''
 
