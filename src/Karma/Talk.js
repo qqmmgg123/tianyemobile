@@ -515,9 +515,6 @@ class Talk extends React.Component {
   }
 
   render() {
-    const { receiverName = '' } = this.state.replyData || {}
-    const { userId = '' } = this.props.loginData
-
     let { 
       helps, 
       refreshing, 
@@ -525,14 +522,18 @@ class Talk extends React.Component {
       page,
       replyVisible,
       reply,
-      friendTotal
+      friendTotal,
+      replyData
     } = this.state
+    const { loginData, navigation } = this.props
+    const { receiverName = '' } = replyData || {}
+    const { userId = '' } = loginData
 
     return (
       <View
         style={globalStyles.container}
       >
-        <Back navigation={this.props.navigation} />
+        <Back navigation={navigation} />
         <View
           style={{ flex: 1 }}
         >
@@ -571,7 +572,14 @@ class Talk extends React.Component {
                 showsVerticalScrollIndicator={false}
                 showsHorizontalScrollIndicator={false}
               />
-            : (!loading ? <TalkEmptyGuide friendTotal={friendTotal} /> : <Empty loading={true} />)
+            : (
+                !loading 
+                  ? <TalkEmptyGuide 
+                      navigation={navigation}
+                      friendTotal={friendTotal} 
+                    /> 
+                  : <Empty loading={true} />
+              )
           }
         </View>
         {
