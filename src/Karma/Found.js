@@ -221,14 +221,35 @@ class FoundSwiper extends Component {
         backgroundColor: '#fff'
       }}>
         <Back navigation={this.props.navigation} />
-        {minds && minds.length ? <Swiper
-          style={{ flex: 1 }}
-          swipeData={minds}
-          renderSwipeItem={(mind, index) => <MindDetail
-            mind={mind}
-            onReport={() => this._modal.open('Report')}
-          />}
-        /> : <View><Text>没数据...</Text></View>}
+        {
+          minds && minds.length 
+            ? <Swiper
+                style={{ flex: 1 }}
+                swipeData={minds}
+                renderSwipeItem={(mind, index) => <MindDetail
+                  mind={mind}
+                  onReport={() => this._modal.open('Report')}
+                />}
+              /> 
+            : <View
+                style={{
+                  flex: 1,
+                  padding: 10,
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }} 
+              >
+                <Text
+                   style={{
+                    fontSize: 16,
+                    color: '#999',
+                    textAlign: 'center',
+                    lineHeight: 28
+                  }}
+                >
+                  没数据...
+                </Text>
+              </View>}
         <MindModal 
           ref={ref => this._modal = ref}
         />
