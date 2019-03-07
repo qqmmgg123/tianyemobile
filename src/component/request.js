@@ -15,7 +15,12 @@ function alert(msg) {
   )
 }
 
+// 正式服地址
 export const rootUrl = 'http://192.168.1.3'
+
+// 测试服地址
+// export const rootUrl = 'http://192.168.1.3:3000'
+
 let userInfo = null
 let curRoute = ''
 
