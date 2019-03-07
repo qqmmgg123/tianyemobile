@@ -20,10 +20,7 @@ class HelpItem extends React.Component {
   render() {
     const { 
       content = '', 
-      replies, 
       _id, 
-      creator_id, 
-      reply_count, 
       remark = [], 
       username = '' } = this.props
     return (
