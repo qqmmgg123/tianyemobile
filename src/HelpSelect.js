@@ -9,8 +9,6 @@ import TYicon from 'app/component/TYicon'
 import Back from 'app/component/Back'
 import { Empty, Footer } from 'app/component/ListLoad'
 
-let noDataTips = '当前没有内容'
-
 class HelpItem extends React.Component {
 
   constructor(props) {
@@ -34,7 +32,6 @@ class HelpItem extends React.Component {
           }}
           style={{
             paddingTop: 10,
-            // paddingBottom: 15
           }}
         >
           <View>
@@ -55,15 +52,15 @@ class HelpItem extends React.Component {
   }
 }
 
-class Help extends React.Component {
+export default class Help extends React.Component {
 
   constructor(props) {
     super(props)
     this.state = {
+      friendTotal: 0,
       refreshing: false,
       helps: [],
       loading: true,
-      noDataTips,
       page: 1
     }
   }
@@ -71,14 +68,15 @@ class Help extends React.Component {
   layoutData(data) {
     let { 
       success,
+      friendTotal,
       pageInfo, 
       helps = [], 
-      noDataTips = noDataTips } = data
+    } = data
     if (success) {
       this.setState({
         page: pageInfo.nextPage || 0,
         helps: [...this.state.helps, ...helps],
-        noDataTips
+        friendTotal
       })
     }
   }
@@ -131,15 +129,17 @@ class Help extends React.Component {
 
   render() {
     let { 
+      friendTotal,
       helps, 
       refreshing, 
       loading, 
-      noDataTips, 
       page 
     } = this.state
 
     return (
-      <View style={{flex: 1}}>
+      <View 
+        style={globalStyles.container}
+      >
         <Back 
           centerCom={(<View
             style={{
@@ -157,49 +157,42 @@ class Help extends React.Component {
           navigation={this.props.navigation} 
         />
         <View style={globalStyles.splitLine}></View>
-        <FlatList
-          contentContainerStyle={{
-            padding: 10
-          }}
-          data={helps}
-          refreshing={refreshing}
-          onRefresh={this.refresh}
-          onEndReached={this.loadMore}
-          onEndReachedThreshold={100}
-          renderItem={({item}) => <HelpItem 
-            navigation={this.props.navigation}
-            {...item} 
-          />}
-          ListEmptyComponent={<Empty 
-            loading={loading}
-            noDataTips={noDataTips}
-          />}
-          ListFooterComponent={<Footer 
-            data={helps} 
-            onLoadMore={this.loadMore} 
-            loading={loading}
-            page={page}
-            noDataTips={noDataTips}
-          />}
-          ItemSeparatorComponent={() => <View style={globalStyles.separator} />}
-          keyExtractor={(item) => (item._id)}
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-        />
+        {
+          helps && helps.length 
+            ? <FlatList
+                contentContainerStyle={{
+                  padding: 10
+                }}
+                data={helps}
+                refreshing={refreshing}
+                onRefresh={this.refresh}
+                onEndReached={this.loadMore}
+                onEndReachedThreshold={100}
+                renderItem={({item}) => <HelpItem 
+                  navigation={this.props.navigation}
+                  {...item} 
+                />}
+                ListFooterComponent={<Footer 
+                  data={helps} 
+                  onLoadMore={this.loadMore} 
+                  loading={loading}
+                  page={page}
+                />}
+                ItemSeparatorComponent={() => <View style={globalStyles.separator} />}
+                keyExtractor={(item) => (item._id)}
+                showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
+              />
+            : (
+                !loading 
+                  ? <TalkEmptyGuide 
+                      navigation={navigation}
+                      friendTotal={friendTotal} 
+                    /> 
+                  : <Empty loading={true} />
+              )
+        }
       </View>
     )
   }
 }
-
-const mapStateToProps = (state) => {
-  const { homeData } = state
-  return { homeData }
-}
-
-const mapDispatchToProps = dispatch => (
-  bindActionCreators({
-    layoutHomeData,
-  }, dispatch)
-)
-
-export default connect(mapStateToProps, mapDispatchToProps)(Help);

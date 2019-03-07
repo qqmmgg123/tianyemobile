@@ -216,8 +216,8 @@ export default class ClassicSection extends Component {
         <Back 
           navigation={this.props.navigation} 
           rightButton={{
-            name: '译文',
-            onPress: () => this.props.navigation.navigate('ClassicTranslate')
+            name: '引用',
+            // onPress: () => this.props.navigation.navigate('ClassicTranslate')
           }}
         />
         <View style={{ flex: 1 }}>
