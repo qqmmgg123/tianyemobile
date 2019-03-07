@@ -215,12 +215,17 @@ export default class ClassicSection extends Component {
       <View style={{ flex: 1 }}>
         <Back 
           navigation={this.props.navigation} 
-          rightButton={{
-            name: '译文',
+          rightButton={[{
+            name: '解读',
             onPress: () => this.props.navigation.navigate('ClassicTranslates', {
               itemId: section._id
             })
-          }}
+          }, {
+            name: '引用',
+            onPress: () => this.props.navigation.navigate('ClassicTranslates', {
+              itemId: section._id
+            })
+          }]}
         />
         <View style={{ flex: 1 }}>
           <ScrollView

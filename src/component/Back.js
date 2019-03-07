@@ -4,7 +4,7 @@ import { View, TouchableOpacity, Text } from 'react-native'
 import globalStyles from 'app/component/globalStyles';
 
 const Back = (props) => {
-  const { 
+  let { 
     routeName, 
     name, 
     rightButton, 
@@ -12,6 +12,7 @@ const Back = (props) => {
     navigation,
     onLayoutRightBtn,
   } = props
+  rightButton = rightButton ? (rightButton.length ? rightButton : [ rightButton ]) : null
   return (
     <View style={{ 
       flexDirection: 'row',
@@ -41,71 +42,81 @@ const Back = (props) => {
       {
         centerCom || null
       }
-      {
-        rightButton
-          ? <TouchableOpacity
-              onLayout={
-                e => onLayoutRightBtn && onLayoutRightBtn(
-                  'button',
-                  e.nativeEvent.target
+      <View
+        style={{
+          flexDirection: 'row'
+        }}
+      >
+        {
+          rightButton
+            ? rightButton.map(
+                (btn, index) => 
+                  <TouchableOpacity
+                    key={index}
+                    style={[
+                      globalStyles.button, 
+                      btn.btnDis ? globalStyles.buttonDis : null, 
+                      btn.noBorder ? {
+                        borderColor: '', 
+                        borderWidth: 0, 
+                        borderRadius: 0,
+                        backgroundColor: 'transparent',
+                      } : null, {
+                        marginVertical: 5,
+                        marginRight: 10,
+                      }
+                    ]}
+                    activeOpacity={btn.btnDis ? 1 : 0.6}
+                    onLayout={
+                      e => onLayoutRightBtn && onLayoutRightBtn(
+                        'button',
+                        e.nativeEvent.target
+                      )
+                    }
+                    onPress={!btn.btnDis ? (btn.routeName 
+                      ? () => navigation.navigate(btn.routeName)
+                      : (btn.onPress ? btn.onPress : null )) : null}
+                  >
+                    {
+                      btn.icon
+                        ? <TYicon 
+                            onLayout={
+                              e => onLayoutRightBtn && onLayoutRightBtn(
+                                'icon', 
+                                e.nativeEvent.target
+                              )
+                            }
+                            name={btn.icon}
+                            size={24} 
+                            color={btn.btnDis ? '#adadad' : '#333333'}
+                          >
+                          </TYicon> 
+                        : null
+                    }
+                    {
+                      btn.name 
+                        ? <Text 
+                            onLayout={
+                              e => onLayoutRightBtn && onLayoutRightBtn(
+                                'text', e.nativeEvent.target
+                              )
+                            }
+                            style={[
+                              globalStyles.buttonText,
+                              btn.btnDis 
+                                ? globalStyles.buttonDisText 
+                                : null
+                            ]}
+                          >
+                            {btn.name}
+                          </Text>
+                        : null
+                    }
+                  </TouchableOpacity>
                 )
-              }
-              activeOpacity={rightButton.btnDis ? 1 : 0.6}
-              style={[
-                globalStyles.button, 
-                rightButton.btnDis ? globalStyles.buttonDis : null, 
-                rightButton.noBorder ? {
-                  borderColor: '', 
-                  borderWidth: 0, 
-                  borderRadius: 0,
-                  backgroundColor: 'transparent',
-                } : null, {
-                  marginVertical: 5,
-                  marginHorizontal: 10,
-                }
-              ]}
-              onPress={!rightButton.btnDis ? (rightButton.routeName 
-                ? () => navigation.navigate(rightButton.routeName)
-                : (rightButton.onPress ? rightButton.onPress : null )) : null}
-            >
-              {
-                rightButton.icon
-                  ? <TYicon 
-                      onLayout={
-                        e => onLayoutRightBtn && onLayoutRightBtn(
-                          'icon', 
-                          e.nativeEvent.target
-                        )
-                      }
-                      name={rightButton.icon}
-                      size={24} 
-                      color={rightButton.btnDis ? '#adadad' : '#333333'}
-                    >
-                    </TYicon> 
-                  : null
-              }
-              {
-                rightButton.name 
-                  ? <Text 
-                      onLayout={
-                        e => onLayoutRightBtn && onLayoutRightBtn(
-                          'text', e.nativeEvent.target
-                        )
-                      }
-                      style={[
-                        globalStyles.buttonText,
-                        rightButton.btnDis 
-                          ? globalStyles.buttonDisText 
-                          : null
-                      ]}
-                    >
-                      {rightButton.name}
-                    </Text>
-                  : null
-              }
-            </TouchableOpacity>
-          : null
-      }
+            : null
+        }
+      </View>
     </View>
   )
 }

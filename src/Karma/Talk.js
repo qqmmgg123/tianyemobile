@@ -516,13 +516,13 @@ class Talk extends React.Component {
 
   render() {
     let { 
+      friendTotal,
       helps, 
       refreshing, 
       loading, 
       page,
       replyVisible,
       reply,
-      friendTotal,
       replyData
     } = this.state
     const { loginData, navigation } = this.props
