@@ -134,6 +134,7 @@ export default class Help extends React.Component {
       loading, 
       page 
     } = this.state
+    const { navigation } = this.props
 
     return (
       <View 
