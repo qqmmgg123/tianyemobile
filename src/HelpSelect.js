@@ -1,11 +1,13 @@
 import React from 'react'
-import { View, FlatList, TouchableOpacity, Text, TextInput, SafeAreaView, Modal, KeyboardAvoidingView, Animated, findNodeHandle, StyleSheet } from 'react-native'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import { layoutHomeData } from 'app/HomeActions';
-import { get, post, del, getUserInfo } from 'app/component/request'
+import { 
+  View, 
+  FlatList, 
+  TouchableOpacity, 
+  Text, 
+} from 'react-native'
+import { TalkEmptyGuide } from 'app/Friend/TalkEmptyGuide'
+import { get } from 'app/component/request'
 import globalStyles from 'app/component/globalStyles'
-import TYicon from 'app/component/TYicon'
 import Back from 'app/component/Back'
 import { Empty, Footer } from 'app/component/ListLoad'
 
@@ -18,10 +20,7 @@ class HelpItem extends React.Component {
   render() {
     const { 
       content = '', 
-      replies, 
       _id, 
-      creator_id, 
-      reply_count, 
       remark = [], 
       username = '' } = this.props
     return (
