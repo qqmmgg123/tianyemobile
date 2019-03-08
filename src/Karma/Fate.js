@@ -54,10 +54,10 @@ class DiaryItem extends React.Component {
               lineHeight: 24
               }}>{[
                 panname, 
-                mUnderstandTotal ? `他（她）有${mUnderstandTotal}次理解您的心结` : '', 
-                mThankTotal ? `他（她）有${mThankTotal}次受益于您的心得` : '', 
-                oUnderstandTotal ? `您有${oUnderstandTotal}次理解他的心结` : '', 
-                oThankTotal ? `您有${oThankTotal}次受益于他的心得` : ''
+                mUnderstandTotal ? `理解您${mUnderstandTotal}次` : '', 
+                mThankTotal ? `认同您${mThankTotal}次` : '', 
+                oUnderstandTotal ? `您理解他${oUnderstandTotal}次` : '', 
+                oThankTotal ? `您认同他${oThankTotal}次` : ''
               ].filter(text => !!text).join('，')}</Text>
           </View>
           <View style={{
@@ -171,7 +171,10 @@ export default class DiaryList extends React.Component {
 
     return (
       <View style={{flex: 1}}>
-        <Back navigation={this.props.navigation} />
+        <Back 
+          name="投缘"
+          navigation={this.props.navigation} 
+        />
         {diarys && diarys.length ? <FlatList
           contentContainerStyle={{
             padding: 10
@@ -221,7 +224,7 @@ export default class DiaryList extends React.Component {
             textAlign: 'center',
             lineHeight: 28
           }}>
-            抱歉，未发现新的，与您投缘的人
+            抱歉，暂无与您投缘的人
           </Text>
           <TouchableOpacity
             onPress={() => this.props.navigation.navigate('Found', {
@@ -242,7 +245,7 @@ export default class DiaryList extends React.Component {
               textAlign: 'center',
               width: 200,
               marginRight: 10
-            }}>去“随缘”，发现能互相理解，彼此获益的有缘人。</Text>
+            }}>去“随缘”，找到能交心的有缘人。</Text>
             <TYicon
               name='jiantou'
               size={16} 

@@ -17,7 +17,7 @@ import Back from 'app/component/Back'
 import { Empty, Footer } from 'app/component/ListLoad'
 import { STATUS_BAR_HEIGHT } from 'app/component/Const'
 import ActionModal from 'app/Karma/ActionModal'
-import { TalkEmptyGuide } from 'app/Friend/TalkEmptyGuide'
+import TalkEmptyGuide from 'app/Friend/TalkEmptyGuide'
 import { ANIMATION_DURATION, MIND_TYPES } from 'app/component/Const'
 
 class ReplyItem extends React.Component {
@@ -449,7 +449,10 @@ class Talk extends React.Component {
       <View
         style={globalStyles.container}
       >
-        <Back navigation={navigation} />
+        <Back
+          name="谈心"
+          navigation={navigation} 
+        />
         <View
           style={{ flex: 1 }}
         >

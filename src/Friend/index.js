@@ -94,16 +94,22 @@ class FriendList extends React.Component {
         }]}
       >
         <Back 
+          name="有缘人"
           routeName={this.props.navigation.state.params.routeName}
           navigation={this.props.navigation} 
           rightButton={{
             icon: 'mn_tianjiahaoyou',
             noBorder: true,
             onPress: () => {
+              this.props.navigation.navigate('UserSearch', {
+                onGoBack: () => this.refresh()
+              })
+            }
+            /*onPress: () => {
               this.setState({
                 dropdownShow: !dropdownShow
               })
-            }
+            }*/
           }}
           onLayoutRightBtn={ 
             (name, target) => this.groupDropDown(
@@ -155,7 +161,7 @@ class FriendList extends React.Component {
                 }
               >查找并添加</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
+            {/*<TouchableOpacity 
               onLayout={ 
                 e => this.groupDropDown(
                   'menu_2', 
@@ -174,7 +180,7 @@ class FriendList extends React.Component {
                   ) 
                 }
               >邀请他（她）加入</Text>
-            </TouchableOpacity>
+              </TouchableOpacity>*/}
           </CardView>
         : null}
         {this.state.friends.length ? <FlatList
@@ -238,19 +244,19 @@ class FriendList extends React.Component {
           <Text style={{
             fontSize: 16,
             color: '#999'
-          }}>您当前没有添加有缘人~</Text>
-          <Text style={{
-            marginTop: 40,
+          }}>当前未添加有缘人~</Text>
+          {/*<Text style={{
+            marginTop: 20,
             color: '#444',
             fontSize: 16
           }}>
-            如果他（她）已经是心也用户
-          </Text>
+            他（她）已经是田野用户
+          </Text>*/}
           <Text style={{
             marginTop: 20,
             fontSize: 16,
             color: '#666'
-          }}>一、您不知道对方邮箱、账号信息</Text>
+          }}>一、不知道对方用户名、邮箱</Text>
           <TouchableOpacity
             onPress={() => this.props.navigation.navigate('Fate', {
               onGoBack: () => this.refresh()
@@ -268,7 +274,7 @@ class FriendList extends React.Component {
               lineHeight: 28,
               color: '#FF0140',
               marginRight: 10
-            }}>去“投缘”看看，有没有比较投缘的人</Text>
+            }}>去“投缘”看看，有没有投缘的人</Text>
             <TYicon 
               name='jiantou'
               size={16} 
@@ -278,7 +284,7 @@ class FriendList extends React.Component {
             color: '#666',
             marginTop: 20,
             fontSize: 16
-          }}>二、您知道他（她）的账号或邮箱</Text>
+          }}>二、知道对方的用户名或邮箱</Text>
           <TouchableOpacity
             onPress={() => this.props.navigation.navigate('UserSearch', {
               onGoBack: () => this.refresh()
@@ -295,13 +301,13 @@ class FriendList extends React.Component {
               lineHeight: 28,
               color: '#FF0140',
               marginRight: 10
-            }}>通过邮箱，账号查找对方并添加</Text>
+            }}>通过用户名或邮箱添加</Text>
             <TYicon 
               name='sousuo'
               size={16} 
               color={'#FF0140'}></TYicon>
           </TouchableOpacity>
-          <Text style={{
+          {/*<Text style={{
             marginTop: 30,
             color: '#444',
             fontSize: 16
@@ -328,7 +334,7 @@ class FriendList extends React.Component {
               name='yaoqing'
               size={16} 
               color={'#FF0140'}></TYicon>
-          </TouchableOpacity>
+          </TouchableOpacity>*/}
         </ScrollView> : <Empty loading={true} />)}
         <AcceptModal 
           ref={ref => this._modal = ref}

@@ -10,8 +10,12 @@ import globalStyles from 'app/component/globalStyles'
 
 let routes = [
   {
-    key: 'Talk',
-    label: '谈心',
+    key: 'Found',
+    label: '随缘',
+  },
+  {
+    key: 'Fate',
+    label: '投缘',
   },
   {
     key: 'Friend',
@@ -21,12 +25,8 @@ let routes = [
     label: '有缘人',
   },
   {
-    key: 'Fate',
-    label: '投缘',
-  },
-  {
-    key: 'Found',
-    label: '随缘',
+    key: 'Talk',
+    label: '谈心',
   },
 ]
 
