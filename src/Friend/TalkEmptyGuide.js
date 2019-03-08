@@ -7,6 +7,7 @@ import {
 import TYicon from 'app/component/TYicon'
 
 export default class TalkEmptyGuide extends React.Component {
+  
   render() {
     const {
       friendTotal,
@@ -75,17 +76,6 @@ export default class TalkEmptyGuide extends React.Component {
             }}
           >
             您的有缘人尚未与您共享内容
-          </Text>
-          <Text 
-            style={{
-              fontSize: 16,
-              color: '#999',
-              textAlign: 'center',
-              width: '60%',
-              lineHeight: 28
-            }}
-          >
-            去跟他打个招呼
           </Text>
         </View>
   }

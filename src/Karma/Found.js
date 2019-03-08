@@ -19,7 +19,7 @@ const types = {
   },
   share: {
     good: {
-      name: '获益',
+      name: '认同',
       id: 'thank'
     },
     bad: '无感'
@@ -220,7 +220,10 @@ class FoundSwiper extends Component {
         flex: 1,
         backgroundColor: '#fff'
       }}>
-        <Back navigation={this.props.navigation} />
+        <Back 
+          name="随缘"
+          navigation={this.props.navigation} 
+        />
         {
           minds && minds.length 
             ? <Swiper

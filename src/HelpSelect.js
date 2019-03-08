@@ -5,7 +5,7 @@ import {
   TouchableOpacity, 
   Text, 
 } from 'react-native'
-import { TalkEmptyGuide } from 'app/Friend/TalkEmptyGuide'
+import TalkEmptyGuide from 'app/Friend/TalkEmptyGuide'
 import { get } from 'app/component/request'
 import globalStyles from 'app/component/globalStyles'
 import Back from 'app/component/Back'
@@ -51,7 +51,7 @@ class HelpItem extends React.Component {
   }
 }
 
-export default class Help extends React.Component {
+export default class HelpSelect extends React.Component {
 
   constructor(props) {
     super(props)
@@ -152,7 +152,7 @@ export default class Help extends React.Component {
             <Text style={{
               fontSize: 16,
               color: '#333'
-            }}>选择您要回复的心结/心得</Text>
+            }}>选择您要回复的主题</Text>
           </View>)}
           navigation={this.props.navigation} 
         />

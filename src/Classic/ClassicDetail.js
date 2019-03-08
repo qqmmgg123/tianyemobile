@@ -331,9 +331,8 @@ export default class ClassicDetail extends Component {
             </View>
             <View style={{
               marginTop: 10,
-              borderLeftColor: '#ccc',
-              borderLeftWidth: 3,
               backgroundColor: '#f1f1f1',
+              borderRadius: 4,
               padding: 10,
               marginHorizontal: 10
             }}>
