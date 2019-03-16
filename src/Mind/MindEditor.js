@@ -208,7 +208,7 @@ export default class MindEditor extends React.Component {
     const { icon, name, action, description } = curType
     return (
       <SafeAreaView
-        style={{flex: 1, backgroundColor: '#f5f6f7'}} 
+        style={{flex: 1, backgroundColor: '#fafafa'}} 
         forceInset={{ top: 'always', horizontal: 'never' }}
       >
         {!loading ? (<View 

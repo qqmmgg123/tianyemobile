@@ -220,11 +220,6 @@ export default class ClassicSection extends Component {
             onPress: () => this.props.navigation.navigate('ClassicTranslates', {
               itemId: section._id
             })
-          }, {
-            name: '引用',
-            onPress: () => this.props.navigation.navigate('ClassicTranslates', {
-              itemId: section._id
-            })
           }]}
         />
         <View style={{ flex: 1 }}>

@@ -311,7 +311,10 @@ export default class ClassicDetail extends Component {
 
     return (
       <View style={{ flex: 1 }}>
-        <Back navigation={this.props.navigation} />
+        <Back 
+          name={classic && classic.title || ''}
+          navigation={this.props.navigation} 
+        />
         <View style={{ flex: 1 }}>
           <ScrollView
             showsVerticalScrollIndicator={false}

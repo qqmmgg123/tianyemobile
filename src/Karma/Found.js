@@ -106,7 +106,7 @@ class MindDetail extends Component {
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#f5f6f7'
+          backgroundColor: '#fafafa'
         }}>
         {isThanked
           ? (
@@ -123,7 +123,7 @@ class MindDetail extends Component {
                 }}
                 name='xin' 
                 size={24} 
-                color='#FF0140'></TYicon>
+                color='#EE3D80'></TYicon>
               <Text style={{
                 color: '#999', 
                 fontSize: 14,

@@ -37,6 +37,10 @@ class FriendList extends React.Component {
     this._dropDown = {}
   }
 
+  static navigationOptions = {
+    title: '谈心'
+  }
+
   refresh() {
     this.loadData()
   }
@@ -93,7 +97,71 @@ class FriendList extends React.Component {
           zIndex: 0
         }]}
       >
-        <Back 
+        <View style={globalStyles.header}>
+          <Text style={globalStyles.logo}>{ title }</Text>
+          <TouchableOpacity
+            ref={ref => {
+              ref && this._dropdowns.push(findNodeHandle(ref))
+            }}
+            onPress={() => this.setState({
+              dropdownShow: !dropdownShow
+            })}
+            style={{
+              padding: 10
+            }}
+          >
+            <TYicon 
+              ref={ref => {
+                this._dropdowns = []
+                ref && this._dropdowns.push(findNodeHandle(ref))
+              }}
+              style={{
+                marginRight: 10
+              }}
+              name='tianjiaguanzhu' 
+              size={18} 
+              color='#666'></TYicon>
+          </TouchableOpacity>
+        </View>
+        { 
+          dropdownShow
+            ? 
+            <CardView
+              ref={ref => {
+                ref && this._dropdowns.push(findNodeHandle(ref))
+              }}
+              cardElevation={4}
+              maxCardElevation={4}
+              radius={5}
+              backgroundColor={'#ffffff'}
+              style={globalStyles.dropDown}
+            >
+              {Object.entries(MIND_TYPES).map(([id, guide], index) => (<TouchableOpacity 
+                key={id}
+                ref={ref => {
+                  ref && this._dropdowns.push(findNodeHandle(ref))
+                }}
+                onPress={() => {
+                  this._modal.open('MindEditor', {
+                    itemTypeId: id,
+                    itemId: '',
+                  })
+                  this.setState({ dropdownShow: false })
+                }}
+                style={{
+                  padding: 10
+                }}
+              >
+                <Text
+                  ref={ref => {
+                    ref && this._dropdowns.push(findNodeHandle(ref))
+                  }}
+                >{guide.action + guide.name + guide.icon}</Text>
+              </TouchableOpacity>))}
+            </CardView>
+          : null
+        }
+        {/*<Back 
           name="有缘人"
           routeName={this.props.navigation.state.params.routeName}
           navigation={this.props.navigation} 
@@ -105,11 +173,11 @@ class FriendList extends React.Component {
                 onGoBack: () => this.refresh()
               })
             }
-            /*onPress: () => {
+            onPress: () => {
               this.setState({
                 dropdownShow: !dropdownShow
               })
-            }*/
+            }
           }}
           onLayoutRightBtn={ 
             (name, target) => this.groupDropDown(
@@ -117,7 +185,7 @@ class FriendList extends React.Component {
               target
             ) 
           }
-        />
+        />*/}
         { dropdownShow ? 
           <CardView
             onLayout={ 
@@ -272,13 +340,13 @@ class FriendList extends React.Component {
               marginTop: 10,
               fontSize: 16,
               lineHeight: 28,
-              color: '#FF0140',
+              color: '#EE3D80',
               marginRight: 10
             }}>去“投缘”看看，有没有投缘的人</Text>
             <TYicon 
               name='jiantou'
               size={16} 
-              color={'#FF0140'}></TYicon>
+              color={'#EE3D80'}></TYicon>
           </TouchableOpacity>
           <Text style={{
             color: '#666',
@@ -299,13 +367,13 @@ class FriendList extends React.Component {
               marginTop: 10,
               fontSize: 16,
               lineHeight: 28,
-              color: '#FF0140',
+              color: '#EE3D80',
               marginRight: 10
             }}>通过用户名或邮箱添加</Text>
             <TYicon 
               name='sousuo'
               size={16} 
-              color={'#FF0140'}></TYicon>
+              color={'#EE3D80'}></TYicon>
           </TouchableOpacity>
           {/*<Text style={{
             marginTop: 30,
@@ -327,13 +395,13 @@ class FriendList extends React.Component {
               marginTop: 10,
               fontSize: 16,
               lineHeight: 28,
-              color: '#FF0140',
+              color: '#EE3D80',
               marginRight: 10
             }}>邀请他（她）加入心也</Text>
             <TYicon 
               name='yaoqing'
               size={16} 
-              color={'#FF0140'}></TYicon>
+              color={'#EE3D80'}></TYicon>
           </TouchableOpacity>*/}
         </ScrollView> : <Empty loading={true} />)}
         <AcceptModal 

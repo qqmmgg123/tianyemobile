@@ -20,7 +20,7 @@ const Back = (props) => {
       borderBottomColor: '#eaeaea',
       borderBottomWidth: 1,
       borderStyle: 'solid',
-      backgroundColor: '#f5f6f7',
+      backgroundColor: '#fafafa',
       justifyContent: 'space-between',
     }}>
       <TouchableOpacity

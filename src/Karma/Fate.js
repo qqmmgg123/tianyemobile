@@ -92,6 +92,10 @@ export default class DiaryList extends React.Component {
     }
   }
 
+  static navigationOptions = {
+    title: '投缘'
+  }
+
   layoutData(data) {
     let { 
       success, 
@@ -170,11 +174,11 @@ export default class DiaryList extends React.Component {
     } = this.state
 
     return (
-      <View style={{flex: 1}}>
-        <Back 
+      <View style={globalStyles.container}>
+        {/*<Back 
           name="投缘"
           navigation={this.props.navigation} 
-        />
+        />*/}
         {diarys && diarys.length ? <FlatList
           contentContainerStyle={{
             padding: 10
@@ -241,7 +245,7 @@ export default class DiaryList extends React.Component {
               marginTop: 10,
               fontSize: 16,
               lineHeight: 28,
-              color: '#FF0140',
+              color: '#EE3D80',
               textAlign: 'center',
               width: 200,
               marginRight: 10
@@ -249,14 +253,14 @@ export default class DiaryList extends React.Component {
             <TYicon
               name='jiantou'
               size={16} 
-              color={'#FF0140'}></TYicon>
+              color={'#EE3D80'}></TYicon>
           </TouchableOpacity>
         </View>) : <Empty loading={true} />)}
         <AcceptModal 
           ref={ref => this._modal = ref}
           onAdd={() => {
             this.props.navigation.goBack()
-            this.props.navigation.state.params.onGoBack();
+            this.props.navigation.state.params.onGoBack()
           }}
         />
       </View>

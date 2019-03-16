@@ -298,6 +298,10 @@ class Talk extends React.Component {
     }
   }
 
+  static navigationOptions = {
+    title: '谈心'
+  }
+
   removeReply = (helpIndex, replyIndex) => {
     let { helps } = this.state
     let help = helps[helpIndex]
@@ -449,10 +453,10 @@ class Talk extends React.Component {
       <View
         style={globalStyles.container}
       >
-        <Back
+        {/*<Back
           name="谈心"
           navigation={navigation} 
-        />
+        />*/}
         <View
           style={{ flex: 1 }}
         >

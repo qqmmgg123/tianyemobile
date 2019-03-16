@@ -11,12 +11,12 @@ export default StyleSheet.create({
     alignItems: 'center',
     height: HEADER_HEIGHT,
     paddingLeft: 10,
-    backgroundColor: '#f5f6f7'
+    backgroundColor: '#fafafa'
   },
   logo: {
     fontSize: 16,
     textAlign: 'center',
-    color: '#FF0140'
+    color: '#EE3D80'
   },
   slogan: {
     textAlign: 'center',
@@ -24,16 +24,16 @@ export default StyleSheet.create({
   },
   separator: {
     flex: 1,
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: '#cccccc',
+    height: 5,
+    backgroundColor: '#fafafa',
   },
   headerBottomLine: {
     height: 1,
     backgroundColor: '#cccccc',
   },
   splitLine: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: '#cccccc',
+    height: 5,
+    backgroundColor: '#fafafa',
   },
   button: {
     borderColor: '#dddddd', 
@@ -63,9 +63,12 @@ export default StyleSheet.create({
     padding: 10
   },
   quoteBg: {
-    borderLeftColor: 'rgba(0, 0, 0, 0.1)',
-    borderLeftWidth: 2,
-    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+    //borderLeftColor: 'rgba(0, 0, 0, 0.1)',
+    //borderLeftWidth: 2,
+    //backgroundColor: 'rgba(0, 0, 0, 0.05)',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+    borderRadius: 3,
     padding: 10,
     marginTop: 10,
   },

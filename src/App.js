@@ -131,7 +131,7 @@ export default class App extends React.Component {
     return (
       <Provider store={ store }>
         <SafeAreaView 
-          style={{flex: 1, backgroundColor: '#f5f6f7'}} 
+          style={{flex: 1, backgroundColor: '#fafafa'}} 
           forceInset={{ top: 'always', horizontal: 'never' }}
         >
           <AppContainer 

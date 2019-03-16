@@ -38,17 +38,16 @@ class TabBar extends React.Component {
         alignItems: 'center',
         width,
         height: 54,
-        borderStyle: 'solid',
-        borderTopColor: '#cccccc',
-        borderTopWidth: 1,
-        backgroundColor: '#f5f6f7'
+        backgroundColor: '#fafafa',
+        // borderStyle: 'solid',
+        // borderTopColor: '#cccccc',
+        // borderTopWidth: 1,
       }}>
       {(features? Object.entries(features) : []).map(feature => {
         let curFeature = feature[0]
-        let { has_new = false } = message.find(
-          msg => msg.feature === curFeature.toLowerCase()
-        ) || {}
-        console.log(has_new)
+        let has_new = message.some(
+          msg => msg.feature === curFeature.toLowerCase() && msg.has_new
+        )
         return (
           <TouchableOpacity
           key={feature[0]}
@@ -75,7 +74,7 @@ class TabBar extends React.Component {
               style={{ 
                 textAlign: 'center',
                 lineHeight: TAB_HEIGHT,
-                color: this.state.curTab === feature[0] ? '#FF0140' : null
+                color: this.state.curTab === feature[0] ? '#EE3D80' : null
               }}
             >{feature[1]}</Text>
           </TouchableOpacity>
@@ -91,7 +90,7 @@ class TabBar extends React.Component {
           }}
           onPress={this.onPressTab.bind(this, 'MORE')}
           >
-          <TYicon name='ellipsis' size={16} color={this.state.curTab === 'MORE' ? '#FF0140' : '#333'}></TYicon>
+          <TYicon name='ellipsis' size={16} color={this.state.curTab === 'MORE' ? '#EE3D80' : '#333'}></TYicon>
         </TouchableOpacity>
       </View>
     )

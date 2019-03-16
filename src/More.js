@@ -189,10 +189,10 @@ class MoreList extends React.Component {
         style={globalStyles.container}
       >
         <View style={globalStyles.header}>
-          {/*<TYicon name='ellipsis' size={20} color='#FF0140'></TYicon>*/}
+          {/*<TYicon name='ellipsis' size={20} color='#EE3D80'></TYicon>*/}
           <Text style={globalStyles.logo}>其他</Text>
         </View>
-        <View style={globalStyles.headerBottomLine}></View>
+        {/*<View style={globalStyles.headerBottomLine}></View>*/}
         {userInfos.map((info, index) => (
           info.value ? (<View key={index}>
             <TouchableOpacity
