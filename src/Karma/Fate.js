@@ -1,14 +1,11 @@
 import React from 'react'
-import { View, FlatList, TouchableOpacity, Text, Animated } from 'react-native'
+import { View, FlatList, ScrollView, RefreshControl, TouchableOpacity, Text, Animated } from 'react-native'
+import { connect } from 'react-redux'
 import { get, del } from 'app/component/request'
 import globalStyles from 'app/component/globalStyles'
-import Back from 'app/component/Back'
 import { Empty, Footer } from 'app/component/ListLoad'
-import AcceptPrompt from 'app/Friend/AcceptPrompt'
-import { createFriendModal } from 'app/component/GlobalModal'
 import TYicon from 'app/component/TYicon'
 
-const AcceptModal = createFriendModal({ AcceptPrompt })
 const ANIMATION_DURATION = 250
 
 class DiaryItem extends React.Component {
@@ -44,10 +41,13 @@ class DiaryItem extends React.Component {
     return (
       <Animated.View style={rowStyles}>
         <View style={{
-          padding: 10
+          padding: 10,
+          backgroundColor: 'white',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center'
         }}>
-          <View
-          >
+          <View>
             <Text style={{ 
               fontSize: 16,
               color: '#333333',
@@ -60,15 +60,13 @@ class DiaryItem extends React.Component {
                 oThankTotal ? `您认同他${oThankTotal}次` : ''
               ].filter(text => !!text).join('，')}</Text>
           </View>
-          <View style={{
-            flexDirection: 'row',
-            justifyContent: 'flex-end',
-            alignItems: 'center'
-          }}>
+          <View
+            style={{
+              alignSelf: 'flex-start'
+            }}
+          >
             <TouchableOpacity
-              style={[globalStyles.button, {
-                marginTop: 10
-              }]}
+              style={globalStyles.button}
               onPress={() => onAddFriend()}
             >
               <Text style={globalStyles.buttonText}>加为有缘人</Text>
@@ -80,7 +78,7 @@ class DiaryItem extends React.Component {
   }
 }
 
-export default class DiaryList extends React.Component {
+class FateList extends React.Component {
 
   constructor(props) {
     super(props)
@@ -90,6 +88,9 @@ export default class DiaryList extends React.Component {
       loading: true,
       page: 1
     }
+    props.navigation.setParams({
+      component: this
+    })
   }
 
   static navigationOptions = {
@@ -116,10 +117,10 @@ export default class DiaryList extends React.Component {
       perPage: 20,
       page
     })
-    console.log(data.diarys)
     if (loading) {
       this.setState({
-        loading: false
+        loading: false,
+        refreshing: false
       }, () => {
         data && this.layoutData(data)
       })
@@ -138,6 +139,15 @@ export default class DiaryList extends React.Component {
     this.setState({
       page: 1,
       refreshing: true
+    }, () => {
+      this.loadData()
+    })
+  }
+
+  reload() {
+    this.setState({
+      loading: true,
+      diarys: []
     }, () => {
       this.loadData()
     })
@@ -165,6 +175,12 @@ export default class DiaryList extends React.Component {
     this.loadData()
   }
 
+  componentWillReceiveProps(props) {
+    if (props.loginData.userId !== this.props.loginData.userId) {
+      this.reload()
+    }
+  }
+
   render() {
     let { 
       diarys, 
@@ -175,14 +191,7 @@ export default class DiaryList extends React.Component {
 
     return (
       <View style={globalStyles.container}>
-        {/*<Back 
-          name="投缘"
-          navigation={this.props.navigation} 
-        />*/}
         {diarys && diarys.length ? <FlatList
-          contentContainerStyle={{
-            padding: 10
-          }}
           data={diarys}
           refreshing={refreshing}
           onRefresh={this.refresh}
@@ -193,10 +202,13 @@ export default class DiaryList extends React.Component {
             navigation={this.props.navigation}
             onRemove={this.removeItem.bind(this, index)} 
             onAddFriend={() => {
-              this._modal.open('AcceptPrompt')
-              this._modal.setParams({
+              this.props.navigation.navigate('AcceptPrompt', {
                 friendId: item._id,
-                status: 'add'
+                status: 'add',
+                onAdd: () => {
+                  this.reload()
+                  this.props.screenProps.onFateChange()
+                }
               })
             }}
           />}
@@ -210,12 +222,22 @@ export default class DiaryList extends React.Component {
           keyExtractor={(item) => (item._id)}
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
-        /> : (!loading ? (<View style={{
-          flex: 1,
-          padding: 10,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
+        /> : (!loading ? (<ScrollView 
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={this.refresh}
+            />
+          }
+          contentContainerStyle={{
+            flex: 1,
+            padding: 10,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+        >
           <Text style={{
             fontSize: 16,
             color: '#999',
@@ -228,10 +250,10 @@ export default class DiaryList extends React.Component {
             textAlign: 'center',
             lineHeight: 28
           }}>
-            抱歉，暂无与您投缘的人
+            抱歉，暂未发现新的与您投缘的人
           </Text>
           <TouchableOpacity
-            onPress={() => this.props.navigation.navigate('Found', {
+            onPress={() => this.props.navigation.navigate('Earth', {
               onGoBack: () => this.refresh()
             })}
             style={{
@@ -249,21 +271,21 @@ export default class DiaryList extends React.Component {
               textAlign: 'center',
               width: 200,
               marginRight: 10
-            }}>去“随缘”，找到能交心的有缘人。</Text>
+            }}>到“尘”，发现有缘人。</Text>
             <TYicon
               name='jiantou'
               size={16} 
               color={'#EE3D80'}></TYicon>
           </TouchableOpacity>
-        </View>) : <Empty loading={true} />)}
-        <AcceptModal 
-          ref={ref => this._modal = ref}
-          onAdd={() => {
-            this.props.navigation.goBack()
-            this.props.navigation.state.params.onGoBack()
-          }}
-        />
+        </ScrollView>) : <Empty loading={true} />)}
       </View>
     )
   }
 }
+
+const mapStateToProps = (state) => {
+  const { loginData } = state
+  return { loginData }
+}
+
+export default connect(mapStateToProps)(FateList)

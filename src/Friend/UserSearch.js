@@ -11,10 +11,6 @@ import { connect } from 'react-redux'
 import { get } from 'app/component/request'
 import globalStyles from 'app/component/globalStyles'
 import Back from 'app/component/Back'
-import AcceptPrompt from 'app/Friend/AcceptPrompt'
-import { createFriendModal } from 'app/component/GlobalModal'
-
-const AcceptModal = createFriendModal({ AcceptPrompt })
 
 class UserSearch extends React.Component {
 
@@ -127,12 +123,16 @@ class UserSearch extends React.Component {
                 <TouchableOpacity
                   style={globalStyles.button}
                   onPress={() => {
-                    this._modal.open('AcceptPrompt')
-                    this._modal.setParams({
+                    this.props.navigation.navigate('AcceptPrompt', {
                       friendId: item._id,
-                      status: 'add'
+                      status: 'add',
+                      onAdd: () => {
+                        this.props.navigation.goBack()
+                        this.props.navigation.state.params.onGoBack();
+                      }
                     })
                   }}
+                  
                 >
                   <Text style={globalStyles.buttonText}>添加</Text>
                 </TouchableOpacity>
@@ -144,13 +144,6 @@ class UserSearch extends React.Component {
             </View>
           )}
         </ScrollView>
-        <AcceptModal 
-          ref={ref => this._modal = ref}
-          onAdd={() => {
-            this.props.navigation.goBack()
-            this.props.navigation.state.params.onGoBack();
-          }}
-        />
       </View>
     )
   }

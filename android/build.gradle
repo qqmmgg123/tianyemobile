@@ -33,6 +33,17 @@ allprojects {
     }
 }
 
+subprojects {
+    afterEvaluate {project ->
+        if (project.hasProperty("android")) {
+            android {
+                compileSdkVersion rootProject.ext.compileSdkVersion
+                buildToolsVersion rootProject.ext.buildToolsVersion
+            }
+        }
+    }
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = '4.7'
     distributionUrl = distributionUrl.replace("bin", "all")

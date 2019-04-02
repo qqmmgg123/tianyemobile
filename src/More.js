@@ -5,6 +5,7 @@ import {
   TextInput,
   Text,
   StyleSheet,
+  AsyncStorage,
   KeyboardAvoidingView
 } from 'react-native'
 import TYicon from 'app/component/TYicon'
@@ -12,7 +13,14 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import Spinner from 'react-native-loading-spinner-overlay'
 import { changeLoginState } from 'app/HomeActions'
-import { get, post, removeUser, getCurRoute, getUserInfo, updateUser } from 'app/component/request'
+import { 
+  get, 
+  post, 
+  removeCookieByMemory, 
+  removeUserByMemory, 
+  getCurRoute, 
+  getUserByMemory
+} from 'app/component/request'
 import globalStyles from 'app/component/globalStyles'
 import { createFriendModal } from 'app/component/GlobalModal'
 import { toast } from 'app/Toast'
@@ -65,12 +73,13 @@ class NameModify extends React.Component {
       spinnerText: '',
     })
     if (res.success) {
-      let userInfo = getUserInfo()
+      let userInfo = getUserByMemory()
       userInfo.panname = panname
+      setUserByMemory(JSON.stringify(userInfo))
+      AsyncStorage.setItem('user', JSON.stringify(userInfo))
       this.props.changeLoginState({
         panname
       })
-      updateUser(userInfo)
       this.props.modal.close()
     }
   }
@@ -160,22 +169,30 @@ class MoreList extends React.Component {
   async postLogout() {
     let res = await get('logout')
     if (res.success) {
-      let curRoute = getCurRoute()
-      if (curRoute) {
-        this.props.navigation.navigate('Classic')
-      }
+      removeCookieByMemory()
+      removeUserByMemory()
+      AsyncStorage.multiRemove(['cookie', 'user'])
       this.props.changeLoginState({
         need_login: true,
+        userId: '',
         userId: '',
         username: '',
         panname: '',
         email: ''
       })
-      await removeUser()
+      let curRoute = getCurRoute()
+      if (curRoute) {
+        this.props.navigation.navigate('Classic')
+      }
     }
   }
 
+  shouldComponentUpdate(nextProps) {
+    return nextProps.homeData.launch || this.props.homeData.launch
+  }
+
   render() {
+    console.log('启动结束渲染......')
     let { loginData } = this.props
     let { need_login, username, panname, email } = loginData
     let userInfos = [
@@ -204,7 +221,8 @@ class MoreList extends React.Component {
                 flexDirection: 'row',
                 alignItems: 'center',
                 flexWrap: 'nowrap',
-                padding: 20
+                padding: 20,
+                backgroundColor: 'white'
               }}
             >
               <Text 
@@ -243,7 +261,8 @@ class MoreList extends React.Component {
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',
-                  padding: 20
+                  padding: 20,
+                  backgroundColor: 'white'
                 }}
                 onPress={() => this.props.navigation.navigate(scene.key, scene.params || null)}
               >
@@ -291,8 +310,8 @@ class MoreList extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  const { loginData } = state
-  return { loginData }
+  const { loginData, homeData } = state
+  return { loginData, homeData }
 }
 
 const mapDispatchToProps = dispatch => (

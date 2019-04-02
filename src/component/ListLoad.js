@@ -20,5 +20,7 @@ export const Footer = (props) => (props.data.length ? (<View>
     onPress={props.onLoadMore}
   >
     <Text style={globalStyles.noDataText}>查看更多</Text>
-  </TouchableOpacity>) : <Text style={globalStyles.noDataText}>没有更多了。</Text>) : <ActivityIndicator />}
+  </TouchableOpacity>) : <Text style={[globalStyles.noDataText, {
+    color: '#999'
+  }]}>没有更多了。</Text>) : <ActivityIndicator />}
 </View>) : null)

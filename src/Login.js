@@ -35,22 +35,32 @@ class Login extends Component {
       spinner: true,
       spinnerText: '',
     })
-    let res = await post('login', {
-      username,
-      password
-    })
-    this.setState({
-      spinner: false,
-      spinnerText: '',
-    })
-    if (res) {
-      const { success } = res
-      if (success) {
-        let curRoute = getCurRoute()
-        if (curRoute) {
-          this.props.navigation.navigate(curRoute)
+    try {
+      let res = await post('login', {
+        username,
+        password
+      })
+      this.setState({
+        spinner: false,
+        spinnerText: '',
+      }, () => {
+        if (res) {
+          const { success } = res
+          if (success) {
+            console.log(`%c 用户登陆成功!!!`, 'color: red;font-size: 16px;')
+            let curRoute = getCurRoute()
+            console.log(`%c 跳转到route ${curRoute}`, 'color: red;font-size: 18px;')
+            if (curRoute) {
+              this.props.navigation.navigate(curRoute)
+            }
+          }
         }
-      }
+      })
+    } catch (err) {
+      this.setState({
+        spinner: false,
+        spinnerText: '',
+      })
     }
   }
 

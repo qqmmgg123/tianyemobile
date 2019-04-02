@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
-import { ScrollView, View, Text, TouchableOpacity, Dimensions } from 'react-native'
+import { ScrollView, RefreshControl, View, Text, TouchableOpacity, Dimensions } from 'react-native'
 import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { layoutHomeData } from 'app/HomeActions'
 import Swiper from 'app/component/SwiperList'
-import { get, post } from 'app/component/request'
+import { get, post, getUserByMemory } from 'app/component/request'
 import TYicon from 'app/component/TYicon'
-import Back from 'app/component/Back'
+import globalStyles from 'app/component/globalStyles'
 import { createFriendModal } from 'app/component/GlobalModal'
 import Report from 'app/component/Report'
 const { width } = Dimensions.get("window");
@@ -31,11 +33,18 @@ class MindDetail extends Component {
   constructor(props) {
     super(props)
     this.state = {
+      refreshing: false,
       mind: props.mind
     }
   }
 
   async thank() {
+    let userInfo = getUserByMemory()
+    if (!userInfo) {
+      this.props.navigation.navigate('Login')
+      return
+    }
+
     let { mind } = this.state
     mind = Object.assign({}, mind)
     if (!mind.isThanked && !mind.thanking) {
@@ -56,9 +65,31 @@ class MindDetail extends Component {
       }
     }
   }
+
+  refresh = () => {
+    this.setState({
+      refreshing: true
+    }, () => {
+      this.loadData()
+    })
+  }
+
+  async loadData() {
+    let { _id } = this.state.mind
+    , data = await get(`mind/${_id}`)
+    if (data) {
+      let { success, mind } = data
+      if (success) {
+        this.setState({
+          mind,
+          loading: false
+        })
+      }
+    }
+  }
   
   render() {
-    let { mind } = this.state
+    let { refreshing, mind } = this.state
     let { 
       _id,
       title, 
@@ -71,6 +102,12 @@ class MindDetail extends Component {
     return <View style={{ flex: 1, width: width }}>
       <View style={{ flex: 1 }}>
         <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={this.refresh}
+            />
+          }
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
         >
@@ -106,7 +143,6 @@ class MindDetail extends Component {
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#fafafa'
         }}>
         {isThanked
           ? (
@@ -177,11 +213,12 @@ class MindDetail extends Component {
 
 const MindModal = createFriendModal({ Report })
 
-class FoundSwiper extends Component {
+class EarthSwiper extends Component {
 
   constructor(props) {
     super(props)
     this.state = {
+      refreshing: false,
       loading: true,
       minds: []
     }
@@ -191,19 +228,41 @@ class FoundSwiper extends Component {
     gesturesEnabled: false
   }
 
-  refresh() {
-    this.loadData()
+  refresh = () => {
+    this.setState({
+      refreshing: true
+    }, () => {
+      this.loadData()
+    })
   }
 
-  componentWillMount() {
-    this.loadData()
+  reload() {
+    this.setState({
+      loading: true,
+      minds: []
+    }, () => {
+      this.loadData()
+    })
   }
 
   async loadData() {
-    let data = await get('features/found')
+    let data = await get('features/earth')
     if (data) {
-      let { success, minds } = data
+      let { 
+        appName, 
+        slogan, 
+        features, 
+        success, 
+        pageInfo,
+        minds 
+      } = data
       if (success) {
+        this.props.layoutHomeData({
+          appName,
+          slogan,
+          features
+        })
+        console.log('获取到数据...', data)
         this.setState({
           minds,
           loading: false
@@ -212,47 +271,103 @@ class FoundSwiper extends Component {
     }
   }
 
+  componentWillMount() {
+    console.log('组件开始装载...')
+  }
+
+  componentDidMount() {
+    console.log('组件渲染结束...')
+  }
+
+  componentDidCatch() {
+    console.log('捕获到错误...')
+  }
+
+  componentWillUpdate() {
+    console.log('组件即将更新...')
+  }
+
+  componentDidUpdate() {
+    console.log('组件更新结束...')
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.homeData.launch === false) {
+      // App启动时
+      if (nextProps.homeData.launch !== this.props.homeData.launch) {
+        console.log('App启动后......')
+        this.loadData()
+      }
+    } else {
+      // 账号切换时
+      if (nextProps.loginData.userId !== this.props.loginData.userId) {
+        console.log('账号切换后......')
+        this.reload()
+      }
+    }
+  }
+
+  shouldComponentUpdate(nextProps) {
+    console.log('允许启动结束渲染......', nextProps.homeData.launch || this.props.homeData.launch)
+    return nextProps.homeData.launch || this.props.homeData.launch
+  }
+
   render() {
-    let { minds } = this.state
+    console.log('启动结束渲染......')
+    const { homeData, navigation } = this.props
+    const { features } = homeData
+    const { routeName } = navigation.state
+    const title = features && features[routeName.toUpperCase()] || ''
+    let { minds, refreshing } = this.state
+    // let minds = []
 
     return (
       <View style={{ 
         flex: 1,
         backgroundColor: '#fff'
       }}>
-        <Back 
-          name="随缘"
-          navigation={this.props.navigation} 
-        />
+        <View style={ globalStyles.header }>
+          <Text style={globalStyles.logo}>{ title }</Text>
+        </View>
         {
           minds && minds.length 
             ? <Swiper
                 style={{ flex: 1 }}
+                refreshing={refreshing}
+                onRefresh={this.refresh}
                 swipeData={minds}
                 renderSwipeItem={(mind, index) => <MindDetail
                   mind={mind}
+                  navigation={navigation}
                   onReport={() => this._modal.open('Report')}
                 />}
               /> 
-            : <View
-                style={{
-                  flex: 1,
-                  padding: 10,
-                  justifyContent: 'center',
-                  alignItems: 'center'
-                }} 
-              >
-                <Text
-                   style={{
-                    fontSize: 16,
-                    color: '#999',
-                    textAlign: 'center',
-                    lineHeight: 28
-                  }}
-                >
-                  没数据...
-                </Text>
-              </View>}
+            : <ScrollView 
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={this.refresh}
+              />
+            }
+            contentContainerStyle={{
+              flex: 1,
+              padding: 10,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            horizontal
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+          ><Text
+          style={{
+           fontSize: 16,
+           color: '#999',
+           textAlign: 'center',
+           lineHeight: 28
+         }}
+       >
+         没数据...
+       </Text></ScrollView>}
         <MindModal 
           ref={ref => this._modal = ref}
         />
@@ -262,8 +377,14 @@ class FoundSwiper extends Component {
 }
 
 const mapStateToProps = (state) => {
-  const { loginData } = state
-  return { loginData }
+  const { loginData, homeData } = state
+  return { loginData, homeData }
 }
 
-export default connect(mapStateToProps)(FoundSwiper);
+const mapDispatchToProps = dispatch => (
+  bindActionCreators({
+    layoutHomeData,
+  }, dispatch)
+)
+
+export default connect(mapStateToProps, mapDispatchToProps)(EarthSwiper);

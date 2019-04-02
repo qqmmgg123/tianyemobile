@@ -1,27 +1,31 @@
 import React from 'react'
 import { Provider } from 'react-redux'
-import { AppState } from 'react-native'
+import { AppState, AsyncStorage } from 'react-native'
 import { 
   createAppContainer, 
   createStackNavigator,
   SafeAreaView
 } from 'react-navigation'
-import { get, getUserInfo, setCurRoute } from 'app/component/request'
-import { layoutHomeData } from 'app/HomeActions'
+import { 
+  getUserByMemory, 
+  setCurRoute, 
+  setCookieByMemory, 
+  setUserByMemory 
+} from 'app/component/request'
+import { getNotification } from 'app/component/api'
+import { layoutHomeData, changeLoginState } from 'app/HomeActions'
 import Tab from 'app/Tab'
 import Profile from 'app/Profile'
-import Talk from 'app/Karma/Talk'
-import Fate from 'app/Karma/Fate'
-import Found from 'app/Karma/Found'
 import HelpDetail from 'app/HelpDetail'
 import HelpSelect from 'app/HelpSelect'
+import AcceptPrompt from 'app/Friend/AcceptPrompt'
 import QuoteEditor from 'app/QuoteEditor'
 import MindDetail from 'app/Mind/MindDetail'
 import ClassicDetail from 'app/Classic/ClassicDetail'
 import ClassicSection from 'app/Classic/ClassicSection'
 import ClassicTranslate from 'app/Classic/ClassicTranslate'
 import ClassicTranslates from 'app/Classic/ClassicTranslates'
-import Friend from 'app/Friend'
+import UserSearch from 'app/Friend/UserSearch'
 import Login from 'app/Login'
 import Signup from 'app/Signup'
 import NavigatorService from 'app/services/navigator'
@@ -30,10 +34,13 @@ import StackViewStyleInterpolator from 'react-navigation-stack/dist/views/StackV
 
 const modalNav = createStackNavigator({
   Tab,
-  QuoteEditor
+  QuoteEditor,
+  UserSearch,
+  AcceptPrompt
 }, {
   headerMode: 'none',
-  mode: 'modal'
+  mode: 'modal',
+  cardStyle: { backgroundColor: '#fafafa' },
 })
 
 const AppNav = createStackNavigator({
@@ -43,18 +50,15 @@ const AppNav = createStackNavigator({
   ClassicSection,
   ClassicTranslate,
   ClassicTranslates,
-  Talk,
-  Fate,
-  Found,
   MindDetail,
   HelpDetail,
   HelpSelect,
-  Friend,
   Login,
   Signup,
 }, {
   headerMode: 'none',
   mode: 'card',
+  // cardStyle: { backgroundColor: '#fafafa' },
   transitionConfig: () => ({
     screenInterpolator: sceneProps => {
       return StackViewStyleInterpolator.forHorizontal(sceneProps);
@@ -66,14 +70,14 @@ const defaultGetStateForAction = AppNav.router.getStateForAction;
 
 AppNav.router.getStateForAction = (action, state) => {
   if (action.type === 'Navigation/NAVIGATE' && action.routeName) {
-    console.log(action.type, action.routeName)
+    console.log(action.routeName)
     if (action.routeName !== 'Login' && action.routeName !== 'Signup') {
       setCurRoute(action.routeName)
     }
     switch (action.routeName) {
       case 'Mind':
       case 'Karma':
-        let userInfo = getUserInfo()
+        let userInfo = getUserByMemory()
         if (!userInfo) {
           NavigatorService.navigate('Login')
           return null
@@ -83,19 +87,74 @@ AppNav.router.getStateForAction = (action, state) => {
         break
     }
   }
-  return defaultGetStateForAction(action, state);
+  return defaultGetStateForAction(action, state)
 }
 
 const AppContainer = createAppContainer(AppNav)
 
 export default class App extends React.Component {
 
+  constructor(props) {
+    super(props)
+  }
+
   state = {
     appState: AppState.currentState,
   }
 
+  async componentWillMount() {
+    // 监听用户登陆状态变化
+    /*let currentValue
+    const unsubscribe = store.subscribe(() => {
+      let previousValue = currentValue
+      currentValue = store.getState().loginData.userId
+      if (previousValue !== currentValue) {
+        // 获取通知
+        getNotification().then(notification => {
+          store.dispatch(layoutHomeData({ 
+            message: notification
+          }))
+        })
+      }
+    })
+    // unsubscribe()*/
+    // 获取登陆信息
+    const keys = await AsyncStorage.getAllKeys()
+    const stores = await AsyncStorage.multiGet(keys)
+    stores.map((result, i, storage) => {
+      let key = storage[i][0]
+      let value = storage[i][1]
+      switch(key) {
+        case 'cookie':
+          if (value) {
+            setCookieByMemory(value)
+          }
+          break
+        case 'user':
+          if (value) {
+            setUserByMemory(value)
+            let user = JSON.parse(value)
+            store.dispatch(changeLoginState({
+              need_login: false,
+              userId: user._id,
+              username: user.username,
+              panname: user.panname,
+              email: user.email
+            }))
+          }
+          break
+      }
+    })
+    // 获取通知
+    const notification = await getNotification()
+    store.dispatch(layoutHomeData({ 
+      launch: true,
+      message: notification
+    }))
+  }
+
   componentDidMount() {
-    AppState.addEventListener('change', this._handleAppStateChange);
+    AppState.addEventListener('change', this._handleAppStateChange)
   }
 
   componentWillUnmount() {
@@ -107,24 +166,12 @@ export default class App extends React.Component {
       this.state.appState.match(/inactive|background/) &&
       nextAppState === 'active'
     ) {
-      console.log('App has come to the foreground!');
       // 获取通知
-      this.getNotification()
+      getNotification().then((notification) => {
+        store.dispatch(layoutHomeData({ message: notification }))
+      })
     }
     this.setState({appState: nextAppState});
-  }
-
-  async getNotification() {
-    console.log('get notification....')
-    let data = await get('notification')
-    if (data) {
-      let { success, notification } = data
-      if (success) {
-        console.log(notification, store.getState())
-        let { homeData } = store.getState()
-        store.dispatch(layoutHomeData(Object.assign(homeData, { message: notification })))
-      }
-    }
   }
 
   render() {

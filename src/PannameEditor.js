@@ -3,10 +3,10 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import Spinner from 'react-native-loading-spinner-overlay'
 import { changeLoginState } from 'app/HomeActions'
-import { KeyboardAvoidingView, View, TouchableOpacity, TextInput, Text } from 'react-native'
+import { KeyboardAvoidingView, AsyncStorage, View, TouchableOpacity, TextInput, Text } from 'react-native'
 import globalStyles from 'app/component/globalStyles'
 import { toast } from 'app/Toast'
-import { post, updateUser, getUserInfo } from 'app/component/request'
+import { post, getUserByMemory } from 'app/component/request'
 
 class PannnameEditor extends Component {
 
@@ -39,12 +39,13 @@ class PannnameEditor extends Component {
       spinnerText: '',
     })
     if (res.success) {
-      let userInfo = getUserInfo()
+      let userInfo = await getUserByMemory()
       userInfo.panname = panname
+      setUserByMemory(JSON.stringify(userInfo))
+      AsyncStorage.setItem('user', JSON.stringify(userInfo))
       this.props.changeLoginState({
         panname
       })
-      updateUser(userInfo)
       this.props.modal.close()
       this.props.navigation.navigate('ShareEditor')
     }

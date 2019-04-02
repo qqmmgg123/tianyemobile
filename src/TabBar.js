@@ -10,10 +10,6 @@ class TabBar extends React.Component {
 
   constructor(props) {
     super(props)
-
-    this.state = {
-      curTab: 'CLASSIC'
-    }
   }
 
   capitalize(str) {
@@ -23,15 +19,55 @@ class TabBar extends React.Component {
 
   onPressTab(feature) {
     const { navigation } = this.props
-    this.setState({
-      curTab: feature
-    })
     feature = this.capitalize(feature)
     navigation.navigate(feature)
   }
 
+  shouldComponentUpdate(nextProps) {
+    const newRoute = nextProps
+    .navigation
+    .state.routes[
+      nextProps
+      .navigation
+      .state
+      .index
+    ].routeName
+    , currRoute = this
+    .props
+    .navigation
+    .state.routes[
+      this
+      .props
+      .navigation
+      .state
+      .index
+    ].routeName 
+    , newFeatures = nextProps.homeData.features
+    , featureKeys = Object.keys(newFeatures || {})
+    , featuresChanged = newFeatures !== this.props.homeData.features
+    , routeChanged = newRoute !== currRoute
+    , routeInfeatures = featureKeys.indexOf(newRoute.toUpperCase()) !== -1
+    , messageChanged = nextProps.homeData.message !== this.props.homeData.message
+    , hasLaunched = nextProps.homeData.launch || this.props.homeData.launch
+
+    // 再次渲染的条件
+    console.log(`%c 功能变更: ${featuresChanged}, Tab路由变更: ${(routeChanged && routeInfeatures)}, 消息变更: ${messageChanged}, app启动结束: ${hasLaunched}`, 'background: #fafafa; color: #EE3D80')
+    return (featuresChanged || (routeChanged && routeInfeatures) || messageChanged) && hasLaunched
+  }
+
   render() {
-    let { features, message = [] } = this.props.homeData
+    let { features, message = [] } = this.props.homeData, 
+    curFeature = this
+      .props
+      .navigation
+      .state.routes[
+        this
+        .props
+        .navigation
+        .state
+        .index
+      ].routeName
+    curFeature = curFeature.toUpperCase()
     return (
       <View style={{
         flexDirection: 'row',
@@ -39,23 +75,21 @@ class TabBar extends React.Component {
         width,
         height: 54,
         backgroundColor: '#fafafa',
-        // borderStyle: 'solid',
-        // borderTopColor: '#cccccc',
-        // borderTopWidth: 1,
       }}>
-      {(features? Object.entries(features) : []).map(feature => {
-        let curFeature = feature[0]
+      {(features? Object.entries(features) : []).map(item => {
+        let feature = item[0]
+        let featureName = item[1]
         let has_new = message.some(
-          msg => msg.feature === curFeature.toLowerCase() && msg.has_new
+          msg => msg.feature === feature.toLowerCase() && msg.has_new
         )
         return (
           <TouchableOpacity
-          key={feature[0]}
-          style={{ 
-            height: 54,
-            flex: 1,
-          }}
-          onPress={this.onPressTab.bind(this, feature[0])}
+            key={feature}
+            style={{ 
+              height: 54,
+              flex: 1,
+            }}
+            onPress={this.onPressTab.bind(this, feature)}
           >
             {has_new ? <View style={{
               width: 8,
@@ -74,9 +108,9 @@ class TabBar extends React.Component {
               style={{ 
                 textAlign: 'center',
                 lineHeight: TAB_HEIGHT,
-                color: this.state.curTab === feature[0] ? '#EE3D80' : null
+                color: curFeature === feature ? '#EE3D80' : '#333'
               }}
-            >{feature[1]}</Text>
+            >{featureName}</Text>
           </TouchableOpacity>
         )
       })}
@@ -90,7 +124,7 @@ class TabBar extends React.Component {
           }}
           onPress={this.onPressTab.bind(this, 'MORE')}
           >
-          <TYicon name='ellipsis' size={16} color={this.state.curTab === 'MORE' ? '#EE3D80' : '#333'}></TYicon>
+          <TYicon name='ellipsis' size={16} color={curFeature === 'MORE' ? '#EE3D80' : '#333'}></TYicon>
         </TouchableOpacity>
       </View>
     )
@@ -102,4 +136,4 @@ const mapStateToProps = (state) => {
   return { homeData }
 }
 
-export default connect(mapStateToProps)(TabBar)
+export default connect(mapStateToProps, null)(TabBar)

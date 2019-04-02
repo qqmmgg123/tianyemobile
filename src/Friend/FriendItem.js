@@ -180,7 +180,9 @@ export default class FriendItem extends React.Component {
       <Animated.View style={rowStyles}>
         <View style={{
           padding: 10,
-          flexDirection: 'row'
+          flexDirection: 'row',
+          backgroundColor: 'white',
+          alignItems: 'center'
         }}>
           <View style={{
             flex: 1

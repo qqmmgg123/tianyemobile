@@ -12,7 +12,7 @@ import {
   Platform,
 } from 'react-native'
 import { connect } from 'react-redux'
-import { get, post, del, getUserInfo } from 'app/component/request'
+import { get, post, del, getUserByMemory } from 'app/component/request'
 import Back from 'app/component/Back'
 import { Footer } from 'app/component/ListLoad'
 import globalStyles from 'app/component/globalStyles'
@@ -231,7 +231,7 @@ class HelpDetail extends Component {
       , newReply = Object.assign({}, reqParams)
       if (help) {
         let replies = help.replies || []
-        , user = getUserInfo()
+        , user = getUserByMemory()
         , key = replies.length
         newReply._id = 'newreply' + key
         newReply.username = user.username
@@ -328,6 +328,8 @@ class HelpDetail extends Component {
     const { receiverName = '' } = this.state.replyData || {}
     const { userId = '' } = this.props.loginData
     const { navigation } = this.props
+    const action = navigation.getParam('action')
+    const isFollow = action === 'follow'
     if (help) {
       let { replies } = help
       return (
@@ -413,21 +415,20 @@ class HelpDetail extends Component {
                   flex: 1,
                   borderColor: '#cccccc', 
                   borderWidth: 1,
-                  height: 36,
-                  paddingTop: 3,
-                  paddingHorizontal: 7,
-                  paddingBottom: 4,
+                  padding: 10,
                   borderRadius: 3,
                   backgroundColor: 'white',
                   marginRight: 8
                 }}
-                placeholder={receiverName ? "回复" + receiverName : "回复..."}
+                placeholder={isFollow? "跟进" : (receiverName ? "回复" + receiverName : "回复...")}
                 placeholderTextColor="#cccccc"
                 allowFontScaling={false}
                 autoCapitalize="none"
                 underlineColorAndroid='transparent'
                 onChangeText={text => this.setState({ reply: text })}
                 value={reply}
+                autoFocus={isFollow}
+                multiline={true}
               />
               {
                 reply.trim() 

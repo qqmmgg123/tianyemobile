@@ -3,6 +3,9 @@ package com.tianyemobile;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.facebook.react.bridge.ReadableNativeArray;
+import com.facebook.react.bridge.ReadableNativeMap;
+import com.psykar.cookiemanager.CookieManagerPackage;
 import com.quenice.reactnative.RNCardViewPackage;
 import com.horcrux.svg.SvgPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
@@ -11,6 +14,7 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
+import custom.widget.rnswiperefresh.SwipeRefreshLayoutPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,10 +31,12 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new CookieManagerPackage(),
             new RNCardViewPackage(),
             new SvgPackage(),
             new VectorIconsPackage(),
-            new RNGestureHandlerPackage()
+            new RNGestureHandlerPackage(),
+            new SwipeRefreshLayoutPackage()
       );
     }
 
@@ -49,5 +55,7 @@ public class MainApplication extends Application implements ReactApplication {
   public void onCreate() {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
+    ReadableNativeArray.setUseNativeAccessor(true);
+    ReadableNativeMap.setUseNativeAccessor(true);
   }
 }

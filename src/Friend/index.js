@@ -7,19 +7,12 @@ import {
   ScrollView,
   RefreshControl
 } from 'react-native'
-import { createStackNavigator } from 'react-navigation'
+import { connect } from 'react-redux'
 import { get } from 'app/component/request'
 import globalStyles from 'app/component/globalStyles'
-import Back from 'app/component/Back'
-import UserSearchScreen from 'app/Friend/UserSearch'
 import FriendItem from 'app/Friend/FriendItem'
-import AcceptPrompt from 'app/Friend/AcceptPrompt'
-import { createFriendModal } from 'app/component/GlobalModal'
 import { Empty, Footer } from 'app/component/ListLoad'
-import CardView from 'react-native-rn-cardview'
 import TYicon from 'app/component/TYicon'
-
-const AcceptModal = createFriendModal({ AcceptPrompt })
 
 let noDataTips = '当前没有内容'
 
@@ -32,34 +25,60 @@ class FriendList extends React.Component {
       friends: [],
       loading: true,
       noDataTips,
-      dropdownShow: false
     }
-    this._dropDown = {}
+    props.navigation.setParams({
+      component: this
+    })
   }
 
   static navigationOptions = {
-    title: '谈心'
+    title: '有缘人'
   }
 
-  refresh() {
-    this.loadData()
+  refresh = () => {
+    this.setState({
+      refreshing: true
+    }, () => {
+      this.loadData()
+    })
+  }
+
+  reload() {
+    this.setState({
+      loading: true,
+      friends: []
+    }, () => {
+      this.loadData()
+    })
+  }
+
+  layoutData(data) {
+    let { success, friends } = data
+    if (success) {
+      this.setState({
+        friends,
+        noDataTips
+      })
+    }
   }
 
   async loadData() {
-    const { loading } =  this.state
+    const { loading, refreshing } =  this.state
     let data = await get('friend')
     if (loading) {
       this.setState({
         loading: false,
         refreshing: false,
       }, () => {
-        let { success, friends } = data
-        if (success) {
-          this.setState({
-            friends,
-            noDataTips
-          })
-        }
+        data && this.layoutData(data)
+      })
+    }
+    if (refreshing) {
+      this.setState({
+        refreshing: false,
+        minds: []
+      }, () => {
+        data && this.layoutData(data)
       })
     }
   }
@@ -68,17 +87,9 @@ class FriendList extends React.Component {
     this.loadData()
   }
 
-  groupDropDown(name, target) {
-    this._dropDown[name] = target
-  }
-
-  dropDownBlur = (e) => {
-    let target = e.nativeEvent.target
-    let dropDowns = Object.values(this._dropDown)
-    if (dropDowns.indexOf(target) === -1) {
-      this.setState({
-        dropdownShow: false
-      })
+  componentWillReceiveProps(props) {
+    if (props.loginData.userId !== this.props.loginData.userId) {
+      this.reload()
     }
   }
 
@@ -86,194 +97,41 @@ class FriendList extends React.Component {
     let { 
       friends, 
       loading, 
-      refreshing, 
-      dropdownShow 
+      refreshing
     } = this.state
 
     return (
       <View 
-        onStartShouldSetResponderCapture={this.dropDownBlur}
         style={[globalStyles.container, {
           zIndex: 0
         }]}
       >
-        <View style={globalStyles.header}>
-          <Text style={globalStyles.logo}>{ title }</Text>
-          <TouchableOpacity
-            ref={ref => {
-              ref && this._dropdowns.push(findNodeHandle(ref))
-            }}
-            onPress={() => this.setState({
-              dropdownShow: !dropdownShow
-            })}
-            style={{
-              padding: 10
-            }}
-          >
-            <TYicon 
-              ref={ref => {
-                this._dropdowns = []
-                ref && this._dropdowns.push(findNodeHandle(ref))
-              }}
-              style={{
-                marginRight: 10
-              }}
-              name='tianjiaguanzhu' 
-              size={18} 
-              color='#666'></TYicon>
-          </TouchableOpacity>
-        </View>
-        { 
-          dropdownShow
-            ? 
-            <CardView
-              ref={ref => {
-                ref && this._dropdowns.push(findNodeHandle(ref))
-              }}
-              cardElevation={4}
-              maxCardElevation={4}
-              radius={5}
-              backgroundColor={'#ffffff'}
-              style={globalStyles.dropDown}
-            >
-              {Object.entries(MIND_TYPES).map(([id, guide], index) => (<TouchableOpacity 
-                key={id}
-                ref={ref => {
-                  ref && this._dropdowns.push(findNodeHandle(ref))
-                }}
-                onPress={() => {
-                  this._modal.open('MindEditor', {
-                    itemTypeId: id,
-                    itemId: '',
-                  })
-                  this.setState({ dropdownShow: false })
-                }}
-                style={{
-                  padding: 10
-                }}
-              >
-                <Text
-                  ref={ref => {
-                    ref && this._dropdowns.push(findNodeHandle(ref))
-                  }}
-                >{guide.action + guide.name + guide.icon}</Text>
-              </TouchableOpacity>))}
-            </CardView>
-          : null
-        }
-        {/*<Back 
-          name="有缘人"
-          routeName={this.props.navigation.state.params.routeName}
-          navigation={this.props.navigation} 
-          rightButton={{
-            icon: 'mn_tianjiahaoyou',
-            noBorder: true,
-            onPress: () => {
-              this.props.navigation.navigate('UserSearch', {
-                onGoBack: () => this.refresh()
-              })
-            }
-            onPress: () => {
-              this.setState({
-                dropdownShow: !dropdownShow
-              })
-            }
-          }}
-          onLayoutRightBtn={ 
-            (name, target) => this.groupDropDown(
-              name, 
-              target
-            ) 
-          }
-        />*/}
-        { dropdownShow ? 
-          <CardView
-            onLayout={ 
-              e => this.groupDropDown(
-                'list', 
-                e.nativeEvent.target
-              ) 
-            }
-            cardElevation={4}
-            maxCardElevation={4}
-            radius={5}
-            backgroundColor={'#ffffff'}
-            style={{
-              ...globalStyles.dropDown,
-              width: 180
-            }}
-          >
-            <TouchableOpacity 
-              onLayout={ 
-                e => this.groupDropDown(
-                  'menu_1', 
-                  e.nativeEvent.target
-                ) 
-              }
-              onPress={() => {
-                this.props.navigation.navigate('UserSearch', {
-                  onGoBack: () => this.refresh()
-                })
-                this.setState({ dropdownShow: false })
-              }}
-              style={{
-                padding: 10
-              }}
-            >
-              <Text
-                onLayout={ 
-                  e => this.groupDropDown(
-                    'menu_1_text', 
-                    e.nativeEvent.target
-                  ) 
-                }
-              >查找并添加</Text>
-            </TouchableOpacity>
-            {/*<TouchableOpacity 
-              onLayout={ 
-                e => this.groupDropDown(
-                  'menu_2', 
-                  e.nativeEvent.target
-                ) 
-              }
-              style={{
-                padding: 10
-              }}
-            >
-              <Text
-                onLayout={ 
-                  e => this.groupDropDown(
-                    'menu_2_text', 
-                    e.nativeEvent.target
-                  ) 
-                }
-              >邀请他（她）加入</Text>
-              </TouchableOpacity>*/}
-          </CardView>
-        : null}
         {this.state.friends.length ? <FlatList
-          style={{
-            marginTop: 10
-          }}
-          data={this.state.friends}
+          data={friends}
+          refreshing={refreshing}
+          onRefresh={this.refresh}
           renderItem={({item, index}) => <FriendItem 
             {...item} 
             onRemove={() => {
               friends.splice(index, 1)
               this.setState({
                 friends
+              }, () => {
+                this.props.screenProps.onFriendChange()
               })
             }} 
             onAccpect={(friendId) => {
-              this._modal.open()
-              this._modal.setParams({
+              this.props.navigation.navigate('AcceptPrompt', {
                 friendId,
-                status: 'accept'
+                status: 'accept',
+                onListRefresh: () => {
+                  this.reload()
+                  this.props.screenProps.onFriendChange()
+                }
               })
             }}
             onDeny={(friendId, animateFun) => {
-              this._modal.open()
-              this._modal.setParams({
+              this.props.navigation.navigate('AcceptPrompt', {
                 friendId,
                 status: 'deny',
                 onDenyConfirm: () => {
@@ -282,10 +140,13 @@ class FriendList extends React.Component {
               })
             }}
             onRemark={(friendship) => {
-              this._modal.open()
-              this._modal.setParams({
+              this.props.navigation.navigate('AcceptPrompt', {
                 friendship,
-                status: 'remark'
+                status: 'remark',
+                onListRefresh: () => {
+                  this.reload()
+                  this.props.screenProps.onFriendChange()
+                }
               })
             }}
           />}
@@ -326,9 +187,7 @@ class FriendList extends React.Component {
             color: '#666'
           }}>一、不知道对方用户名、邮箱</Text>
           <TouchableOpacity
-            onPress={() => this.props.navigation.navigate('Fate', {
-              onGoBack: () => this.refresh()
-            })}
+            onPress={() => this.props.navigation.navigate('Fate')}
             style={{
               borderRadius: 3,
               justifyContent: 'center',
@@ -355,7 +214,7 @@ class FriendList extends React.Component {
           }}>二、知道对方的用户名或邮箱</Text>
           <TouchableOpacity
             onPress={() => this.props.navigation.navigate('UserSearch', {
-              onGoBack: () => this.refresh()
+              onGoBack: () => this.reload()
             })}
             style={{
               justifyContent: 'center',
@@ -404,19 +263,14 @@ class FriendList extends React.Component {
               color={'#EE3D80'}></TYicon>
           </TouchableOpacity>*/}
         </ScrollView> : <Empty loading={true} />)}
-        <AcceptModal 
-          ref={ref => this._modal = ref}
-          listRefresh={() => this.refresh()}
-        />
       </View>
     )
   }
 }
 
-export default createStackNavigator({
-  FriendList,
-  UserSearch: UserSearchScreen
-}, {
-  headerMode: 'none',
-  mode: 'modal'
-})
+const mapStateToProps = (state) => {
+  const { loginData } = state
+  return { loginData }
+}
+
+export default connect(mapStateToProps)(FriendList)
