@@ -145,6 +145,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-cookies')
     implementation project(':react-native-rn-cardview')
     implementation project(':react-native-svg')
     implementation project(':react-native-vector-icons')

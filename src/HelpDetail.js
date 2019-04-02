@@ -12,13 +12,15 @@ import {
   Platform,
 } from 'react-native'
 import { connect } from 'react-redux'
-import { get, post, del, getUserInfo } from 'app/component/request'
+import { get, post, del, getUserByMemory } from 'app/component/request'
 import Back from 'app/component/Back'
+import { Footer } from 'app/component/ListLoad'
 import globalStyles from 'app/component/globalStyles'
 import { STATUS_BAR_HEIGHT } from 'app/component/Const'
 import ActionModal from 'app/Karma/ActionModal'
+import { Spinner } from 'app/component/GlobalModal'
 
-let noDataTips = '当前没有内容'
+let noDataTips = '当前没有评论'
 const ANIMATION_DURATION = 250
 
 class ReplyItem extends React.Component {
@@ -55,6 +57,7 @@ class ReplyItem extends React.Component {
       reply_type, 
       receivername = '',
       curUserId,
+      onReply,
       onShowAction
     } = this.props
     const replyName = (remark && remark[0] || username || '')
@@ -68,7 +71,6 @@ class ReplyItem extends React.Component {
           onPress={creator_id !== curUserId ? () => onReply({ 
             replyType: 'reply', 
             replyId: _id,
-            parentId: _id,
             receiverId: creator_id,
             receiverName: replyName
           }) : () => onShowAction()}
@@ -115,7 +117,10 @@ class DetailView extends Component {
   async removeMind(id) {
     const res = await del(`mind/${id}`)
     if (res.success) {
-      this.onRemove()
+      // TODO 删除后效果
+      // this.onRemove()
+      this.props.navigation.goBack()
+      this.props.navigation.state.params.onBackRemove();
     }
   }
 
@@ -148,14 +153,7 @@ class DetailView extends Component {
             style={{
               padding: 10
             }}
-            onPress={() => {
-              this.props.onReply({ 
-                replyType: 'help', 
-                replyId: help._id,
-                parentId: help._id,
-                receiverId: help.creator_id 
-              })}
-            }
+            onPress={() => this.props.onReply()}
           >
             <Text style={{ 
               fontSize: 14,
@@ -168,7 +166,7 @@ class DetailView extends Component {
                   style={{
                     padding: 10
                   }}
-                  onPress={() => this.removeHelp(_id)}
+                  onPress={() => this.removeMind(help._id)}
                 >
                   <Text style={{ 
                   fontSize: 14,
@@ -187,48 +185,90 @@ class HelpDetail extends Component {
 
   constructor(props) {
     super(props)
+    this._defaultReplyData = null
     this.state = {
       help: null,
+      loading: true,
       noDataTips,
       refreshing: false,
+      replyData: null,
       reply: ''
     }
   }
 
-  async replyConfirm() {
-    this._replyInput && this._replyInput.blur()
-    const data = Object.assign(this.state.replyData, { content: this.state.reply })
-    const { content, replyId, replyType, parentId, receiverId } = data
-    let res = await post(`${replyType}/${replyId}/reply`, { 
-      content,
-      parent_id: parentId,
-      parent_type: 'help',
-      receiver_id: receiverId
-    })
-    if (res) {
-      const { success } = res
+  replyConfirm() {
+    // 获取回复数据
+    const { 
+      replyData, 
+      reply 
+    } = this.state
+    , data = Object.assign(
+      replyData || this._defaultReplyData, { 
+        content: reply 
+      }
+    )
+    , { 
+      content, 
+      replyId, 
+      replyType, 
+      parentId, 
+      receiverId 
+    } = data
+
+    // 清理回复框并发送回复
+    this.setState({
+      reply: '',
+      replyData: null
+    }, async () => {
+      // 界面上添加回复项
       let { help } = this.state
-      if (help && success) {
-        let user = getUserInfo()
-        let { reply } = res
-        reply.username = user.username
+      , reqParams = { 
+        content,
+        parent_id: parentId,
+        parent_type: 'mind',
+        receiver_id: receiverId
+      }
+      , newReply = Object.assign({}, reqParams)
+      if (help) {
+        let replies = help.replies || []
+        , user = getUserByMemory()
+        , key = replies.length
+        newReply._id = 'newreply' + key
+        newReply.username = user.username
+        newReply.reply_id = replyId
+        newReply.reply_type = replyType
+        newReply.creator_id = user._id
         if (replyType === 'reply') {
           let replyTo = help.replies.find(item => item._id === replyId)
-          reply.receivername = replyTo.remark[0] || replyTo.username[0] || ''
+          newReply.receivername = replyTo.remark[0] || replyTo.username[0] || ''
         }
-        help.replies = help.replies || []
-        help.replies.unshift(reply)
+        replies.unshift(newReply)
         this.setState({
           help
         })
       }
-    }
+
+      // 向服务器发送回复
+      const res = await post(
+        `${replyType}/${replyId}/reply`, 
+        reqParams
+      )
+      if (res) {
+        const { success, reply } = res
+        if (success && reply) {
+          newReply._id = reply._id
+          this.setState({
+            help
+          })
+        }
+      }
+    })
   }
 
   onReply(data) {
     this.setState({
       reply: '',
-      replyData: data
+      replyData: data || null
     }, () => {
       this._replyInput.focus()
     })
@@ -239,14 +279,22 @@ class HelpDetail extends Component {
   }
 
   async loadData() {
-    const troubleId = this.props.navigation.getParam('itemId')
-    let data = await get(`help/${troubleId}`)
-    console.log(data)
-    let { success, help } = data
-    if (success) {
-      this.setState({
-        help
-      })
+    const mindId = this.props.navigation.getParam('itemId')
+    let data = await get(`help/${mindId}`)
+    if (data) {
+      let { success, help } = data
+      if (success) {
+        this._defaultReplyData = { 
+          replyType: 'mind', 
+          replyId: help._id,
+          parentId: help._id,
+          receiverId: help.creator_id 
+        }
+        this.setState({
+          help,
+          loading: false
+        })
+      }
     }
   }
 
@@ -254,17 +302,19 @@ class HelpDetail extends Component {
     this.loadData()
   }
 
-  async removeReply(id, index) {
-    console.log(id, index)
-    const res = await del(`reply/${id}`)
-    if (res.success) {
-      let { help } = this.state
-      let { replies } = help
-      replies.splice(index, 1)
-      this.setState({
-        replies
-      })
-    }
+  removeReply(id, index) {
+    let { help } = this.state
+    let { replies } = help
+    replies.splice(index, 1)
+    this.setState({
+      replies
+    }, async () => {
+      // TODO 删除中loading...效果
+      const res = await del(`reply/${id}`)
+      if (res.success) {
+        // TODO 删除后状态提示
+      }
+    })
   }
 
   showActionModal(id, index) {
@@ -274,18 +324,28 @@ class HelpDetail extends Component {
   }
 
   render() {
-    let { noDataTips, help, reply } = this.state
+    let { noDataTips, help, reply, refreshing, loading } = this.state
     const { receiverName = '' } = this.state.replyData || {}
     const { userId = '' } = this.props.loginData
     const { navigation } = this.props
+    const action = navigation.getParam('action')
+    const isFollow = action === 'follow'
     if (help) {
       let { replies } = help
       return (
         <View 
           style={{ flex: 1 }}
         >
+          {/*<Spinner
+            visible={true}
+            textStyle={{
+              color: '#333'
+            }}
+            color='#666'
+            overlayColor='rgba(255,255,255, 0.25)'
+          />*/}
           <Back navigation={navigation} />
-          {replies && replies.length ? <FlatList
+          <FlatList
               contentContainerStyle={{
                 paddingHorizontal: 15,
                 paddingBottom: 15
@@ -293,31 +353,50 @@ class HelpDetail extends Component {
               keyboardShouldPersistTaps="handled"
               keyboardDismissMode="on-drag"
               data={replies}
+              refreshing={refreshing}
+              onRefresh={this.refresh}
               ListHeaderComponent={
                 <DetailView 
                   curUserId={userId} 
+                  navigation={navigation}
                   help={help} 
-                  onReply={(data) => this.onReply(data)} 
+                  onReply={() => this.onReply()} 
                 />
               }
               renderItem={({item, index}) => <ReplyItem 
                 navigation={navigation}
-                onReply={this.onReply.bind(this)} 
+                onReply={(data) => {
+                  data.parentId = help._id
+                  this.onReply(data)
+                }} 
                 curUserId={userId}
                 onShowAction={() => this.showActionModal(item._id, index)}
                 {...item}
               />}
+              ListEmptyComponent={() => 
+                <View>
+                  <Text style={{
+                    color: '#333333',
+                    textAlign: 'center',
+                    paddingTop: 20
+                  }}>
+                    {noDataTips}
+                  </Text>
+                </View>
+              }
+              /*
+                TODO 增加分页
+                ListFooterComponent={<Footer 
+                data={replies} 
+                onLoadMore={this.loadMore} 
+                loading={loading}
+                page={page}
+              />}*/
               ItemSeparatorComponent={() => <View style={globalStyles.separator} />}
               keyExtractor={(item) => (item._id)}
-            /> : (<View>
-              <Text style={{
-                color: '#333333',
-                textAlign: 'center',
-                paddingTop: 20
-              }}>
-                {noDataTips}
-              </Text>∂
-            </View>)}
+              showsVerticalScrollIndicator={false}
+              showsHorizontalScrollIndicator={false}
+            />
             <KeyboardAvoidingView
               keyboardVerticalOffset={Platform.select({ios: STATUS_BAR_HEIGHT, android: null})}
               behavior={Platform.select({ios: 'padding', android: null})}
@@ -336,20 +415,20 @@ class HelpDetail extends Component {
                   flex: 1,
                   borderColor: '#cccccc', 
                   borderWidth: 1,
-                  height: 36,
-                  paddingTop: 3,
-                  paddingHorizontal: 7,
-                  paddingBottom: 4,
+                  padding: 10,
                   borderRadius: 3,
                   backgroundColor: 'white',
                   marginRight: 8
                 }}
-                placeholder={receiverName ? "回复" + receiverName : "回复..."}
+                placeholder={isFollow? "跟进" : (receiverName ? "回复" + receiverName : "回复...")}
                 placeholderTextColor="#cccccc"
                 allowFontScaling={false}
                 autoCapitalize="none"
                 underlineColorAndroid='transparent'
                 onChangeText={text => this.setState({ reply: text })}
+                value={reply}
+                autoFocus={isFollow}
+                multiline={true}
               />
               {
                 reply.trim() 
@@ -366,30 +445,39 @@ class HelpDetail extends Component {
                   : null
               }
             </KeyboardAvoidingView> 
-              <ActionModal 
-                navigation={this.props.navigation}
-                ref={ ref => this._modal = ref }
-              />
+            <ActionModal 
+              navigation={this.props.navigation}
+              ref={ ref => this._modal = ref }
+            />
         </View>
       )
     } else {
-      return (
-        <View style={{ flex: 1 }}>
-          <Back navigation={this.props.navigation} />
-          <ScrollView
-            refreshControl={
-              <RefreshControl
-                refreshing={this.state.refreshing}
-                onRefresh={this.refresh}
-              />
-            }
-            showsVerticalScrollIndicator={false}
-            showsHorizontalScrollIndicator={false}
-          >
-            <Text style={globalStyles.noDataText}>您查看的内容已被删除。</Text>
-          </ScrollView>
-        </View>
-      )
+      return loading
+        ? <View style={{ flex: 1 }}>
+            <Back navigation={this.props.navigation} />
+            <Text style={globalStyles.noDataText}>加载中...</Text>
+          </View>
+        : <View style={{ flex: 1 }}>
+            <Back navigation={this.props.navigation} />
+            <ScrollView
+              refreshControl={
+                <RefreshControl
+                  refreshing={this.state.refreshing}
+                  onRefresh={this.refresh}
+                />
+              }
+              contentContainerStyle={{
+                flex: 1,
+                padding: 10,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+              showsVerticalScrollIndicator={false}
+              showsHorizontalScrollIndicator={false}
+            >
+              <Text style={globalStyles.noDataText}>您查看的内容已被删除。</Text>
+            </ScrollView>
+          </View>
     }
   }
 }

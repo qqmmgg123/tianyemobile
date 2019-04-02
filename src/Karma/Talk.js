@@ -10,15 +10,17 @@ import {
   Platform,
 } from 'react-native'
 import { connect } from 'react-redux'
-import { get, post, del, getUserInfo } from 'app/component/request'
+import { bindActionCreators } from 'redux'
+import { layoutHomeData } from 'app/HomeActions'
+import { get, post, del, getUserByMemory } from 'app/component/request'
 import globalStyles from 'app/component/globalStyles'
 import TYicon from 'app/component/TYicon'
-import Back from 'app/component/Back'
 import { Empty, Footer } from 'app/component/ListLoad'
 import { STATUS_BAR_HEIGHT } from 'app/component/Const'
 import ActionModal from 'app/Karma/ActionModal'
 import TalkEmptyGuide from 'app/Friend/TalkEmptyGuide'
 import { ANIMATION_DURATION, MIND_TYPES } from 'app/component/Const'
+import { getDate } from 'app/utils'
 
 class ReplyItem extends React.Component {
 
@@ -78,12 +80,16 @@ class HelpItem extends React.Component {
 
   constructor(props) {
     super(props)
+    this._readed = 0
     this._animated = new Animated.Value(1)
+    const { curReply } = props
+    const { summary } = curReply
     this.state = {
       loading: false,
-      text: props.summary,
+      text: summary,
+      curReply,
       content: '',
-      summary: props.summary,
+      summary,
       expand: false
     }
   }
@@ -119,6 +125,26 @@ class HelpItem extends React.Component {
         duration: ANIMATION_DURATION,
       }).start(() => onRemove(helpIndex, index))
     }
+  }
+
+  mindComment = () => {
+    const { msgCount, onRemoveMsgTips } = this.props
+    const { curReply } = this.state
+    const { _id } = curReply
+    this.props.navigation.navigate('HelpDetail', {
+      itemId: _id,
+      action: 'comment',
+      onBackRemove: () => this.onRemove()
+    })
+    this._readed += 1 
+    curReply.reply_visit_date = new Date()
+    this.setState({
+      curReply: curReply
+    }, () => {
+      if (this._readed >= msgCount) {
+        onRemoveMsgTips()
+      }
+    })
   }
 
   showActionModal(id, index) {
@@ -165,33 +191,69 @@ class HelpItem extends React.Component {
   }
 
   render() {
+    const { text, content, expand, curReply } = this.state
+    const { navigation, onReply } = this.props
     const { 
       replies, 
       _id, 
       type_id,
       column_id,
+      curUserId,
       creator_id, 
       reply_count, 
-      remark = [], 
-      username = '',
-      curUserId,
+      author, 
+      friend,
       is_extract,
-      navigation,
-      onReply } = this.props
-    const { text, content, expand } = this.state
+      created_date,
+      updated_date,
+      new_reply_date,
+      reply_visit_date,
+    } = curReply
+    const username = (friend && friend.remark) || (author && (author.panname || author.username)) || ''
+    const hasNew = new_reply_date > reply_visit_date
     return (
       <View 
         style={{
-          paddingTop: 10
+          padding: 10,
+          backgroundColor: 'white'
         }}
       >
+        <View
+          style={{
+            flexDirection: 'row'
+          }}
+        >
+          {
+            hasNew
+              ? <View 
+                  style={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: 4,
+                    backgroundColor: '#EE3D80',
+                    marginTop: 8,
+                    marginRight: 10,
+                    alignSelf: 'flex-start'
+                  }}
+                ></View>
+              : null
+          }
+          <Text 
+            style={{ 
+              fontSize: 14,
+              color: '#999',
+              lineHeight: 28
+            }}
+          >{
+              [
+                username, 
+                getDate(new Date(created_date)), 
+                (updated_date ? '更新' : MIND_TYPES[type_id].action) + '了', 
+                MIND_TYPES[type_id].name
+              ].join(' ')
+            }</Text>
+        </View>
         <View>
-          <Text>{MIND_TYPES[type_id].icon + MIND_TYPES[type_id].name}</Text>
-          <Text style={{ 
-            fontSize: 14,
-            color: '#333',
-            lineHeight: 28
-            }}>{remark || username}：</Text>
           <Text style={{ 
             marginTop: 5,
             fontSize: 16,
@@ -238,12 +300,13 @@ class HelpItem extends React.Component {
             style={{
               padding: 10
             }}
-            onPress={() => onReply({ 
+            onPress={this.mindComment}
+            /* onPress={() => onReply({ 
               replyType: 'mind', 
               replyId: _id,
               parentId: _id,
               receiverId: creator_id 
-            })}
+            })} */
           >
             <Text style={{ 
             fontSize: 14,
@@ -257,7 +320,7 @@ class HelpItem extends React.Component {
           borderRadius: 3,
           marginBottom: 10
         }}>
-          {replies.map((reply, index) => {
+          {/*replies.map((reply, index) => {
             const replyName = (reply.remark && reply.remark[0] || reply.username || '')
             return <ReplyItem 
               key={reply._id}
@@ -273,8 +336,8 @@ class HelpItem extends React.Component {
                 receiverName: replyName
               })}
             />
-          })}
-          {this.moreButton(_id, reply_count)}
+          })*/}
+          {/*this.moreButton(_id, reply_count)*/}
         </View>
       </View>
     )
@@ -296,6 +359,13 @@ class Talk extends React.Component {
       replyData: null,
       btnDis: true,
     }
+    props.navigation.setParams({
+      component: this
+    })
+  }
+
+  static navigationOptions = {
+    title: '谈心'
   }
 
   removeReply = (helpIndex, replyIndex) => {
@@ -322,7 +392,7 @@ class Talk extends React.Component {
       const { success } = res
       let { helps } = this.state
       if (success) {
-        let user = getUserInfo()
+        let user = getUserByMemory()
         let help = helps.find(item => item._id === parentId)
         let { reply } = res
         reply.username = user.username
@@ -381,11 +451,13 @@ class Talk extends React.Component {
     const { page, loading, refreshing } =  this.state
     let data = await get('features/help', {
       perPage: 20,
-      page
+      page,
+      isVisit: refreshing
     })
     if (loading) {
       this.setState({
-        loading: false
+        loading: false,
+        refreshing: false,
       }, () => {
         data && this.layoutData(data)
       })
@@ -409,6 +481,16 @@ class Talk extends React.Component {
     })
   }
 
+  reload() {
+    this.setState({
+      page: 1,
+      loading: true,
+      helps: []
+    }, () => {
+      this.loadData()
+    })
+  }
+
   loadMore = () => {
     const { page, loading } = this.state
     if (!page || loading) return
@@ -419,14 +501,75 @@ class Talk extends React.Component {
     })
   }
 
-  componentWillMount() {
-    this.loadData()
+  newMindsReaded(message, karmaMsg, curMsg) {
+    this.refresh()
+    if (curMsg) {
+      curMsg.mind_total = 0
+      if (curMsg.reply_total === 0) {
+        karmaMsg.has_new = false
+        curMsg.has_new = false
+      }
+      this.props.layoutHomeData({
+        message: message
+      })
+    }
   }
 
-  componentDidUpdate(props, state) {
+  componentWillMount() {
+    let query = msg => msg.feature === 'karma'
+    let message = [...this.props.homeData.message]
+    let karmaMsg = message.find(query)
+    let karmaMsgs = karmaMsg && karmaMsg.sub_feature || []
+    let curMsg = karmaMsgs.find(msg => msg.feature === 'talk')
+    if (!curMsg || !curMsg.mind_total) {
+      this.loadData()
+    }
+  }
+
+  componentDidMount() {
+    this._foucsHandle = this.props.navigation.addListener('didFocus', () => {
+      let query = msg => msg.feature === 'karma'
+      let message = [...this.props.homeData.message]
+      let karmaMsg = message.find(query)
+      let karmaMsgs = karmaMsg && karmaMsg.sub_feature || []
+      let curMsg = karmaMsgs.find(msg => msg.feature === 'talk')
+      if (curMsg && curMsg.mind_total) {
+        this.newMindsReaded(message, karmaMsg, curMsg)
+      }
+    })
+  }
+
+  componentWillUnmount() {
+    this._foucsHandle.remove()
+  }
+
+  componentDidUpdate(prevProps, state) {
     let { replyVisible } = state
     if (this.state.replyVisible && replyVisible !== this.state.replyVisible) {
       this._replyInput.focus()
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    let query = msg => msg.feature === 'karma'
+    let newMessage = [...nextProps.homeData.message]
+    let newKarmaMsg = newMessage.find(query)
+    let curKarmaMsg = this.props.homeData.message.find(query)
+    let newKarmaMsgs = newKarmaMsg && newKarmaMsg.sub_feature || []
+    let curKarmaMsgs = curKarmaMsg && curKarmaMsg.sub_feature || []
+    let newMsg = newKarmaMsgs.find(msg => msg.feature === 'talk')
+    let curMsg = curKarmaMsgs.find(msg => msg.feature === 'talk')
+
+    if (newMsg && newMsg.mind_total) {
+      if (nextProps.navigation.isFocused()) {
+        this.newMindsReaded(newMessage, newKarmaMsg, newMsg)
+      }
+      return
+    }
+
+    if (nextProps.loginData.userId !== this.props.loginData.userId ||
+      (newMsg && newMsg.reply_total || 0) !== (curMsg && curMsg.reply_total || 0)) {
+      this.reload()
     }
   }
 
@@ -441,18 +584,20 @@ class Talk extends React.Component {
       reply,
       replyData
     } = this.state
-    const { loginData, navigation } = this.props
+    const { loginData, homeData, navigation } = this.props
     const { receiverName = '' } = replyData || {}
     const { userId = '' } = loginData
+    let { message } = homeData
+    message = [...message]
+    let karmaMsg = message.find(msg => msg.feature === 'karma')
+    let karmaMsgs = karmaMsg && karmaMsg.sub_feature || []
+    let curMsg = karmaMsgs.find(msg => msg.feature === 'talk')
+    let replyMsgCount = curMsg && curMsg.reply_total || 0
 
     return (
       <View
         style={globalStyles.container}
       >
-        <Back
-          name="谈心"
-          navigation={navigation} 
-        />
         <View
           style={{ flex: 1 }}
         >
@@ -462,16 +607,34 @@ class Talk extends React.Component {
               <FlatList
                 keyboardShouldPersistTaps="handled"
                 keyboardDismissMode="on-drag"
-                contentContainerStyle={{
+                /*contentContainerStyle={{
                   padding: 10
-                }}
+                }}*/
                 data={helps}
                 refreshing={refreshing}
                 onRefresh={this.refresh}
                 onEndReached={this.loadMore}
                 onEndReachedThreshold={100}
                 renderItem={({item, index}) => <HelpItem 
+                  curReply={item}
                   curUserId={userId}
+                  msgCount={replyMsgCount}
+                  onRemoveMsgTips={() => {
+                    console.log('消息全部已读')
+                    message = [...message]
+                    let karmaMsg = message.find(msg => msg.feature === 'karma')
+                    let karmaMsgs = karmaMsg && karmaMsg.sub_feature || []
+                    let curMsg = karmaMsgs.find(msg => msg.feature === 'talk')
+                    if (curMsg) {
+                      curMsg.has_new = false
+                      curMsg.reply_total = 0
+                      karmaMsg.has_new = false
+                      karmaMsg.mind_total = 0
+                      this.props.layoutHomeData({
+                        message: message
+                      })
+                    }
+                  }}
                   navigation={this.props.navigation}
                   onReply={this.onReply.bind(this)} 
                   onShowActionModal={(onRemoveReply) => this._modal.open('ActionSelect', {
@@ -496,6 +659,8 @@ class Talk extends React.Component {
                   ? <TalkEmptyGuide 
                       navigation={navigation}
                       friendTotal={friendTotal} 
+                      refreshing={refreshing}
+                      onRefresh={this.refresh}
                     /> 
                   : <Empty loading={true} />
               )
@@ -564,8 +729,14 @@ class Talk extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  const { loginData } = state
-  return { loginData }
+  const { loginData, homeData } = state
+  return { loginData, homeData }
 }
 
-export default connect(mapStateToProps)(Talk)
+const mapDispatchToProps = dispatch => (
+  bindActionCreators({
+    layoutHomeData,
+  }, dispatch)
+)
+
+export default connect(mapStateToProps, mapDispatchToProps)(Talk)

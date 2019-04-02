@@ -29,12 +29,16 @@ class MindItem extends React.Component {
 
   constructor(props) {
     super(props)
+    this._readed = 0
     this._animated = new Animated.Value(1)
+    const { curReply } = props
+    const { summary } = curReply
     this.state = {
       loading: false,
-      text: props.summary,
+      curReply,
+      text: summary,
       content: '',
-      summary: props.summary,
+      summary,
       expand: false
     }
   }
@@ -72,59 +76,225 @@ class MindItem extends React.Component {
     }
   }
 
+  mindFollow = () => {
+    const { msgCount, onRemoveMsgTips } = this.props
+    const { curReply } = this.state
+    const { _id } = curReply
+    this.props.navigation.navigate('HelpDetail', {
+      itemId: _id,
+      action: 'follow',
+      onBackRemove: () => this.onRemove()
+    })
+    this._readed += 1
+    curReply.reply_visit_date = new Date()
+    this.setState({
+      curReply: curReply
+    }, () => {
+      if (this._readed >= msgCount) {
+        onRemoveMsgTips()
+      }
+    })
+  }
+
+  mindModify = () => {
+    const { _id } = this.state.curReply
+    this.props.modal.open('MindEditor', {
+      itemId: _id,
+    })
+  }
+
   render() {
     const rowStyles = [
       { opacity: this._animated }
     ]
+    const { text, content, expand, curReply } = this.state
+    const { curUserId, navigation } = this.props
     const { 
+      _id, 
       type_id, 
       title = '', 
-      curUserId, 
       creator_id,
-      _id, 
       created_date, 
       updated_date, 
       last_reply_date, 
+      reply_visit_date,
       new_reply, 
       quote, 
       column_id, 
       is_extract, 
-      navigation 
-    } = this.props
-    const { text, content, expand } = this.state
+    } = curReply
 
     // 动态
     let activity = ''
+    let notice = null
     if (created_date) {
-      activity = `${MIND_TYPES[type_id].action}于 ${getDate(new Date(created_date))}`
+      activity = `${getDate(new Date(created_date))}${MIND_TYPES[type_id].action}了`
     }
     if (updated_date) {
-      activity = `更新于 ${getDate(new Date(created_date))}`
+      activity = `${getDate(new Date(created_date))}更新了`
     }
     if (last_reply_date && new_reply) {
       const { author, friend } = new_reply
       let username = (friend && friend.remark) || (author && (author.panname || author.username)) || ''
-      activity = `${username} 回复于 ${getDate(new Date(created_date))}`
+      activity = `${username} ${getDate(new Date(created_date))}回复了你的`
+      let hasNew = curUserId !== new_reply.creator_id && last_reply_date > reply_visit_date
+      if (hasNew) {
+        notice = <View style={{
+          width: 8,
+          height: 8,
+          borderRadius: 4,
+          backgroundColor: '#EE3D80',
+          marginTop: 8,
+          marginRight: 10,
+          alignSelf: 'flex-start'
+        }}></View>
+      }
     }
+
+    let header = <View
+      style={{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}
+    >
+      {notice}
+      <Text 
+        style={{
+          fontSize: 14,
+          color: '#999',
+          flex: 1
+        }}
+      >{[activity, MIND_TYPES[type_id].name].join('')}</Text>
+      {
+        last_reply_date 
+          ? <TouchableOpacity
+              style={{
+                padding: 10
+              }}
+              onPress={this.mindFollow}
+            >
+              <Text
+                style={{
+                  fontSize: 14,
+                  color: '#666'
+                }}  
+              >跟进</Text>
+            </TouchableOpacity>
+          : <TouchableOpacity
+              style={{
+                padding: 10
+              }}
+              onPress={() => {
+                this.props.modal.open('MindEditor', {
+                  itemId: _id,
+                })
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 14,
+                  color: '#666'
+                }}
+              >修改</Text>
+            </TouchableOpacity>
+            /*<View style={{
+              marginTop: 5,
+              flexDirection: 'row',
+              alignItems: 'center'
+            }}>
+              {
+                (curUserId && curUserId === creator_id)
+                && (!last_reply_date && ['share', 'help'].indexOf(type_id) !== -1)
+                ? (<TouchableOpacity
+                      style={{
+                        padding: 10
+                      }}
+                      onPress={() => navigation.navigate('HelpDetail', {
+                        itemId: _id,
+                        onBackRemove: () => this.onRemove()
+                      })}
+                    >
+                      <Text style={{ 
+                      fontSize: 14,
+                      color: '#666',
+                      }}>回复</Text>
+                    </TouchableOpacity>)
+                : null
+              }
+              {
+                curUserId && curUserId === creator_id
+                ? (<TouchableOpacity
+                      style={{
+                        padding: 10
+                      }}
+                      onPress={() => this.removeMind(_id)}
+                    >
+                      <Text style={{ 
+                      fontSize: 14,
+                      color: '#666'
+                      }}>{type_id === 'help' ? '已解' : '删除'}</Text>
+                    </TouchableOpacity>)
+                : null
+              }
+            </View>*/
+      }
+      <TYicon 
+        style={{
+          marginRight: 10
+        }}
+        name='gengduo' 
+        size={16} 
+        color='#666'></TYicon>
+    </View>
 
     return (
       <Animated.View style={rowStyles}>
-        <View style={{
-          paddingTop: 15,
-          paddingBottom: 10,
-        }}>
+        <TouchableOpacity 
+          style={{
+            padding: 10,
+            backgroundColor: 'white'
+          }}
+          activeOpacity={1}
+          onPress={last_reply_date ? this.mindFollow : this.mindModify}
+        >
           <View>
-            <Text>{MIND_TYPES[type_id].icon + MIND_TYPES[type_id].name}</Text>
+            {
+              /*last_reply_date 
+                ? <View 
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center'
+                      // marginTop: 5,
+                      // backgroundColor: '#f3f4f5',
+                      // borderRadius: 3,
+                      // marginBottom: 10,
+                      // padding: 10
+                    }}
+                  >
+                  <TYicon 
+                    style={{
+                      marginRight: 10
+                    }}
+                    name='icon_huifu-xian' 
+                    size={18} 
+                    color='#999'></TYicon>
+                  <Text 
+                    style={{
+                      fontSize: 14,
+                      lineHeight: 24,
+                      color: '#666',
+                    }}
+                    numberOfLines={1}
+                  >
+                    {new_reply.content}
+                  </Text>
+                </View>
+              : null
+            */}
+            {header}
           </View>
-          <TouchableOpacity
-            activeOpacity={title ? 0.6 : 1}
-            onPress={
-              title
-              ? () => navigation.navigate('MindDetail', {
-                itemId: _id
-              })
-              : null}
-          >
+          <View>
             { title ?
               <Text style={{ 
               fontSize: 16,
@@ -132,13 +302,16 @@ class MindItem extends React.Component {
               lineHeight: 24
             }}>{title}</Text> : null
             }
-            <Text style={{
-              fontSize: title ? 14 : 16,
-              color: title ? '#4d4d4d' : '#333',
-              lineHeight: 24,
-              marginTop: 10
-            }}>{text}</Text>
-          </TouchableOpacity>
+            <Text 
+              style={{
+                fontSize: title ? 14 : 16,
+                color: title ? '#4d4d4d' : '#333',
+                lineHeight: 24,
+                marginTop: 10
+              }}
+              numberOfLines={expand ? null : 2}
+            >{text}</Text>
+          </View>
           {column_id === 'sentence' && is_extract ? <TouchableOpacity
             onPress={() => {
               let { content, expand, summary } = this.state
@@ -173,90 +346,18 @@ class MindItem extends React.Component {
           >
             <Text
               style={globalStyles.quoteTitle}
+              numberOfLines={1}
             >
               {quote.title || ''}
             </Text>
-            <Text
+            {/*<Text
               style={globalStyles.quoteSummary}
+              numberOfLines={2}
             >
               {quote.summary || ''}
-            </Text>
+            </Text>*/}
           </TouchableOpacity> : null}
-          <View style={{
-            marginTop: 5,
-            flexDirection: 'row',
-            alignItems: 'center'
-          }}>
-          <View
-            style={{
-              flex: 1,
-              paddingVertical: 10,
-              paddingRight: 10
-            }}
-          >
-            <Text style={{ 
-              fontSize: 14,
-              color: '#999999',
-              flex: 1,
-            }}>
-              {activity}
-            </Text>
-          </View>
-            {
-              (curUserId && curUserId === creator_id)
-              && (type_id === 'diary')
-               ? (<TouchableOpacity
-                    style={{
-                      padding: 10
-                    }}
-                    onPress={() => {
-                        this.props.modal.open('MindEditor', {
-                          itemId: _id,
-                        })
-                      }
-                    }
-                  >
-                    <Text style={{ 
-                    fontSize: 14,
-                    color: '#666',
-                    }}>编辑</Text>
-                  </TouchableOpacity>)
-              : null
-            }
-            {
-              curUserId && curUserId === creator_id
-               ? (<TouchableOpacity
-                    style={{
-                      padding: 10
-                    }}
-                    onPress={() => this.removeMind(_id)}
-                  >
-                    <Text style={{ 
-                    fontSize: 14,
-                    color: '#666'
-                    }}>{type_id === 'help' ? '已解' : '删除'}</Text>
-                  </TouchableOpacity>)
-              : null
-            }
-          </View>
-          {new_reply && new_reply.conetnt ? <View style={{
-            marginTop: 5,
-            backgroundColor: '#f3f4f5',
-            borderRadius: 3,
-            marginBottom: 10,
-            padding: 10
-          }}>
-            <Text 
-              style={{ 
-                fontSize: 14,
-                lineHeight: 24,
-                color: '#666',
-              }}
-            >
-              {new_reply.conetnt}
-            </Text>
-          </View> : null}
-        </View>
+        </TouchableOpacity>
       </Animated.View>
     )
   }
@@ -298,8 +399,7 @@ class MindList extends React.Component {
       this.props.layoutHomeData({
         appName,
         slogan,
-        features,
-
+        features
       })
       this.setState({
         page: pageInfo.nextPage || 0,
@@ -342,6 +442,16 @@ class MindList extends React.Component {
     })
   }
 
+  reload() {
+    this.setState({
+      page: 1,
+      loading: true,
+      minds: []
+    }, () => {
+      this.loadData()
+    })
+  }
+
   loadMore = () => {
     const { page, loading } = this.state
     if (!page || loading) return
@@ -364,14 +474,18 @@ class MindList extends React.Component {
     this.loadData()
   }
 
-  componentWillReceiveProps(props) {
-    if (props.loginData.userId !== this.props.loginData.userId) {
-      this.refresh()
+  componentWillReceiveProps(nextProps) {
+    let query = msg => msg.feature === 'mind'
+    let newMsg = nextProps.homeData.message.find(query)
+    let curMsg = this.props.homeData.message.find(query)
+    if (nextProps.loginData.userId !== this.props.loginData.userId ||
+      (newMsg && newMsg.total || 0) !== (curMsg && curMsg.total || 0)) {
+      this.reload()
     }
   }
 
   render() {
-    const { features } = this.props.homeData
+    let { features, message } = this.props.homeData
     const { userId = '' } = this.props.loginData
     const { routeName } = this.props.navigation.state
     const title = features && features[routeName.toUpperCase()] || ''
@@ -384,6 +498,10 @@ class MindList extends React.Component {
       page,
       dropdownShow, 
     } = this.state
+
+    message = [...message]
+    let curMsg = message.find(msg => msg.feature === 'mind')
+    let msgCount = curMsg && curMsg.total || 0
     
     return (
       <View 
@@ -463,10 +581,9 @@ class MindList extends React.Component {
             </CardView>
           : null
         }
-        <View style={globalStyles.headerBottomLine}></View>
         {minds && minds.length ? <FlatList
           contentContainerStyle={{
-            padding: 10
+            paddingVertical: 10
           }}
           data={minds}
           refreshing={refreshing}
@@ -476,8 +593,22 @@ class MindList extends React.Component {
           renderItem={({item, index}) => <MindItem
             navigation={this.props.navigation}
             modal={this._modal}
-            {...item} 
+            curReply={item}
             curUserId={userId}
+            msgCount={msgCount}
+            onRemoveMsgTips={() => {
+              console.log('消息全部已读')
+              let { message } = this.props.homeData
+              message = [...message]
+              let curMsg = message.find(msg => msg.feature === 'mind')
+              if (curMsg) {
+                curMsg.has_new = false
+                curMsg.total = 0
+                this.props.layoutHomeData({
+                  message: message
+                })
+              }
+            }}
             onRemove={this.removeItem.bind(this, index)} 
             onRefresh={() => this.refresh()}
             onReport={() => this._modal.open('Report')}
@@ -487,7 +618,6 @@ class MindList extends React.Component {
             onLoadMore={this.loadMore} 
             loading={loading}
             page={page}
-            noDataTips={noDataTips}
           />}
           ItemSeparatorComponent={() => <View style={globalStyles.separator} />}
           keyExtractor={item => (item._id)}

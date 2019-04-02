@@ -103,8 +103,7 @@ export default class MindEditor extends React.Component {
       _id: '',
       type_id: 'diary',
       column_id: 'sentence',
-      content: '',
-      keyboardHeight: 0
+      content: ''
     }
   }
 
@@ -143,35 +142,6 @@ export default class MindEditor extends React.Component {
     }
   }
 
-  _keyboardDidShow(e) {
-    console.log(e.endCoordinates.height)
-    this.setState({
-      keyboardHeight: e.endCoordinates.height
-    })
-  }
-
-  _keyboardDidHide() {
-    this.setState({
-      keyboardHeight: 0
-    })
-  }
-
-  componentDidMount() {
-    this.keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      this._keyboardDidShow.bind(this),
-    );
-    this.keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      this._keyboardDidHide.bind(this),
-    );
-  }
-
-  componentWillUnmount() {
-    this.keyboardDidShowListener.remove();
-    this.keyboardDidHideListener.remove();
-  }
-
   async componentWillMount() {
     const { modal } = this.props
     const _id = modal.getParam('itemId')
@@ -203,12 +173,12 @@ export default class MindEditor extends React.Component {
   }
 
   render() {
-    const { loading, type_id, content, keyboardHeight } = this.state
+    const { loading, type_id, content } = this.state
     const curType = MIND_TYPES[type_id]
     const { icon, name, action, description } = curType
     return (
       <SafeAreaView
-        style={{flex: 1, backgroundColor: '#f5f6f7'}} 
+        style={{flex: 1, backgroundColor: '#fafafa'}} 
         forceInset={{ top: 'always', horizontal: 'never' }}
       >
         {!loading ? (<View 

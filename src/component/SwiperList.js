@@ -1,5 +1,6 @@
 import React from "react";
-import { View, FlatList, Dimensions, Text } from "react-native";
+import { View, Dimensions, Text } from "react-native";
+import FlatList from "app/HorizontalList/FlatList" 
 
 import PropTypes from "prop-types";
 
@@ -94,6 +95,8 @@ class Swiper extends React.Component {
             onViewableItemsChanged={this.onViewableItemsChanged}
             viewabilityConfig={this.viewabilityConfig}
             getItemLayout={this.getItemLayout}
+            refreshing={this.props.refreshing}
+            onRefresh={this.props.onRefresh}
             horizontal
             directionalLockEnabled
             pagingEnabled

@@ -1,8 +1,8 @@
-
 import { AsyncStorage, Alert } from 'react-native'
 import NavigatorService from 'app/services/navigator'
 import { store } from 'app/Store'
-import { changeLoginState } from 'app/HomeActions'
+import { layoutHomeData, changeLoginState } from 'app/HomeActions'
+import CookieManager from 'react-native-cookies'
 
 function alert(msg) {
   Alert.alert(
@@ -16,13 +16,17 @@ function alert(msg) {
 }
 
 // 正式服地址
-export const rootUrl = 'http://192.168.1.3'
+export const rootUrl = 'http://192.168.1.4'
 
 // 测试服地址
-// export const rootUrl = 'http://192.168.1.3:3000'
+// export const rootUrl = 'http://192.168.1.4:3000'
 
-let userInfo = null
+// 当前访问地址
 let curRoute = ''
+// 缓存用户信息
+let userInfo = ''
+// 缓存cookie
+let cookie = ''
 
 export function get(api, data) {
   let queryStr = Object.keys(data || {})
@@ -43,51 +47,30 @@ export function del(api, data) {
   return request(api, 'DELETE', data)
 }
 
-async function getUser() {
-  try {
-    const user = await AsyncStorage.getItem('user', user)
-    return JSON.parse(user)
-  } catch (error) {
-    return null
-  }
+export function setCookieByMemory(value) {
+  cookie = value
 }
 
-export function getUserInfo() {
-  try {
-    return JSON.parse(userInfo)
-  } catch {
-    return null
-  }
+export function setUserByMemory(value) {
+  userInfo = value
 }
 
-async function _saveUser(user) {
-  userInfo = JSON.stringify(user)
-  try {
-    const existUser = await getUser()
-    if (!existUser) {
-      await AsyncStorage.setItem('user', JSON.stringify(user))
-    }
-  } catch (error) {
-    // Error saving data
-  }
+export function getCookieByMemory() {
+  if (cookie) return cookie
+  else return ''
 }
 
-export async function updateUser(user) {
-  userInfo = JSON.stringify(user)
-  try {
-    await AsyncStorage.setItem('user', JSON.stringify(user))
-  } catch (error) {
-    // Error saving data
-  }
+export function getUserByMemory() {
+  if (userInfo) return JSON.parse(userInfo)
+  else return null
 }
 
-export async function removeUser() {
+export function removeCookieByMemory() {
+  cookie = ''
+}
+
+export function removeUserByMemory() {
   userInfo = ''
-  try {
-    await AsyncStorage.removeItem('user')
-  } catch (error) {
-    // Error saving data
-  }
 }
 
 export function setCurRoute(route) {
@@ -103,72 +86,100 @@ export function removeCurRoute() {
 }
 
 function request(api, method, data, headers = {}) {
-  const FETCH_TIMEOUT = 5000;
-  let didTimeOut = false;
+  const REQUEST_TIMEOUT = 5000
   
   return new Promise(function(resolve, reject) {
-    const timeout = setTimeout(function() {
-      didTimeOut = true;
+    const memoryCookie = getCookieByMemory()
+    , timeout = setTimeout(function() {
       reject(new Error('Request timed out'));
-    }, FETCH_TIMEOUT)
-
-    fetch([rootUrl, api].join('/'), {
-      method, // *GET, POST, PUT, DELETE, etc.
-      mode: "cors", // no-cors, cors, *same-origin
-      cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-      headers: Object.assign({
-        'Content-Type': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
-      }, headers),
-      credentials: "same-origin",
-      redirect: "follow", // manual, *follow, error
-      referrer: "no-referrer", // no-referrer, *client
-      body: JSON.stringify(data), // body data type must match "Content-Type" header
-    }).then(function(response) {
-      return response.json()
-    }).then(function(res) {
-      if (!res.success) {
-        switch (res.code) {
-          case 1002:
-            NavigatorService.navigate('Login')
-            store.dispatch(changeLoginState({
-              need_login: true,
-              userId: '',
-              userId: '',
-              username: '',
-              panname: '',
-              email: ''
+    }, REQUEST_TIMEOUT)
+    CookieManager.clearAll().then(() => {
+      console.log(`当前请求:${api}，发送...`, memoryCookie)
+      fetch([rootUrl, api].join('/'), {
+        method, // *GET, POST, PUT, DELETE, etc.
+        mode: "cors", // no-cors, cors, *same-origin
+        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+        headers: Object.assign({
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'Cookie': memoryCookie
+        }, headers),
+        credentials: "omit", // omit, same-origi, include
+        redirect: "manual", // manual, *follow, error
+        referrer: "no-referrer", // no-referrer, *client
+        body: JSON.stringify(data), // body data type must match "Content-Type" header
+      }).then(function(response) {
+        let resCookie = response.headers.get('set-cookie')
+        let newCookie = resCookie ? resCookie.match(/(koa:sess[^;]+;)/g).join(' ') : ''
+        console.log(`当前请求:${api}，成功返回数据...`, newCookie, resCookie)
+        if (newCookie) {
+          setCookieByMemory(newCookie)
+          AsyncStorage.setItem('cookie', newCookie)
+        }
+        return response.json()
+      }).then(res => {
+        let errMsg = ''
+        if (!res.success) {
+          switch (res.code) {
+            case 1002:
+              removeCookieByMemory()
+              removeUserByMemory()
+              AsyncStorage.multiRemove(['cookie', 'user'])
+              store.dispatch(changeLoginState({
+                need_login: true,
+                userId: '',
+                userId: '',
+                username: '',
+                panname: '',
+                email: ''
+              }))
+              NavigatorService.navigate('Login')
+              errMsg = res.info || res.message || '异常错误'
+              clearTimeout(timeout);
+              reject(new Error(errMsg))
+              break
+            default:
+              errMsg = res.info || res.message || '异常错误'
+              setTimeout( () => {
+                alert(errMsg)
+              }, 0)
+              clearTimeout(timeout);
+              reject(new Error(errMsg))
+              break
+          }
+        } else {
+          let { user, notification } = res
+          if (user && notification) {
+            console.log(`用户变更: ${user.panname}`)
+            // 获取该用户通知
+            // TODO: 获取用户消息，应该在服务器进行。reducer也应该是用户的登陆信息
+            setUserByMemory(JSON.stringify(user))
+            AsyncStorage.setItem('user', JSON.stringify(user))
+            store.dispatch(layoutHomeData({ 
+              message: notification
             }))
-            removeUser()
-            break
-          default:
-            setTimeout( () => {
-              alert(res.info || res.message || '异常错误')
-            }, 0)
-            break
+            store.dispatch(changeLoginState({
+              need_login: false,
+              userId: user._id,
+              username: user.username,
+              panname: user.panname,
+              email: user.email
+            }))
+            console.log(`用户变更结束: ${user.panname}`)
+            clearTimeout(timeout);
+            resolve(res)
+            return
+          }
+          resolve(res)
         }
-      } else {
-        let { user } = res
-        let userInfo = getUserInfo()
-        if (user && (!userInfo || user._id !== userInfo._id)) {
-          store.dispatch(changeLoginState({
-            need_login: false,
-            userId: user._id,
-            username: user.username,
-            panname: user.panname,
-            email: user.email
-          }))
-          _saveUser(user)
-        }
-      }
-      clearTimeout(timeout);
-      resolve(res)
-    }).catch(function(err) {
-      setTimeout( () => {
-        alert(err.message || '异常错误')
-      }, 0)
-      if(didTimeOut) return;
-      reject(err);
+      }).catch((err) => {
+        setTimeout( () => {
+          alert(err.message || '异常错误')
+        }, 0)
+        clearTimeout(timeout);
+        reject(err)
+      })
     })
   })
 }

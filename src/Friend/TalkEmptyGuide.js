@@ -1,6 +1,8 @@
 import React from 'react'
 import { 
   View, 
+  ScrollView,
+  RefreshControl,
   TouchableOpacity, 
   Text, 
 } from 'react-native'
@@ -12,17 +14,27 @@ export default class TalkEmptyGuide extends React.Component {
     const {
       friendTotal,
       navigation,
+      refreshing,
+      onRefresh
     } = this.props
 
     return !friendTotal
       ? 
-        <View 
-          style={{
+        <ScrollView 
+          contentContainerStyle={{
             flex: 1,
             padding: 10,
             justifyContent: 'center',
             alignItems: 'center',
           }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
         >
           <Text style={{
             fontSize: 16,
@@ -48,7 +60,7 @@ export default class TalkEmptyGuide extends React.Component {
               marginTop: 10,
               fontSize: 16,
               lineHeight: 28,
-              color: '#FF0140',
+              color: '#EE3D80',
               textAlign: 'center',
               width: 200,
               marginRight: 10
@@ -56,10 +68,26 @@ export default class TalkEmptyGuide extends React.Component {
             <TYicon
               name='jiantou'
               size={16} 
-              color={'#FF0140'}></TYicon>
+              color={'#EE3D80'}></TYicon>
           </TouchableOpacity>
-        </View>
+        </ScrollView>
       : 
+        <ScrollView 
+          contentContainerStyle={{
+            flex: 1,
+            padding: 10,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+        >
         <View style={{
           flex: 1,
           padding: 10,
@@ -78,5 +106,6 @@ export default class TalkEmptyGuide extends React.Component {
             您的有缘人尚未与您共享内容
           </Text>
         </View>
+      </ScrollView>
   }
 }

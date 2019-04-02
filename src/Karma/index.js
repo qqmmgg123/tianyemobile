@@ -3,93 +3,119 @@ import {
   View,
   TouchableOpacity,
   Text,
+  findNodeHandle
 } from 'react-native'
+import { createMaterialTopTabNavigator } from 'react-navigation'
+import CardView from 'react-native-rn-cardview'
+import { bindActionCreators } from 'redux'
+import { layoutHomeData } from 'app/HomeActions'
+import { getNotification } from 'app/component/api'
 import TYicon from 'app/component/TYicon'
 import { connect } from 'react-redux'
 import globalStyles from 'app/component/globalStyles'
+import Talk from 'app/Karma/Talk'
+import Friend from 'app/Friend'
+import Fate from 'app/Karma/Fate'
+import KarmaTab from 'app/Karma/KarmaTab'
 
-let routes = [
-  {
-    key: 'Found',
-    label: '随缘',
-  },
-  {
-    key: 'Fate',
-    label: '投缘',
-  },
-  {
-    key: 'Friend',
-    params: {
-      routeName: 'Karma'
+let navOptions = {
+  tabBarComponent: props => <KarmaTab {...props} />,
+  tabBarOptions: {
+    labelStyle: {
+      color: '#333333'
     },
-    label: '有缘人',
-  },
-  {
-    key: 'Talk',
-    label: '谈心',
-  },
-]
+    indicatorStyle: {
+      width: 20,
+      left: '16.66%',
+      marginLeft: -10,
+      backgroundColor: '#EE3D80'
+    },
+    style: {
+      backgroundColor: '#ffffff',
+    }
+  }
+}
 
-class MoreList extends React.Component {
+const FateNav = createMaterialTopTabNavigator({
+  Talk,
+  Friend,
+  Fate
+}, navOptions)
+
+class Karma extends React.Component {
+
+  constructor(props) {
+    super(props)
+  }
+
+  static router = FateNav.router
+
+  static navigationOptions = {
+    cardStack: {
+      gesturesEnabled: false
+    }
+  }
+
+  friendChange = () => {
+    this.props.navigation.state.routes.forEach((route => {
+      if (['Talk', 'Fate'].indexOf(route.key) !== -1) {
+        route.params.component.reload()
+        getNotification().then(notification => {
+          this.props.layoutHomeData({ 
+            message: notification
+          })
+        })
+      }
+    }))
+  }
+
+  fateChange = () => {
+    const friend  = this.props.navigation.state.routes.find(route => route.key === 'Friend')
+    friend.params.component.reload()
+  }
 
   render() {
-    const { features, message = [] } = this.props.homeData
+    const { features } = this.props.homeData
     const { routeName } = this.props.navigation.state
     const title = features && features[routeName.toUpperCase()] || ''
 
     return (
-      <View
-        style={globalStyles.container}
+      <View 
+        style={[globalStyles.container, {
+          zIndex: 0
+        }]}
       >
         <View style={globalStyles.header}>
           <Text style={globalStyles.logo}>{ title }</Text>
+          <TouchableOpacity
+            style={{
+              padding: 10
+            }}
+            onPress={() => {
+              this.props.navigation.navigate('UserSearch', {
+                onGoBack: () => this.refresh()
+              })
+            }}
+          >
+            <TYicon 
+              style={{
+                marginRight: 10
+              }}
+              name='mn_tianjiahaoyou' 
+              size={18} 
+              color='#666'></TYicon>
+          </TouchableOpacity>
         </View>
-        <View style={globalStyles.headerBottomLine}></View>
-        {routes.map(scene => {
-          let curFeature = scene.key
-          let { has_new = false } = message.find(
-            msg => msg.sub_feature === curFeature.toLowerCase()
-          ) || {}
-          return (
-            <View
-              key={scene.key}>
-              <TouchableOpacity
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  padding: 20
-                }}
-                onPress={() => this.props.navigation.navigate(scene.key, scene.params || null)}
-              >
-                <Text 
-                  style={{
-                    flex: 1,
-                    fontSize: 16
-                  }}
-                >{scene.label}</Text>
-                {has_new ? <View style={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: 4,
-                  backgroundColor: 'red',
-                  marginRight: 15,
-                }}></View> : null}
-                <TYicon 
-                  style={{
-                    transform: [{ rotate: '180deg'}],
-                    marginBottom: 2
-                  }}
-                  ref={ref => this._buttonText = ref} 
-                  name='fanhui' 
-                  size={16} 
-                  color='#ccc'></TYicon>
-              </TouchableOpacity>
-              <View style={globalStyles.splitLine}></View>
-            </View>
-          )})}
-        </View>
-      )
-  }
+        <FateNav
+          navigation={this.props.navigation} 
+          screenProps={{
+            onFriendChange: this.friendChange,
+            onFateChange: this.fateChange
+          }}
+        />
+      </View>
+    )
+  } 
 }
 
 const mapStateToProps = (state) => {
@@ -97,4 +123,10 @@ const mapStateToProps = (state) => {
   return { homeData }
 }
 
-export default connect(mapStateToProps)(MoreList)
+const mapDispatchToProps = dispatch => (
+  bindActionCreators({
+    layoutHomeData,
+  }, dispatch)
+)
+
+export default connect(mapStateToProps, mapDispatchToProps)(Karma)

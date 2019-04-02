@@ -279,7 +279,6 @@ class Classic extends React.Component {
             onLoadMore={this.loadMore} 
             loading={loading}
             page={page}
-            noDataTips={noDataTips}
           />}
           ItemSeparatorComponent={() => <View style={globalStyles.separator} />}
           keyExtractor={(item) => (item._id)}

@@ -5,6 +5,7 @@ import {
 } from 'app/types'
 
 const homeReducer = (state = {
+  launch: false,
   appName: '',
   slogan: '',
   features: null,
@@ -20,7 +21,7 @@ const homeReducer = (state = {
 
 const loginReducer = (state = {
   need_login: true,
-  userId: 'aaaa',
+  userId: '',
   username: '',
   panname: '',
   email: ''
