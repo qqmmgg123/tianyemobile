@@ -142,6 +142,7 @@ function request(api, method, data, headers = {}) {
               break
             default:
               errMsg = res.info || res.message || '异常错误'
+              console.log('这里错了')
               setTimeout( () => {
                 alert(errMsg)
               }, 0)
@@ -175,6 +176,7 @@ function request(api, method, data, headers = {}) {
           resolve(res)
         }
       }).catch((err) => {
+        console.log('这里错了。。。。。。')
         setTimeout( () => {
           alert(err.message || '异常错误')
         }, 0)

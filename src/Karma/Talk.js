@@ -501,14 +501,23 @@ class Talk extends React.Component {
     })
   }
 
+  // 处理消息显示状态
   newMindsReaded(message, karmaMsg, curMsg) {
     this.refresh()
     if (curMsg) {
+      // 处理当前投缘消息小红点
       curMsg.mind_total = 0
+
+      // 处理缘tab消息小红点
+      let iskarmaOtherNew = karmaMsg.sub_feature.some(msg => !!msg.total)
       if (curMsg.reply_total === 0) {
-        karmaMsg.has_new = false
         curMsg.has_new = false
+        if (!iskarmaOtherNew) {
+          karmaMsg.has_new = false
+        }
       }
+
+      // 通知消息状态变更
       this.props.layoutHomeData({
         message: message
       })
@@ -607,9 +616,6 @@ class Talk extends React.Component {
               <FlatList
                 keyboardShouldPersistTaps="handled"
                 keyboardDismissMode="on-drag"
-                /*contentContainerStyle={{
-                  padding: 10
-                }}*/
                 data={helps}
                 refreshing={refreshing}
                 onRefresh={this.refresh}

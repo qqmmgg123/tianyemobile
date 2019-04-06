@@ -11,8 +11,10 @@ const Back = (props) => {
     centerCom, 
     navigation,
     onLayoutRightBtn,
+    mode = 'back'
   } = props
   rightButton = rightButton ? (rightButton.length ? rightButton : [ rightButton ]) : null
+  let isCloseMode = mode === 'close'
   return (
     <View style={{ 
       flexDirection: 'row',
@@ -29,14 +31,19 @@ const Back = (props) => {
           : () => navigation.goBack()) : () => props.goBack()}
         style={{
           //width: 100,
+          alignItems: 'center',
           padding: 10,
           flexDirection: 'row',
           flexWrap: 'wrap'
         }}
       >
-        <TYicon name='fanhui' size={16} color='#333333'></TYicon>
+        <TYicon 
+          name={!isCloseMode ? 'fanhui' : 'guanbi'} 
+          size={16} 
+          color='#333333'
+        ></TYicon>
         <Text style={{ paddingLeft: 5, fontSize: 16, color: '#333333' }}>
-          {name ? name : '返回'}
+          {name ? name : (!isCloseMode ? '返回' : '取消')}
         </Text>
       </TouchableOpacity>
       {
