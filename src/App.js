@@ -21,6 +21,7 @@ import HelpSelect from 'app/HelpSelect'
 import AcceptPrompt from 'app/Friend/AcceptPrompt'
 import QuoteEditor from 'app/QuoteEditor'
 import MindDetail from 'app/Mind/MindDetail'
+import MindEditor from 'app/Mind/MindEditor'
 import ClassicDetail from 'app/Classic/ClassicDetail'
 import ClassicSection from 'app/Classic/ClassicSection'
 import ClassicTranslate from 'app/Classic/ClassicTranslate'
@@ -34,6 +35,7 @@ import StackViewStyleInterpolator from 'react-navigation-stack/dist/views/StackV
 
 const modalNav = createStackNavigator({
   Tab,
+  MindEditor,
   QuoteEditor,
   UserSearch,
   AcceptPrompt

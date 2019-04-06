@@ -7,8 +7,10 @@ import Swiper from 'app/component/SwiperList'
 import { get, post, getUserByMemory } from 'app/component/request'
 import TYicon from 'app/component/TYicon'
 import globalStyles from 'app/component/globalStyles'
+import { Empty } from 'app/component/ListLoad'
 import { createFriendModal } from 'app/component/GlobalModal'
 import Report from 'app/component/Report'
+import TYRefreshCtrol from 'app/HorizontalList/RefreshControl'
 const { width } = Dimensions.get("window");
 
 const types = {
@@ -245,29 +247,45 @@ class EarthSwiper extends Component {
     })
   }
 
+  layoutData(data) {
+    let { 
+      appName, 
+      slogan, 
+      features, 
+      success, 
+      pageInfo,
+      minds = []
+    } = data
+    if (success) {
+      this.props.layoutHomeData({
+        appName,
+        slogan,
+        features
+      })
+      this.setState({
+        minds,
+      })
+    }
+  }
+
   async loadData() {
+    const { page, loading, refreshing } =  this.state
     let data = await get('features/earth')
-    if (data) {
-      let { 
-        appName, 
-        slogan, 
-        features, 
-        success, 
-        pageInfo,
-        minds 
-      } = data
-      if (success) {
-        this.props.layoutHomeData({
-          appName,
-          slogan,
-          features
-        })
-        console.log('获取到数据...', data)
-        this.setState({
-          minds,
-          loading: false
-        })
-      }
+    if (loading) {
+      this.setState({
+        loading: false,
+        refreshing: false,
+      }, () => {
+        data && this.layoutData(data)
+      })
+    }
+    if (refreshing) {
+      this.setState({
+        refreshing: false,
+        minds: []
+      }, () => {
+        data && this.layoutData(data)
+      })
     }
   }
 
@@ -318,8 +336,7 @@ class EarthSwiper extends Component {
     const { features } = homeData
     const { routeName } = navigation.state
     const title = features && features[routeName.toUpperCase()] || ''
-    let { minds, refreshing } = this.state
-    // let minds = []
+    let { minds, loading, refreshing } = this.state
 
     return (
       <View style={{ 
@@ -342,9 +359,9 @@ class EarthSwiper extends Component {
                   onReport={() => this._modal.open('Report')}
                 />}
               /> 
-            : <ScrollView 
+            : (!loading ? <ScrollView 
             refreshControl={
-              <RefreshControl
+              <TYRefreshCtrol
                 refreshing={refreshing}
                 onRefresh={this.refresh}
               />
@@ -366,8 +383,8 @@ class EarthSwiper extends Component {
            lineHeight: 28
          }}
        >
-         没数据...
-       </Text></ScrollView>}
+         您和您的有缘人之外，没有其他人分享心事~
+       </Text></ScrollView> : <Empty loading={true} />)}
         <MindModal 
           ref={ref => this._modal = ref}
         />

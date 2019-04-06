@@ -17,11 +17,11 @@ import globalStyles from 'app/component/globalStyles'
 import TYicon from 'app/component/TYicon'
 import { getDate } from 'app/utils'
 import { createFriendModal } from 'app/component/GlobalModal'
-import MindEditor from 'app/Mind/MindEditor'
 import PannameEditor from 'app/PannameEditor'
 import { Empty, Footer } from 'app/component/ListLoad'
 import CardView from 'react-native-rn-cardview'
 import { ANIMATION_DURATION, MIND_TYPES } from 'app/component/Const'
+import TypeSelect from 'app/Mind/TypeSelect'
 
 let noDataTips = '当前没有内容'
 
@@ -98,8 +98,9 @@ class MindItem extends React.Component {
 
   mindModify = () => {
     const { _id } = this.state.curReply
-    this.props.modal.open('MindEditor', {
+    this.props.navigation.navigate('MindEditor', {
       itemId: _id,
+      onListRefresh: this.refresh
     })
   }
 
@@ -167,7 +168,7 @@ class MindItem extends React.Component {
         }}
       >{[activity, MIND_TYPES[type_id].name].join('')}</Text>
       {
-        last_reply_date 
+        new_reply 
           ? <TouchableOpacity
               style={{
                 padding: 10
@@ -185,11 +186,7 @@ class MindItem extends React.Component {
               style={{
                 padding: 10
               }}
-              onPress={() => {
-                this.props.modal.open('MindEditor', {
-                  itemId: _id,
-                })
-              }}
+              onPress={this.mindModify}
             >
               <Text
                 style={{
@@ -198,46 +195,40 @@ class MindItem extends React.Component {
                 }}
               >修改</Text>
             </TouchableOpacity>
-            /*<View style={{
-              marginTop: 5,
-              flexDirection: 'row',
-              alignItems: 'center'
-            }}>
-              {
-                (curUserId && curUserId === creator_id)
-                && (!last_reply_date && ['share', 'help'].indexOf(type_id) !== -1)
-                ? (<TouchableOpacity
-                      style={{
-                        padding: 10
-                      }}
-                      onPress={() => navigation.navigate('HelpDetail', {
-                        itemId: _id,
-                        onBackRemove: () => this.onRemove()
-                      })}
-                    >
-                      <Text style={{ 
-                      fontSize: 14,
-                      color: '#666',
-                      }}>回复</Text>
-                    </TouchableOpacity>)
-                : null
-              }
-              {
-                curUserId && curUserId === creator_id
-                ? (<TouchableOpacity
-                      style={{
-                        padding: 10
-                      }}
-                      onPress={() => this.removeMind(_id)}
-                    >
-                      <Text style={{ 
-                      fontSize: 14,
-                      color: '#666'
-                      }}>{type_id === 'help' ? '已解' : '删除'}</Text>
-                    </TouchableOpacity>)
-                : null
-              }
-            </View>*/
+      }
+      {
+        (curUserId && curUserId === creator_id)
+        && (!last_reply_date && ['share', 'help'].indexOf(type_id) !== -1)
+        ? (<TouchableOpacity
+              style={{
+                padding: 10
+              }}
+              onPress={() => navigation.navigate('HelpDetail', {
+                itemId: _id,
+                onBackRemove: () => this.onRemove()
+              })}
+            >
+              <Text style={{ 
+              fontSize: 14,
+              color: '#666',
+              }}>回复</Text>
+            </TouchableOpacity>)
+        : null
+      }
+      {
+        curUserId && curUserId === creator_id
+        ? (<TouchableOpacity
+              style={{
+                padding: 10
+              }}
+              onPress={() => this.removeMind(_id)}
+            >
+              <Text style={{ 
+              fontSize: 14,
+              color: '#666'
+              }}>{type_id === 'help' ? '已解' : '删除'}</Text>
+            </TouchableOpacity>)
+        : null
       }
       <TYicon 
         style={{
@@ -256,42 +247,9 @@ class MindItem extends React.Component {
             backgroundColor: 'white'
           }}
           activeOpacity={1}
-          onPress={last_reply_date ? this.mindFollow : this.mindModify}
+          onPress={new_reply ? this.mindFollow : this.mindModify}
         >
           <View>
-            {
-              /*last_reply_date 
-                ? <View 
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center'
-                      // marginTop: 5,
-                      // backgroundColor: '#f3f4f5',
-                      // borderRadius: 3,
-                      // marginBottom: 10,
-                      // padding: 10
-                    }}
-                  >
-                  <TYicon 
-                    style={{
-                      marginRight: 10
-                    }}
-                    name='icon_huifu-xian' 
-                    size={18} 
-                    color='#999'></TYicon>
-                  <Text 
-                    style={{
-                      fontSize: 14,
-                      lineHeight: 24,
-                      color: '#666',
-                    }}
-                    numberOfLines={1}
-                  >
-                    {new_reply.content}
-                  </Text>
-                </View>
-              : null
-            */}
             {header}
           </View>
           <View>
@@ -309,7 +267,6 @@ class MindItem extends React.Component {
                 lineHeight: 24,
                 marginTop: 10
               }}
-              numberOfLines={expand ? null : 2}
             >{text}</Text>
           </View>
           {column_id === 'sentence' && is_extract ? <TouchableOpacity
@@ -357,6 +314,50 @@ class MindItem extends React.Component {
               {quote.summary || ''}
             </Text>*/}
           </TouchableOpacity> : null}
+          {!new_reply ? <View 
+            style={{
+              marginTop: 5,
+              flexDirection: 'row',
+              justifyContent: 'flex-end'
+            }}
+          >
+          <TouchableOpacity
+              style={{
+                padding: 10
+              }}
+              onPress={this.mindFollow}
+            >
+              <Text
+                style={{
+                  fontSize: 14,
+                  color: '#666'
+                }}  
+              >跟进</Text>
+            </TouchableOpacity>
+          </View> : null}
+          {
+              new_reply 
+                ? <TouchableOpacity
+                  style={{
+                    padding: 10,
+                    arginTop: 5,
+                    backgroundColor: '#f3f4f5',
+                    borderRadius: 3,
+                    marginTop: 10,
+                    marginBottom: 10
+                  }}
+                  onPress={new_reply.creator_id !== curUserId ? () => onReply() : () => onShowAction()}
+                >
+                  <Text style={{
+                    fontSize: 14,
+                    lineHeight: 24,
+                    color: '#333'
+                  }}>
+                    {new_reply.content || ''}
+                  </Text>
+                </TouchableOpacity>
+              : null
+            }
         </TouchableOpacity>
       </Animated.View>
     )
@@ -364,10 +365,7 @@ class MindItem extends React.Component {
 }
 
 const MindModal = createFriendModal({
-  MindEditor: {
-    com: MindEditor,
-    animationType: 'slide'
-  },
+  TypeSelect,
   PannameEditor
 })
 
@@ -386,6 +384,14 @@ class MindList extends React.Component {
     }
   }
 
+  newMind = (id) => {
+    this.props.navigation.navigate('MindEditor', {
+      itemTypeId: id,
+      itemId: '',
+      onListRefresh: this.refresh
+    })
+  }
+
   layoutData(data) {
     let { 
       appName, 
@@ -394,7 +400,8 @@ class MindList extends React.Component {
       success, 
       pageInfo,
       minds = [], 
-      noDataTips = noDataTips} = data
+      noDataTips = noDataTips
+    } = data
     if (success) {
       this.props.layoutHomeData({
         appName,
@@ -520,12 +527,13 @@ class MindList extends React.Component {
         <View style={globalStyles.header}>
           <Text style={globalStyles.logo}>{ title }</Text>
           <TouchableOpacity
-            ref={ref => {
+            /* ref={ref => {
               ref && this._dropdowns.push(findNodeHandle(ref))
             }}
             onPress={() => this.setState({
               dropdownShow: !dropdownShow
-            })}
+            })} */
+            onPress={() => this._modal.open('TypeSelect')}
             style={{
               padding: 10
             }}
@@ -562,10 +570,6 @@ class MindList extends React.Component {
                   ref && this._dropdowns.push(findNodeHandle(ref))
                 }}
                 onPress={() => {
-                  this._modal.open('MindEditor', {
-                    itemTypeId: id,
-                    itemId: '',
-                  })
                   this.setState({ dropdownShow: false })
                 }}
                 style={{
@@ -644,55 +648,45 @@ class MindList extends React.Component {
             color: '#999',
             textAlign: 'center',
             lineHeight: 28
-          }}>{noDataTips}</Text>
-          <Text style={{
-            fontSize: 16,
-            color: '#999',
-            textAlign: 'center',
-            lineHeight: 28
           }}>
-            添加内心活动，方式如下
+            在这里，您可以~
           </Text>
-          <View
-            style={{
-              // flexDirection: 'row'
-            }}
-          >
-          {Object.entries(MIND_TYPES).map(([id, guide]) => (
-            <TouchableOpacity
-              key={id}
-              style={{
-                marginTop: 20
-              }}
-              onPress={() => this._modal.open('MindEditor', {
-                itemTypeId: id
-              })}
-            >
-              <View>
-                <Text style={{
-                  textAlign: 'center',
-                  fontSize: 20
-                }}>{guide.action + guide.name + guide.icon}</Text>
-              </View>
-              <View style={{
-                marginTop: 10
-              }}>
-                <Text style={{
-                  color: '#666',
-                  fontSize: 16,
-                  lineHeight: 24,
-                  textAlign: 'center',
-                  width: 200,
-                }}>{guide.description}</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
+          <View>
+            {Object.entries(MIND_TYPES).map(([id, guide]) => (
+              <TouchableOpacity
+                key={id}
+                style={{
+                  marginTop: 20
+                }}
+                onPress={this.newMind.bind(this, id)}
+              >
+                <View>
+                  <Text style={{
+                    textAlign: 'center',
+                    fontSize: 20
+                  }}>{guide.action + guide.name + guide.icon}</Text>
+                </View>
+                <View style={{
+                  marginTop: 10
+                }}>
+                  <Text style={{
+                    color: '#666',
+                    fontSize: 16,
+                    lineHeight: 24,
+                    textAlign: 'center',
+                    width: 200,
+                  }}>{guide.description}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
           </View>
         </ScrollView>) : <Empty loading={true} />)}
         <MindModal 
-          navigation={this.props.navigation}
           ref={ref => this._modal = ref}
-          listRefresh={this.refresh}
+          onChangeType={(type_id) => {
+            this.newMind(type_id)
+            this._modal.close()
+          }}
         />
       </View>
     );

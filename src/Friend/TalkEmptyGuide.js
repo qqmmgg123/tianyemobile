@@ -42,7 +42,7 @@ export default class TalkEmptyGuide extends React.Component {
             textAlign: 'center',
             lineHeight: 28
           }}>
-            您未添加有缘人与您互诉衷肠～
+            您没有添加有缘人～
           </Text>
           <TouchableOpacity
             onPress={() => navigation.navigate('Friend', {
@@ -62,13 +62,16 @@ export default class TalkEmptyGuide extends React.Component {
               lineHeight: 28,
               color: '#EE3D80',
               textAlign: 'center',
-              width: 200,
               marginRight: 10
-            }}>去“有缘人”添加</Text>
+            }}>去添加</Text>
             <TYicon
               name='jiantou'
               size={16} 
-              color={'#EE3D80'}></TYicon>
+              color={'#EE3D80'}
+              style={{
+                marginTop: 10
+              }}
+            ></TYicon>
           </TouchableOpacity>
         </ScrollView>
       : 

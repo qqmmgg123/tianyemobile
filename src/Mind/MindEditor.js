@@ -7,88 +7,18 @@ import {
   findNodeHandle,
   ActivityIndicator,
   TouchableOpacity,
-  Keyboard,
   Platform,
+  Alert
 } from 'react-native'
-import { SafeAreaView } from 'react-navigation'
+import Spinner from 'react-native-loading-spinner-overlay'
 import { get, post, put } from 'app/component/request'
 import TYicon from 'app/component/TYicon'
-import globalStyles from 'app/component/globalStyles'
 import { createFriendModal } from 'app/component/GlobalModal'
 import Back from 'app/component/Back'
+import TypeSelect from 'app/Mind/TypeSelect'
 import { MIND_TYPES, STATUS_BAR_HEIGHT } from 'app/component/Const'
 
-class TypeSelect extends React.Component {
 
-  constructor(props) {
-    super(props)
-    this._modal = props.modal
-    const type_id = this._modal.getParam('type_id')
-    this.state = {
-      type_id
-    }
-  }
-
-  componentDidUpdate(props, state) {
-    if (state.type_id !== this.state.type_id) {
-      let timer = setTimeout(() => {
-        this._modal.close()
-        timer = null
-      }, 0)
-    }
-  }
-
-  render() {
-    return (
-      <TouchableOpacity 
-        onPressOut={() => this._modal.close()}
-        activeOpacity={1}
-        style={{
-          flex: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: 'rgba(0,0,0,0.5)'
-        }}
-      >
-        <View style={{
-          width: 250,
-          backgroundColor: 'white',
-          borderRadius: 3,
-          padding: 10
-        }}>
-          {Object.entries(MIND_TYPES).map(([id, type], index) => (<View
-            key={id}
-          >
-            <TouchableOpacity
-              activeOpacity={1}
-              style={{
-                padding: 15,
-                flexDirection: 'row',
-              }}
-              onPress={() => {
-                this.setState({
-                  type_id: id,
-                }, () => {
-                  this.props.onChangeType(id)
-                })
-              }}>
-                {this.state.type_id === id ? <TYicon 
-                  style={{
-                    marginRight: 10
-                  }}
-                  name='gou' 
-                  size={16} 
-                  color='#666'
-                ></TYicon> : <View style={{ width: 26 }}></View>}
-              <Text>{type.action + type.name + ' ' + type.icon}</Text>
-            </TouchableOpacity>
-            {index < Object.entries(MIND_TYPES).length - 1 ? <View style={globalStyles.splitLine}></View> : null}
-          </View>))}
-        </View>
-      </TouchableOpacity>
-    )
-  }
-}
 
 const TypeModal = createFriendModal({ 
   TypeSelect,
@@ -100,6 +30,8 @@ export default class MindEditor extends React.Component {
     super(props)
     this.state = {
       loading: true,
+      spinner: false,
+      spinnerText: '',
       _id: '',
       type_id: 'diary',
       column_id: 'sentence',
@@ -108,43 +40,59 @@ export default class MindEditor extends React.Component {
   }
 
   async postMind() {
-    const { navigation, listRefresh, modal } = this.props
+    const { navigation, listRefresh } = this.props
     const { _id, type_id, content, column_id } = this.state
-    let res = null
-    if (_id) {
-      res = await put(`mind/${_id}`, {
-        _id: '',
-        type_id,
-        column_id,
-        content
-      })
-    } else {
-      res = await post('mind', {
-        _id: '',
-        type_id,
-        column_id,
-        content
-      })
-    }
-    if (res) {
-      const { success, info } = res
-      if (success) {
-        modal.close()
-        if (_id) {
-          navigation.navigate('MindDetail', {
-            itemId: _id
-          })
-        }
-        listRefresh && listRefresh()
+    this.setState({
+      spinner: true,
+      spinnerText: '',
+    })
+    try {
+      let res = null
+      if (_id) {
+        res = await put(`mind/${_id}`, {
+          _id: '',
+          type_id,
+          column_id,
+          content
+        })
       } else {
-        toast(info)
+        res = await post('mind', {
+          _id: '',
+          type_id,
+          column_id,
+          content
+        })
       }
+      this.setState({
+        spinner: false,
+        spinnerText: '',
+      }, () => {
+        if (res) {
+          const { success, info } = res
+          if (success) {
+            navigation.goBack()
+            /* if (_id) {
+              navigation.navigate('MindDetail', {
+                itemId: _id
+              })
+            } */
+            navigation.state.params.onListRefresh()
+          } else {
+            toast(info)
+          }
+        }
+      })
+    } catch (err) {
+      this.setState({
+        spinner: false,
+        spinnerText: '',
+      })
     }
   }
 
   async componentWillMount() {
-    const { modal } = this.props
-    const _id = modal.getParam('itemId')
+    const { navigation } = this.props
+    const _id = navigation.getParam('itemId')
     if (_id) {
       let data = await get(`mind/${_id}`)
       this.setState({loading: false}, () => {
@@ -161,7 +109,7 @@ export default class MindEditor extends React.Component {
         }
       })
     } else {
-      const type_id = modal.getParam('itemTypeId')
+      const type_id = navigation.getParam('itemTypeId')
       this.setState({
         loading: false,
         _id: '',
@@ -172,23 +120,56 @@ export default class MindEditor extends React.Component {
     }
   }
 
+  saveToDiary = () => {
+    const { navigation } = this.props
+    this.setState({
+      type_id: 'diary',
+    }, () => {
+      this.postMind()
+    })
+  }
+
+  closeEditor = () => {
+    const { content = '', _id } = this.state
+    const { navigation } = this.props
+    if (content.trim() && !_id) {
+      Alert.alert(
+        '',
+        '如果离开，当前内容会丢失，' + (this.state.type_id === 'diary' ? '是否保存' : '是否记录到心语?'),
+        [
+          {text: this.state.type_id === 'diary' ? '保存' : '记录', onPress: this.saveToDiary},
+          {text: '否', onPress: () => navigation.goBack(), style: 'cancel'},
+        ],
+        { cancelable: false }
+      )
+    } else {
+      navigation.goBack()
+    }
+  }
+
   render() {
-    const { loading, type_id, content } = this.state
+    const { loading, type_id, content, spinner, spinnerText } = this.state
     const curType = MIND_TYPES[type_id]
     const { icon, name, action, description } = curType
     return (
-      <SafeAreaView
-        style={{flex: 1, backgroundColor: '#fafafa'}} 
-        forceInset={{ top: 'always', horizontal: 'never' }}
-      >
-        {!loading ? (<View 
+        !loading ? (<View 
           style={{
             flex: 1,
             backgroundColor: '#fff'
           }}
         >
+          <Spinner
+            visible={spinner}
+            textContent={spinnerText}
+            textStyle={{
+              color: '#333'
+            }}
+            color='#666'
+            overlayColor='rgba(255,255,255, 0.25)'
+          />
           <Back 
-            goBack={() => this.props.modal.close()} 
+            goBack={this.closeEditor} 
+            mode="close"
             centerCom={(<TouchableOpacity
               onPress={() => this._modal.open('TypeSelect', {
                 type_id
@@ -257,6 +238,13 @@ export default class MindEditor extends React.Component {
                 multiline={true}
               />
           </KeyboardAvoidingView>
+          <TypeModal 
+            navigation={this.props.navigation}
+            ref={ ref => this._modal = ref }
+            onChangeType={(type_id) => this.setState({
+              type_id
+            })}
+          />
         </View>) : (
           <View style={{
             flex: 1,
@@ -265,15 +253,7 @@ export default class MindEditor extends React.Component {
           }}>
             <ActivityIndicator />
           </View>
-        )}
-        <TypeModal 
-          navigation={this.props.navigation}
-          ref={ ref => this._modal = ref }
-          onChangeType={(type_id) => this.setState({
-            type_id
-          })}
-        />
-      </SafeAreaView>
+        )
     )
   }
 }

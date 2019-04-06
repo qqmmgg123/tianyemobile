@@ -55,7 +55,10 @@ class UserSearch extends React.Component {
           }
         }}
       >
-        <Back goBack={() => this.props.navigation.goBack()} />
+        <Back 
+          mode='close'
+          goBack={() => this.props.navigation.goBack()} 
+        />
         <View style={{
           flexDirection: 'row', 
           alignItems: 'center',

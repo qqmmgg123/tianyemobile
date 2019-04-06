@@ -1,10 +1,13 @@
 import React from 'react'
 import { View, FlatList, ScrollView, RefreshControl, TouchableOpacity, Text, Animated } from 'react-native'
 import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { layoutHomeData } from 'app/HomeActions'
 import { get, del } from 'app/component/request'
 import globalStyles from 'app/component/globalStyles'
 import { Empty, Footer } from 'app/component/ListLoad'
 import TYicon from 'app/component/TYicon'
+import { getDate } from 'app/utils'
 
 const ANIMATION_DURATION = 250
 
@@ -36,7 +39,23 @@ class DiaryItem extends React.Component {
     const rowStyles = [
       { opacity: this._animated }
     ]
-    const { _id, panname, mUnderstandTotal, mThankTotal, oUnderstandTotal, oThankTotal, onAddFriend } = this.props
+    const thanks = {
+      thank: '认同',
+      understand: '理解'
+    }
+    const { 
+      _id, 
+      userId,
+      panname, 
+      type_id, 
+      giver_id, 
+      given_date, 
+      mUnderstandTotal, 
+      mThankTotal, 
+      oUnderstandTotal, 
+      oThankTotal, 
+      onAddFriend 
+    } = this.props
 
     return (
       <Animated.View style={rowStyles}>
@@ -47,18 +66,56 @@ class DiaryItem extends React.Component {
           justifyContent: 'space-between',
           alignItems: 'center'
         }}>
-          <View>
-            <Text style={{ 
-              fontSize: 16,
-              color: '#333333',
-              lineHeight: 24
-              }}>{[
-                panname, 
-                mUnderstandTotal ? `理解您${mUnderstandTotal}次` : '', 
-                mThankTotal ? `认同您${mThankTotal}次` : '', 
-                oUnderstandTotal ? `您理解他${oUnderstandTotal}次` : '', 
-                oThankTotal ? `您认同他${oThankTotal}次` : ''
-              ].filter(text => !!text).join('，')}</Text>
+          <View
+            style={{
+              flex: 1
+            }}
+          >
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginRight: 10
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: '#333',
+                }}
+              >
+                {
+                  userId === giver_id 
+                    ? '您' + thanks[type_id] + '了' + panname 
+                    : panname + thanks[type_id] + '了你'
+                }
+              </Text>
+              <Text
+                style={{
+                  fontSize: 14,
+                  color: '#999'
+                }}
+              >
+                {getDate(new Date(given_date))}
+              </Text>
+            </View>
+            <Text 
+              style={{
+                marginTop: 10,
+                fontSize: 14,
+                color: '#999',
+                lineHeight: 24
+              }}
+            >
+              {[
+                mThankTotal || mUnderstandTotal ? '他一共' : '',
+                ...[mUnderstandTotal ? `理解您${mUnderstandTotal}次` : '', 
+                mThankTotal ? `认同您${mThankTotal}次` : ''].filter(text => !!text).join(','), 
+                oThankTotal || oUnderstandTotal ? '您一共' : '',
+                ...[oUnderstandTotal ? `理解他${oUnderstandTotal}次` : '', 
+                oThankTotal ? `认同他${oThankTotal}次` : ''].filter(text => !!text).join(',')
+              ].join('')}
+            </Text>
           </View>
           <View
             style={{
@@ -115,7 +172,8 @@ class FateList extends React.Component {
     const { page, loading, refreshing } =  this.state
     let data = await get('features/diary', {
       perPage: 20,
-      page
+      page,
+      isVisit: refreshing
     })
     if (loading) {
       this.setState({
@@ -171,12 +229,73 @@ class FateList extends React.Component {
     })
   }
 
-  componentWillMount() {
-    this.loadData()
+  // 处理消息显示状态
+  newFatesReaded(message, karmaMsg, curMsg) {
+    this.refresh()
+    console.log(message, karmaMsg, curMsg)
+    if (message && karmaMsg && curMsg) {
+      // 处理当前投缘消息小红点
+      curMsg.total = 0
+      curMsg.has_new = false
+
+      // 处理缘tab消息小红点
+      let talkMsg = karmaMsg.sub_feature.find(msg => msg.feature === 'talk')
+      console.log(talkMsg)
+      if (!talkMsg || (talkMsg.reply_total === 0 && talkMsg.mind_total === 0)) {
+        karmaMsg.has_new = false
+      }
+
+      // 通知消息状态变更
+      this.props.layoutHomeData({
+        message: message
+      })
+    }
   }
 
-  componentWillReceiveProps(props) {
-    if (props.loginData.userId !== this.props.loginData.userId) {
+  componentWillMount() {
+    let query = msg => msg.feature === 'karma'
+    let message = [...this.props.homeData.message]
+    let karmaMsg = message.find(query)
+    let karmaMsgs = karmaMsg && karmaMsg.sub_feature || []
+    let curMsg = karmaMsgs.find(msg => msg.feature === 'fate')
+    if (!curMsg || !curMsg.total) {
+      console.log('Fate load data......', curMsg)
+      this.loadData()
+    }
+  }
+
+  componentDidMount() {
+    this._foucsHandle = this.props.navigation.addListener('didFocus', () => {
+      let query = msg => msg.feature === 'karma'
+      let message = [...this.props.homeData.message]
+      let karmaMsg = message.find(query)
+      let karmaMsgs = karmaMsg && karmaMsg.sub_feature || []
+      let curMsg = karmaMsgs.find(msg => msg.feature === 'fate')
+      if (curMsg && curMsg.total) {
+        this.newFatesReaded(message, karmaMsg, curMsg)
+      }
+    })
+  }
+
+  componentWillUnmount() {
+    this._foucsHandle.remove()
+  }
+
+  componentWillReceiveProps(nextProps) {
+    let query = msg => msg.feature === 'karma'
+    let newMessage = [...nextProps.homeData.message]
+    let newKarmaMsg = newMessage.find(query)
+    let newKarmaMsgs = newKarmaMsg && newKarmaMsg.sub_feature || []
+    let newMsg = newKarmaMsgs.find(msg => msg.feature === 'fate')
+
+    if (newMsg && newMsg.total) {
+      if (nextProps.navigation.isFocused()) {
+        this.newFatesReaded(newMessage, newKarmaMsg, newMsg)
+      }
+      return
+    }
+
+    if (nextProps.loginData.userId !== this.props.loginData.userId) {
       this.reload()
     }
   }
@@ -188,6 +307,8 @@ class FateList extends React.Component {
       loading, 
       page,
     } = this.state
+    let { loginData } = this.props
+    , { userId } = loginData
 
     return (
       <View style={globalStyles.container}>
@@ -199,6 +320,7 @@ class FateList extends React.Component {
           onEndReachedThreshold={100}
           renderItem={({item, index}) => <DiaryItem 
             {...item} 
+            userId={userId}
             navigation={this.props.navigation}
             onRemove={this.removeItem.bind(this, index)} 
             onAddFriend={() => {
@@ -269,13 +391,16 @@ class FateList extends React.Component {
               lineHeight: 28,
               color: '#EE3D80',
               textAlign: 'center',
-              width: 200,
               marginRight: 10
             }}>到“尘”，发现有缘人。</Text>
             <TYicon
               name='jiantou'
               size={16} 
-              color={'#EE3D80'}></TYicon>
+              color={'#EE3D80'}
+              style={{
+                marginTop: 10
+              }}
+            ></TYicon>
           </TouchableOpacity>
         </ScrollView>) : <Empty loading={true} />)}
       </View>
@@ -284,8 +409,14 @@ class FateList extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  const { loginData } = state
-  return { loginData }
+  const { loginData, homeData } = state
+  return { loginData, homeData }
 }
 
-export default connect(mapStateToProps)(FateList)
+const mapDispatchToProps = dispatch => (
+  bindActionCreators({
+    layoutHomeData,
+  }, dispatch)
+)
+
+export default connect(mapStateToProps, mapDispatchToProps)(FateList)

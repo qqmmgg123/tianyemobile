@@ -1,20 +1,16 @@
 import React from 'react'
 import { 
   View, 
-  FlatList, 
-  TouchableOpacity, 
-  Text,
-  ScrollView,
-  RefreshControl
+  FlatList
 } from 'react-native'
 import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { layoutHomeData } from 'app/HomeActions'
 import { get } from 'app/component/request'
 import globalStyles from 'app/component/globalStyles'
 import FriendItem from 'app/Friend/FriendItem'
-import { Empty, Footer } from 'app/component/ListLoad'
-import TYicon from 'app/component/TYicon'
-
-let noDataTips = '当前没有内容'
+import FriendEmptyGuide from 'app/Friend/FriendEmptyGuide'
+import { Empty, PageError } from 'app/component/ListLoad'
 
 class FriendList extends React.Component {
 
@@ -24,7 +20,7 @@ class FriendList extends React.Component {
       refreshing: false,
       friends: [],
       loading: true,
-      noDataTips,
+      error: false,
     }
     props.navigation.setParams({
       component: this
@@ -43,7 +39,7 @@ class FriendList extends React.Component {
     })
   }
 
-  reload() {
+  reload = () => {
     this.setState({
       loading: true,
       friends: []
@@ -56,39 +52,115 @@ class FriendList extends React.Component {
     let { success, friends } = data
     if (success) {
       this.setState({
-        friends,
-        noDataTips
+        friends
       })
     }
   }
 
   async loadData() {
     const { loading, refreshing } =  this.state
-    let data = await get('friend')
-    if (loading) {
+    try {
+      let data = await get('friend', {
+        isVisit: refreshing
+      })
+      if (loading) {
+        this.setState({
+          error: false,
+          loading: false,
+          refreshing: false,
+        }, () => {
+          data && this.layoutData(data)
+        })
+      }
+      if (refreshing) {
+        this.setState({
+          error: false,
+          refreshing: false,
+          minds: []
+        }, () => {
+          data && this.layoutData(data)
+        })
+      }
+    } catch (err) {
       this.setState({
+        error: true,
         loading: false,
-        refreshing: false,
-      }, () => {
-        data && this.layoutData(data)
+        refreshing: false
       })
     }
-    if (refreshing) {
-      this.setState({
-        refreshing: false,
-        minds: []
-      }, () => {
-        data && this.layoutData(data)
+  }
+
+  // 处理消息显示状态
+  friendNewReaded(message, karmaMsg, curMsg) {
+    this.refresh()
+    if (message && karmaMsg && curMsg) {
+      // 处理当前投缘消息小红点
+      curMsg.total = 0
+      curMsg.has_new = false
+
+      // 处理缘tab消息小红点
+      let talkMsg = karmaMsg.sub_feature.find(msg => msg.feature === 'talk')
+      if (!talkMsg || (talkMsg.reply_total === 0 && talkMsg.mind_total === 0)) {
+        karmaMsg.has_new = false
+      }
+
+      // 通知消息状态变更
+      this.props.layoutHomeData({
+        message: message
       })
     }
   }
 
   componentWillMount() {
-    this.loadData()
+    let query = msg => msg.feature === 'karma'
+    let message = [...this.props.homeData.message]
+    let karmaMsg = message.find(query)
+    let karmaMsgs = karmaMsg && karmaMsg.sub_feature || []
+    let curMsg = karmaMsgs.find(msg => msg.feature === 'Friend')
+    if (!curMsg || !curMsg.total) {
+      this.loadData()
+    }
   }
 
-  componentWillReceiveProps(props) {
-    if (props.loginData.userId !== this.props.loginData.userId) {
+  componentDidMount() {
+    this._foucsHandle = this.props.navigation.addListener('didFocus', () => {
+      let query = msg => msg.feature === 'karma'
+      let message = [...this.props.homeData.message]
+      let karmaMsg = message.find(query)
+      let karmaMsgs = karmaMsg && karmaMsg.sub_feature || []
+      let curMsg = karmaMsgs.find(msg => msg.feature === 'Friend')
+      if (curMsg && curMsg.total) {
+        this.friendNewReaded(message, karmaMsg, curMsg)
+      }
+    })
+  }
+
+  componentWillUnmount() {
+    this._foucsHandle.remove()
+  }
+
+  componentDidUpdate(prevProps, state) {
+    let { replyVisible } = state
+    if (this.state.replyVisible && replyVisible !== this.state.replyVisible) {
+      this._replyInput.focus()
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    let query = msg => msg.feature === 'karma'
+    let newMessage = [...nextProps.homeData.message]
+    let newKarmaMsg = newMessage.find(query)
+    let newKarmaMsgs = newKarmaMsg && newKarmaMsg.sub_feature || []
+    let newMsg = newKarmaMsgs.find(msg => msg.feature === 'friend')
+
+    if (newMsg && newMsg.total) {
+      if (nextProps.navigation.isFocused()) {
+        this.friendNewReaded(newMessage, newKarmaMsg, newMsg)
+      }
+      return
+    }
+
+    if (nextProps.loginData.userId !== this.props.loginData.userId) {
       this.reload()
     }
   }
@@ -97,8 +169,14 @@ class FriendList extends React.Component {
     let { 
       friends, 
       loading, 
-      refreshing
+      refreshing,
+      error
     } = this.state
+
+    let {
+      navigation, 
+      screenProps
+    } = this.props
 
     return (
       <View 
@@ -117,21 +195,21 @@ class FriendList extends React.Component {
               this.setState({
                 friends
               }, () => {
-                this.props.screenProps.onFriendChange()
+                screenProps.onFriendChange()
               })
             }} 
             onAccpect={(friendId) => {
-              this.props.navigation.navigate('AcceptPrompt', {
+              navigation.navigate('AcceptPrompt', {
                 friendId,
                 status: 'accept',
                 onListRefresh: () => {
                   this.reload()
-                  this.props.screenProps.onFriendChange()
+                  screenProps.onFriendChange()
                 }
               })
             }}
             onDeny={(friendId, animateFun) => {
-              this.props.navigation.navigate('AcceptPrompt', {
+              navigation.navigate('AcceptPrompt', {
                 friendId,
                 status: 'deny',
                 onDenyConfirm: () => {
@@ -140,12 +218,12 @@ class FriendList extends React.Component {
               })
             }}
             onRemark={(friendship) => {
-              this.props.navigation.navigate('AcceptPrompt', {
+              navigation.navigate('AcceptPrompt', {
                 friendship,
                 status: 'remark',
                 onListRefresh: () => {
                   this.reload()
-                  this.props.screenProps.onFriendChange()
+                  screenProps.onFriendChange()
                 }
               })
             }}
@@ -154,123 +232,29 @@ class FriendList extends React.Component {
           keyExtractor={(item) => (item._id)}
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
-        /> : (!loading ? <ScrollView 
-          refreshControl={
-            <RefreshControl
+        /> : (!loading ? (!error ? <FriendEmptyGuide
+            navigation={navigation}
+            refreshing={refreshing}
+            onRefresh={this.refresh}
+            onReload={this.reload}
+          /> : <PageError
               refreshing={refreshing}
               onRefresh={this.refresh}
-            />
-          }
-          contentContainerStyle={{
-            flex: 1,
-            padding: 10,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-        >
-          <Text style={{
-            fontSize: 16,
-            color: '#999'
-          }}>当前未添加有缘人~</Text>
-          {/*<Text style={{
-            marginTop: 20,
-            color: '#444',
-            fontSize: 16
-          }}>
-            他（她）已经是田野用户
-          </Text>*/}
-          <Text style={{
-            marginTop: 20,
-            fontSize: 16,
-            color: '#666'
-          }}>一、不知道对方用户名、邮箱</Text>
-          <TouchableOpacity
-            onPress={() => this.props.navigation.navigate('Fate')}
-            style={{
-              borderRadius: 3,
-              justifyContent: 'center',
-              flexDirection: 'row',
-              alignItems: 'center'
-            }}
-          >
-            <Text style={{
-              marginTop: 10,
-              fontSize: 16,
-              lineHeight: 28,
-              color: '#EE3D80',
-              marginRight: 10
-            }}>去“投缘”看看，有没有投缘的人</Text>
-            <TYicon 
-              name='jiantou'
-              size={16} 
-              color={'#EE3D80'}></TYicon>
-          </TouchableOpacity>
-          <Text style={{
-            color: '#666',
-            marginTop: 20,
-            fontSize: 16
-          }}>二、知道对方的用户名或邮箱</Text>
-          <TouchableOpacity
-            onPress={() => this.props.navigation.navigate('UserSearch', {
-              onGoBack: () => this.reload()
-            })}
-            style={{
-              justifyContent: 'center',
-              flexDirection: 'row',
-              alignItems: 'center'
-            }}
-          >
-            <Text style={{
-              marginTop: 10,
-              fontSize: 16,
-              lineHeight: 28,
-              color: '#EE3D80',
-              marginRight: 10
-            }}>通过用户名或邮箱添加</Text>
-            <TYicon 
-              name='sousuo'
-              size={16} 
-              color={'#EE3D80'}></TYicon>
-          </TouchableOpacity>
-          {/*<Text style={{
-            marginTop: 30,
-            color: '#444',
-            fontSize: 16
-          }}>他（她）不是心也用户</Text>
-          <TouchableOpacity
-            onPress={() => this.props.navigation.navigate('UserSearch', {
-              onGoBack: () => this.refresh()
-            })}
-            style={{
-              borderRadius: 3,
-              justifyContent: 'center',
-              flexDirection: 'row',
-              alignItems: 'center'
-            }}
-          >
-            <Text style={{
-              marginTop: 10,
-              fontSize: 16,
-              lineHeight: 28,
-              color: '#EE3D80',
-              marginRight: 10
-            }}>邀请他（她）加入心也</Text>
-            <TYicon 
-              name='yaoqing'
-              size={16} 
-              color={'#EE3D80'}></TYicon>
-          </TouchableOpacity>*/}
-        </ScrollView> : <Empty loading={true} />)}
+            />): <Empty loading={true} />)}
       </View>
     )
   }
 }
 
 const mapStateToProps = (state) => {
-  const { loginData } = state
-  return { loginData }
+  const { loginData, homeData } = state
+  return { loginData, homeData }
 }
 
-export default connect(mapStateToProps)(FriendList)
+const mapDispatchToProps = dispatch => (
+  bindActionCreators({
+    layoutHomeData,
+  }, dispatch)
+)
+
+export default connect(mapStateToProps, mapDispatchToProps)(FriendList)

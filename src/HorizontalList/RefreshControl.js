@@ -34,10 +34,9 @@ if (Platform.OS === 'android') {
 type NativeRefreshControlType = Class<NativeComponent<RefreshControlProps>>;
 
 const NativeRefreshControl: NativeRefreshControlType =
-  (requireNativeComponent('TYSwipeRefreshLayout'): any);
-  /* Platform.OS === 'ios'
-    ? (requireNativeComponent('RCTRefreshControl'): any)
-    : (requireNativeComponent('TYSwipeRefreshLayout'): any); */
+  Platform.OS === 'ios'
+    ? (requireNativeComponent('TYRefreshControl'): any)
+    : (requireNativeComponent('TYSwipeRefreshLayout'): any);
 
 type IOSProps = $ReadOnly<{|
   /**

@@ -57,15 +57,15 @@ export default StyleSheet.create({
   },
   noDataText: {
     marginTop: 10,
-    color: '#666666',
-    textAlign: 'center',
     fontSize: 14,
+    color: '#999',
+    textAlign: 'center',
+    width: '60%',
+    alignSelf: 'center',
+    lineHeight: 28,
     padding: 10
   },
   quoteBg: {
-    //borderLeftColor: 'rgba(0, 0, 0, 0.1)',
-    //borderLeftWidth: 2,
-    //backgroundColor: 'rgba(0, 0, 0, 0.05)',
     borderWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.1)',
     borderRadius: 3,
