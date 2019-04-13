@@ -580,7 +580,7 @@ class Talk extends React.Component {
       return
     }
 
-    if (nextProps.loginData.userId !== this.props.loginData.userId ||
+    if ((nextProps.loginData.userId && (nextProps.loginData.userId !== this.props.loginData.userId)) ||
       (newMsg && newMsg.reply_total || 0) !== (curMsg && curMsg.reply_total || 0)) {
       this.reload()
     }

@@ -35,7 +35,7 @@ class Login extends Component {
       codeBtnText: '发送验证码',
       countDown: null,
       isSecret: true,
-      way: 'password'
+      way: 'local'
     }
     this._title = props.navigation.getParam('name')
   }
@@ -48,10 +48,11 @@ class Login extends Component {
     })
     try {
       let params = {
-        email
+        email,
+        way
       }
       switch(way) {
-        case 'password':
+        case 'local':
           params.password = password
           break
         case 'code':
@@ -142,7 +143,7 @@ class Login extends Component {
       isSecret, 
       currInput = '',
     } = this.state
-    const submitBtnDis = !email.trim() || !password.trim()
+    const submitBtnDis = !email.trim() || !(way === 'local' ? password.trim() : code.trim())
 
     return (
       <View
@@ -207,7 +208,7 @@ class Login extends Component {
               visible-password='email-address'
             />
             {
-              way === 'password'
+              way === 'local'
                 ?  
                   <View 
                     style={{
@@ -348,7 +349,7 @@ class Login extends Component {
                 marginTop: 10
               }}
               onPress={() => {
-                let newWay = way === 'password' ? 'code' : 'password'
+                let newWay = way === 'local' ? 'code' : 'local'
                 this.setState({
                   way: newWay
                 })
@@ -358,7 +359,7 @@ class Login extends Component {
                 style={{
                   color: '#999'
                 }}
-              >{way === 'password' ? '邮箱验证码登录' : '密码登录'}</Text>
+              >{way === 'local' ? '邮箱验证码登录' : '密码登录'}</Text>
             </TouchableOpacity>
           </ScrollView>
         </KeyboardAvoidingView>
