@@ -22,8 +22,7 @@ const homeReducer = (state = {
 const loginReducer = (state = {
   need_login: true,
   userId: '',
-  username: '',
-  panname: '',
+  nickname: '',
   email: ''
 }, action) => {
   switch (action.type) {

@@ -46,7 +46,7 @@ class DiaryItem extends React.Component {
     const { 
       _id, 
       userId,
-      panname, 
+      nickname, 
       type_id, 
       giver_id, 
       given_date, 
@@ -56,6 +56,29 @@ class DiaryItem extends React.Component {
       oThankTotal, 
       onAddFriend 
     } = this.props
+
+    let mFateWord = ''
+    , oFateWord = ''
+    if (mThankTotal || mUnderstandTotal) {
+      let mTotalArray = [
+        mUnderstandTotal ? `理解您${mUnderstandTotal}次` : '',
+        mThankTotal ? `认同您${mThankTotal}次` : ''
+      ]
+      mFateWord = '他一共' + mTotalArray.filter(text => text !== '').join(',')
+    }
+
+    if (oThankTotal || oUnderstandTotal) {
+      let oTotalArray = [
+        oUnderstandTotal ? `理解他${oUnderstandTotal}次` : '',
+        oThankTotal ? `认同他${oThankTotal}次` : ''
+      ]
+      oFateWord = '您一共' + oTotalArray.filter(text => text !== '').join(',')
+    }
+
+    let fateWord = [
+      mFateWord, 
+      oFateWord
+    ].filter(text => text !== '').join(',')
 
     return (
       <Animated.View style={rowStyles}>
@@ -86,8 +109,8 @@ class DiaryItem extends React.Component {
               >
                 {
                   userId === giver_id 
-                    ? '您' + thanks[type_id] + '了' + panname 
-                    : panname + thanks[type_id] + '了你'
+                    ? '您' + thanks[type_id] + '了' + nickname 
+                    : nickname + thanks[type_id] + '了你'
                 }
               </Text>
               <Text
@@ -107,14 +130,7 @@ class DiaryItem extends React.Component {
                 lineHeight: 24
               }}
             >
-              {[
-                mThankTotal || mUnderstandTotal ? '他一共' : '',
-                ...[mUnderstandTotal ? `理解您${mUnderstandTotal}次` : '', 
-                mThankTotal ? `认同您${mThankTotal}次` : ''].filter(text => !!text).join(','), 
-                oThankTotal || oUnderstandTotal ? '您一共' : '',
-                ...[oUnderstandTotal ? `理解他${oUnderstandTotal}次` : '', 
-                oThankTotal ? `认同他${oThankTotal}次` : ''].filter(text => !!text).join(',')
-              ].join('')}
+              {fateWord}
             </Text>
           </View>
           <View

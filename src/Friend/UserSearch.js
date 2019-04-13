@@ -26,7 +26,7 @@ class UserSearch extends React.Component {
 
   searchUser = async () => {
     let res = await get('user/search', {
-      username: this.state.query.trim()
+      email: this.state.query.trim()
     })
     if (res) {
       const { success, users = [], noUserResult = '' } = res
@@ -76,7 +76,7 @@ class UserSearch extends React.Component {
               borderRadius: 3,
               flex: 1
             }}
-            placeholder="请输入对方用户名或邮箱..."
+            placeholder="请输入对方邮箱..."
             placeholderTextColor="#cccccc"
             allowFontScaling={false}
             autoCapitalize="none"
@@ -121,7 +121,7 @@ class UserSearch extends React.Component {
             >
               <Text numberOfLines={1} style={{
                 flex: 1
-              }}>{item.username}</Text>
+              }}>{item.nickname}</Text>
               {item.isfriend ? (<Text>有缘人</Text>) : (userId !== item._id ? (
                 <TouchableOpacity
                   style={globalStyles.button}

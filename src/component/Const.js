@@ -1,3 +1,6 @@
+/**
+ * 常量集中定义
+ */
 import {
   Dimensions,
   Platform,

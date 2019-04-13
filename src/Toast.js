@@ -1,3 +1,6 @@
+/**
+ * 弹出提示框
+ */
 import { Platform } from 'react-native'
 import Toast from 'react-native-simple-toast'
 

@@ -1,3 +1,6 @@
+/**
+ * 用户注册界面
+ */
 import React, { Component } from 'react'
 import {
   View,
@@ -14,7 +17,7 @@ import TYicon from 'app/component/TYicon'
 import Back from 'app/component/Back'
 import globalStyles from 'app/component/globalStyles'
 import { toast } from 'app/Toast'
-import Spinner from 'react-native-loading-spinner-overlay'
+import { Spinner } from 'app/component/GlobalModal'
 import { STATUS_BAR_HEIGHT } from 'app/component/Const'
 
 export default class Signup extends Component {
@@ -22,7 +25,7 @@ export default class Signup extends Component {
   constructor(props) {
     super(props)
     this.state = { 
-      username: '',
+      nickname: '',
       password: '',
       email: '',
       code: '',
@@ -36,77 +39,88 @@ export default class Signup extends Component {
     }
   }
 
-  async postLogin() {
-    const { username, password, email, code } = this.state
+  // 发起注册请求
+  postSignup() {
+    const { 
+      nickname, 
+      password, 
+      email, 
+      code 
+    } = this.state
     this.setState({
       spinner: true,
       spinnerText: '',
       submitBtnDis: true
-    })
-    let res = await post('signup', {
-      username,
-      password,
-      email,
-      code,
-    })
-    this.setState({
-      spinner: false,
-      spinnerText: '',
-      submitBtnDis: false
-    })
-    if (res) {
-      const { success } = res
-      if (success) {
+    }, async () => {
+      try {
+        await post('signup', {
+          nickname,
+          password,
+          email,
+          code,
+        })
         let curRoute = getCurRoute()
         if (curRoute) {
           this.props.navigation.navigate(curRoute)
         }
+      } catch (err) {
+        this.setState({
+          spinner: false,
+          spinnerText: '',
+          submitBtnDis: false
+        })
       }
-    }
+    })
   }
 
-  sendCode = async () => {
+  // 发送验证码
+  sendCode = () => {
     const { email } = this.state
     this.setState({
       codeSending: true
-    })
-    let res = await post('email/vcode', {
-      email
-    })
-    if (res) {
-      const { success } = res
-      if (success) {
+    }, async () => {
+      try {
+        await post('email/vcode', {
+          email,
+          type: 'signup'
+        })
+        toast('验证码发送成功，有效时间10分钟。')
         let timer = null
-        let time = 30
+        let time = 60
         this.setState({
-          codeBtnText: '秒后重发',
+          codeBtnText: '秒后可重发',
           codeBtnDis: true,
           codeSending: false
         }, () => {
-          toast('验证码发送成功，有效时间10分钟。')
+          timer = setInterval(() => {
+            if (time >= 0) {
+              this.setState({
+                countDown: time--
+              })
+            } else {
+              this.setState({
+                codeBtnText: '重新发送',
+                codeBtnDis: false,
+                countDown: null,
+              })
+              clearInterval(timer)
+              timer = null
+            }
+          }, 1000)
         })
-        timer = setInterval(() => {
-          if (time >= 0) {
-            this.setState({
-              countDown: time--
-            })
-          } else {
-            this.setState({
-              codeBtnText: '重新发送',
-              codeBtnDis: false,
-              countDown: null,
-            })
-            clearInterval(timer)
-            timer = null
-          }
-        }, 1000)
+      } catch (err) {
+        this.setState({
+          codeBtnText: '重新发送',
+          codeBtnDis: false,
+          codeSending: false
+        })
       }
-    }
+    })
   }
 
   render() {
     const {       
-      username = '',
+      nickname = '',
       password = '',
       email = '',
       code = '', 
@@ -115,7 +129,7 @@ export default class Signup extends Component {
       codeSending,
       isSecret,
     } = this.state
-    const submitBtnDis = !username.trim() || !password.trim() || !email.trim() || !code.trim()
+    const submitBtnDis = !nickname.trim() || !password.trim() || !email.trim() || !code.trim()
 
     return (
       <View
@@ -168,13 +182,13 @@ export default class Signup extends Component {
                 marginTop: 10,
                 fontSize: 16
               }}
-              onChangeText={(username) => this.setState({username})}
-              value={this.state.username}
-              placeholder="用户名"
+              onChangeText={(nickname) => this.setState({nickname})}
+              value={this.state.nickname}
+              placeholder="称号"
               placeholderTextColor="#cccccc"
               allowFontScaling={false}
               autoCapitalize="none"
-              textContentType="username"
+              textContentType="nickname"
             />
             <View 
               style={{
@@ -267,8 +281,8 @@ export default class Signup extends Component {
                 returnKeyType='send'
               />
               <TouchableOpacity 
-                activeOpacity={this.state.codeBtnDis || !email.trim() ? 1 : 0.6}
-                onPress={this.state.codeBtnDis || !email.trim() ? null : this.sendCode}
+                activeOpacity={this.state.codeBtnDis || !email.trim() || codeSending ? 1 : 0.6}
+                onPress={this.state.codeBtnDis || !email.trim() || codeSending ? null : this.sendCode}
                 style={[
                   globalStyles.button, 
                   this.state.codeBtnDis 
@@ -322,7 +336,7 @@ export default class Signup extends Component {
               ]}
               onPress={submitBtnDis 
                 ? null
-                : this.postLogin.bind(this)}
+                : this.postSignup.bind(this)}
             >
               <Text style={[
                 globalStyles.buttonText, 

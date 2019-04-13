@@ -1,3 +1,6 @@
+/**
+ * 主功能Tab导航组件
+ */
 import React from 'react';
 import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
 import { connect } from 'react-redux'
@@ -43,7 +46,7 @@ class TabBar extends React.Component {
       .index
     ].routeName 
     , newFeatures = nextProps.homeData.features
-    , featureKeys = Object.keys(newFeatures || {})
+    , featureKeys = Object.keys(newFeatures || {}).concat(['MORE'])
     , featuresChanged = newFeatures !== this.props.homeData.features
     , routeChanged = newRoute !== currRoute
     , routeInfeatures = featureKeys.indexOf(newRoute.toUpperCase()) !== -1

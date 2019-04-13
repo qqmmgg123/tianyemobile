@@ -22,7 +22,7 @@ class HelpItem extends React.Component {
       content = '', 
       _id, 
       remark = [], 
-      username = '' } = this.props
+      nickname = '' } = this.props
     return (
         <TouchableOpacity 
           onPress={() => {
@@ -38,7 +38,7 @@ class HelpItem extends React.Component {
               fontSize: 14,
               color: '#333',
               lineHeight: 24
-              }}>{remark[0] || username}：</Text>
+              }}>{remark[0] || nickname}：</Text>
             <Text style={{ 
               marginTop: 5,
               fontSize: 14,

@@ -2,6 +2,9 @@ import React, { Component } from 'react'
 import { KeyboardAvoidingView, View, TouchableOpacity, TextInput, Text } from 'react-native'
 import globalStyles from 'app/component/globalStyles'
 
+/**
+ * 举报界面
+ */
 export default class Report extends Component {
 
   constructor(props) {

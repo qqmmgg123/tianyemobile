@@ -1,3 +1,6 @@
+/*
+ * app主程序
+ */
 import React from 'react'
 import { Provider } from 'react-redux'
 import { AppState, AsyncStorage } from 'react-native'
@@ -139,8 +142,7 @@ export default class App extends React.Component {
             store.dispatch(changeLoginState({
               need_login: false,
               userId: user._id,
-              username: user.username,
-              panname: user.panname,
+              nickname: user.nickname,
               email: user.email
             }))
           }

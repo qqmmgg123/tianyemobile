@@ -16,7 +16,7 @@ function alert(msg) {
 }
 
 // 正式服地址
-export const rootUrl = 'http://192.168.1.4'
+export const rootUrl = 'http://47.110.236.154'
 
 // 测试服地址
 // export const rootUrl = 'http://192.168.1.4:3000'
@@ -86,11 +86,12 @@ export function removeCurRoute() {
 }
 
 function request(api, method, data, headers = {}) {
-  const REQUEST_TIMEOUT = 5000
+  const REQUEST_TIMEOUT = 6000
   
   return new Promise(function(resolve, reject) {
     const memoryCookie = getCookieByMemory()
     , timeout = setTimeout(function() {
+      alert(api + ', 请求超时，请检查你的网络。')
       reject(new Error('Request timed out'));
     }, REQUEST_TIMEOUT)
     CookieManager.clearAll().then(() => {
@@ -130,29 +131,22 @@ function request(api, method, data, headers = {}) {
                 need_login: true,
                 userId: '',
                 userId: '',
-                username: '',
-                panname: '',
+                nickname: '',
                 email: ''
               }))
               NavigatorService.navigate('Login')
               errMsg = res.info || res.message || '异常错误'
-              clearTimeout(timeout);
-              reject(new Error(errMsg))
-              break
+              clearTimeout(timeout)
+              throw new Error(errMsg)
             default:
               errMsg = res.info || res.message || '异常错误'
-              console.log('这里错了')
-              setTimeout( () => {
-                alert(errMsg)
-              }, 0)
-              clearTimeout(timeout);
-              reject(new Error(errMsg))
-              break
+              clearTimeout(timeout)
+              throw new Error(errMsg)
           }
         } else {
           let { user, notification } = res
           if (user && notification) {
-            console.log(`用户变更: ${user.panname}`)
+            console.log(`用户变更: ${user.nickname}`)
             // 获取该用户通知
             // TODO: 获取用户消息，应该在服务器进行。reducer也应该是用户的登陆信息
             setUserByMemory(JSON.stringify(user))
@@ -163,23 +157,22 @@ function request(api, method, data, headers = {}) {
             store.dispatch(changeLoginState({
               need_login: false,
               userId: user._id,
-              username: user.username,
-              panname: user.panname,
+              nickname: user.nickname,
               email: user.email
             }))
-            console.log(`用户变更结束: ${user.panname}`)
-            clearTimeout(timeout);
+            console.log(`用户变更结束: ${user.nickname}`)
+            clearTimeout(timeout)
             resolve(res)
             return
           }
+          clearTimeout(timeout)
           resolve(res)
         }
       }).catch((err) => {
-        console.log('这里错了。。。。。。')
-        setTimeout( () => {
+        setTimeout(() => {
           alert(err.message || '异常错误')
         }, 0)
-        clearTimeout(timeout);
+        clearTimeout(timeout)
         reject(err)
       })
     })

@@ -1,3 +1,7 @@
+/**
+ * 缘——谈心模块
+ */
+
 import React from 'react'
 import { 
   View, 
@@ -34,7 +38,7 @@ class ReplyItem extends React.Component {
       { opacity: this._animated }
     ]
     const { reply, curUserId, navigation, onShowAction, onReply } = this.props
-    const replyName = (reply.remark && reply.remark[0] || reply.username || '')
+    const replyName = (reply.remark && reply.remark[0] || reply.nickname || '')
 
     return (
       <Animated.View 
@@ -209,7 +213,7 @@ class HelpItem extends React.Component {
       new_reply_date,
       reply_visit_date,
     } = curReply
-    const username = (friend && friend.remark) || (author && (author.panname || author.username)) || ''
+    const creatorname = (friend && friend.remark) || (author && author.nickname) || ''
     const hasNew = new_reply_date > reply_visit_date
     return (
       <View 
@@ -246,7 +250,7 @@ class HelpItem extends React.Component {
             }}
           >{
               [
-                username, 
+                creatorname, 
                 getDate(new Date(created_date)), 
                 (updated_date ? '更新' : MIND_TYPES[type_id].action) + '了', 
                 MIND_TYPES[type_id].name
@@ -321,7 +325,7 @@ class HelpItem extends React.Component {
           marginBottom: 10
         }}>
           {/*replies.map((reply, index) => {
-            const replyName = (reply.remark && reply.remark[0] || reply.username || '')
+            const replyName = (reply.remark && reply.remark[0] || reply.nickname || '')
             return <ReplyItem 
               key={reply._id}
               reply={reply}
@@ -395,10 +399,10 @@ class Talk extends React.Component {
         let user = getUserByMemory()
         let help = helps.find(item => item._id === parentId)
         let { reply } = res
-        reply.username = user.username
+        reply.nickname = user.nickname
         if (replyType === 'reply') {
           let replyTo = help.replies.find(item => item._id === replyId)
-          reply.receivername = replyTo.remark[0] || replyTo.username[0] || ''
+          reply.receivername = replyTo.remark[0] || replyTo.nickname[0] || ''
         }
         if (help) {
           help.reply_count += 1

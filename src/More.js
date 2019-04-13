@@ -1,3 +1,6 @@
+/**
+ * 其他模块
+ */
 import React from 'react'
 import {
   View,
@@ -34,12 +37,18 @@ let routes = [
   {
     key: 'Login',
     label: '登录',
-    visible: 'unlogin'
+    visible: 'unlogin',
+    params: {
+      name: '登录'
+    }
   },
   {
     key: 'Login',
     label: '切换账号',
-    visible: 'login'
+    visible: 'login',
+    params: {
+      name: '切换账号'
+    }
   },
 ]
 
@@ -48,16 +57,16 @@ class NameModify extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      panname: '',
+      nickname: '',
       spinner: false,
       spinnerText: ''
     }
   }
 
   confirm = async () => {
-    let { panname } = this.state
-    panname = panname.trim()
-    if (!panname) {
+    let { nickname } = this.state
+    nickname = nickname.trim()
+    if (!nickname) {
       toast('称号不能填空。')
       return
     }
@@ -65,8 +74,8 @@ class NameModify extends React.Component {
       spinner: true,
       spinnerText: '',
     })
-    const res = await post('panname', {
-      panname
+    const res = await post('nickname', {
+      nickname
     })
     this.setState({
       spinner: false,
@@ -74,18 +83,18 @@ class NameModify extends React.Component {
     })
     if (res.success) {
       let userInfo = getUserByMemory()
-      userInfo.panname = panname
+      userInfo.nickname = nickname
       setUserByMemory(JSON.stringify(userInfo))
       AsyncStorage.setItem('user', JSON.stringify(userInfo))
       this.props.changeLoginState({
-        panname
+        nickname
       })
       this.props.modal.close()
     }
   }
 
   render() {
-    const { panname = '', spinner, spinnerText } = this.state
+    const { nickname = '', spinner, spinnerText } = this.state
 
     return (
       <KeyboardAvoidingView
@@ -118,8 +127,8 @@ class NameModify extends React.Component {
             padding: 10
           }}>
           <TextInput
-            onChangeText={(panname) => this.setState({panname})}
-            value={this.state.panname}
+            onChangeText={(nickname) => this.setState({nickname})}
+            value={this.state.nickname}
             style={{
               borderColor: '#cccccc', 
               borderWidth: 1,
@@ -137,11 +146,11 @@ class NameModify extends React.Component {
             autoFocus={true}
           />
           <TouchableOpacity
-            activeOpacity={!panname.trim() ? 1 : 0.6}
-            onPress={!panname.trim() ? null : this.confirm}
+            activeOpacity={!nickname.trim() ? 1 : 0.6}
+            onPress={!nickname.trim() ? null : this.confirm}
             style={[
               globalStyles.button, 
-              !panname.trim() ? globalStyles.buttonDis : null, 
+              !nickname.trim() ? globalStyles.buttonDis : null, 
               { 
                 marginTop: 10,
               }
@@ -150,7 +159,7 @@ class NameModify extends React.Component {
             <Text
               style={[
                 globalStyles.buttonText, 
-                !panname.trim() ? globalStyles.buttonDisText : null
+                !nickname.trim() ? globalStyles.buttonDisText : null
               ]}
             >确定修改</Text>
           </TouchableOpacity>
@@ -176,8 +185,7 @@ class MoreList extends React.Component {
         need_login: true,
         userId: '',
         userId: '',
-        username: '',
-        panname: '',
+        nickname: '',
         email: ''
       })
       let curRoute = getCurRoute()
@@ -194,10 +202,9 @@ class MoreList extends React.Component {
   render() {
     console.log('启动结束渲染......')
     let { loginData } = this.props
-    let { need_login, username, panname, email } = loginData
+    let { need_login, nickname, email } = loginData
     let userInfos = [
-      { key: 'username', name: '用户名', value: username },
-      { key: 'panname', name: '称号', value: panname },
+      { key: 'nickname', name: '称号', value: nickname },
       { key: 'email', name: '邮箱', value: email },
     ]
 
@@ -213,8 +220,8 @@ class MoreList extends React.Component {
         {userInfos.map((info, index) => (
           info.value ? (<View key={index}>
             <TouchableOpacity
-              activeOpacity={info.key === 'panname' ? 0 : 1}
-              onPress={info.key === 'panname'
+              activeOpacity={info.key === 'nickname' ? 0 : 1}
+              onPress={info.key === 'nickname'
                 ? () => this._modal.open()
                 : null}
               style={{
@@ -237,7 +244,7 @@ class MoreList extends React.Component {
                 }}
                 numberOfLines={1}
               >{info.value}</Text>
-              {info.key === 'panname' ? (<TYicon 
+              {info.key === 'nickname' ? (<TYicon 
                 style={{
                   transform: [{ rotate: '180deg'}],
                   marginBottom: 2

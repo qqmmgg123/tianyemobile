@@ -1,3 +1,7 @@
+/**
+ * 缘模块入口
+ */
+
 import React from 'react'
 import {
   View,

@@ -50,7 +50,7 @@ class ReplyItem extends React.Component {
       content = '',
       remark = [], 
       rremark = [],
-      username = '', 
+      nickname = '', 
       ref_id, 
       ref_title = '', 
       ref_summary = '', 
@@ -60,7 +60,7 @@ class ReplyItem extends React.Component {
       onReply,
       onShowAction
     } = this.props
-    const replyName = (remark && remark[0] || username || '')
+    const replyName = (remark && remark[0] || nickname || '')
     return (
       <Animated.View style={rowStyles}>
         <TouchableOpacity
@@ -126,6 +126,7 @@ class DetailView extends Component {
 
   render() {
     let { help, curUserId } = this.props
+    , isCreator = help.creator_id === curUserId
     return (
       <View style={{
         flex: 1
@@ -158,10 +159,10 @@ class DetailView extends Component {
             <Text style={{ 
               fontSize: 14,
               color: '#666',
-            }}>回复</Text>
+            }}>{isCreator ? '跟进' : '回复'}</Text>
           </TouchableOpacity>
           {
-            help.creator_id === curUserId
+            isCreator
               ? <TouchableOpacity
                   style={{
                     padding: 10
@@ -234,13 +235,13 @@ class HelpDetail extends Component {
         , user = getUserByMemory()
         , key = replies.length
         newReply._id = 'newreply' + key
-        newReply.username = user.username
+        newReply.nickname = user.nickname
         newReply.reply_id = replyId
         newReply.reply_type = replyType
         newReply.creator_id = user._id
         if (replyType === 'reply') {
           let replyTo = help.replies.find(item => item._id === replyId)
-          newReply.receivername = replyTo.remark[0] || replyTo.username[0] || ''
+          newReply.receivername = replyTo.remark[0] || replyTo.nickname[0] || ''
         }
         replies.unshift(newReply)
         this.setState({

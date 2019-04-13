@@ -2,6 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View, Text, Modal, ActivityIndicator } from 'react-native';
 
+/**
+ * 方法: 创建弹出蒙层对话
+ */
 export function createFriendModal(Inner, options) {
 
   return class FriendModal extends React.Component {
@@ -124,6 +127,9 @@ const styles = StyleSheet.create({
 const ANIMATION = ['none', 'slide', 'fade'];
 const SIZES = ['small', 'normal', 'large'];
 
+/**
+ * 等待loading组件
+ */
 export class Spinner extends React.PureComponent {
   constructor(props) {
     super(props);

@@ -1,3 +1,6 @@
+/**
+ * 主功能tab导航
+ */
 import React from 'react'
 import { createBottomTabNavigator } from 'react-navigation'
 import TabBar from 'app/TabBar'

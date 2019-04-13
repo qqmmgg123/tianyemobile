@@ -41,7 +41,7 @@ render() {
             marginTop: 20,
             fontSize: 16,
             color: '#999'
-          }}>如果不知道对方用户名/邮箱</Text>
+          }}>如果不知道对方邮箱</Text>
           <TouchableOpacity
             onPress={() => navigation.navigate('Fate')}
             style={{
@@ -71,7 +71,7 @@ render() {
             color: '#999',
             marginTop: 20,
             fontSize: 16
-          }}>如果知道对方的用户名/邮箱</Text>
+          }}>如果知道对方的邮箱</Text>
           <TouchableOpacity
             onPress={() => navigation.navigate('UserSearch', {
               onGoBack: onReload
@@ -88,7 +88,7 @@ render() {
               lineHeight: 28,
               color: '#EE3D80',
               marginRight: 10
-            }}>通过用户名/邮箱添加对方</Text>
+            }}>通过邮箱添加对方</Text>
             <TYicon 
               name='sousuo'
               size={16} 

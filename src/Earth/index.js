@@ -1,3 +1,7 @@
+/**
+ * 尘模块
+ */
+
 import React, { Component } from 'react'
 import { ScrollView, RefreshControl, View, Text, TouchableOpacity, Dimensions } from 'react-native'
 import { connect } from 'react-redux'

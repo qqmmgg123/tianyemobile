@@ -1,3 +1,6 @@
+/**
+ * 心模块列表也
+ */
 import React from 'react'
 import { 
   View, 
@@ -136,8 +139,8 @@ class MindItem extends React.Component {
     }
     if (last_reply_date && new_reply) {
       const { author, friend } = new_reply
-      let username = (friend && friend.remark) || (author && (author.panname || author.username)) || ''
-      activity = `${username} ${getDate(new Date(created_date))}回复了你的`
+      let creatorname = (friend && friend.remark) || (author && (author.nickname || author.nickname)) || ''
+      activity = `${creatorname} ${getDate(new Date(created_date))}回复了你的`
       let hasNew = curUserId !== new_reply.creator_id && last_reply_date > reply_visit_date
       if (hasNew) {
         notice = <View style={{

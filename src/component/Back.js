@@ -1,3 +1,6 @@
+/**
+ * 返回与取消组件
+ */
 import React from 'react'
 import TYicon from 'app/component/TYicon'
 import { View, TouchableOpacity, Text } from 'react-native'

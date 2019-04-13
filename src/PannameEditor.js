@@ -13,16 +13,16 @@ class PannnameEditor extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      panname: '',
+      nickname: '',
       spinner: false,
       spinnerText: ''
     }
   }
 
   createPanname = async () => {
-    let { panname } = this.state
-    panname = panname.trim()
-    if (!panname) {
+    let { nickname } = this.state
+    nickname = nickname.trim()
+    if (!nickname) {
       toast('称号不能填空。')
       return
     }
@@ -31,8 +31,8 @@ class PannnameEditor extends Component {
       spinner: true,
       spinnerText: '',
     })
-    const res = await post('panname', {
-      panname
+    const res = await post('nickname', {
+      nickname
     })
     this.setState({
       spinner: false,
@@ -40,11 +40,11 @@ class PannnameEditor extends Component {
     })
     if (res.success) {
       let userInfo = await getUserByMemory()
-      userInfo.panname = panname
+      userInfo.nickname = nickname
       setUserByMemory(JSON.stringify(userInfo))
       AsyncStorage.setItem('user', JSON.stringify(userInfo))
       this.props.changeLoginState({
-        panname
+        nickname
       })
       this.props.modal.close()
       this.props.navigation.navigate('ShareEditor')
@@ -52,7 +52,7 @@ class PannnameEditor extends Component {
   }
   
   render() {
-    const { panname = '', spinner, spinnerText } = this.state
+    const { nickname = '', spinner, spinnerText } = this.state
 
     return (
       <KeyboardAvoidingView
@@ -104,8 +104,8 @@ class PannnameEditor extends Component {
               placeholder='您的称号'
               placeholderTextColor="#cccccc"
               autoCapitalize="none"
-              onChangeText={(panname) => this.setState({panname})}
-              value={this.state.panname}
+              onChangeText={(nickname) => this.setState({nickname})}
+              value={this.state.nickname}
             />
             <View style={{
               flexDirection: 'row'
@@ -113,17 +113,17 @@ class PannnameEditor extends Component {
               <TouchableOpacity
                 style={[
                   globalStyles.button, 
-                  !panname.trim() ? globalStyles.buttonDis : null, 
+                  !nickname.trim() ? globalStyles.buttonDis : null, 
                   { 
                     marginTop: 10,
                     flex: 1 
                   }
                 ]}
-                onPress={!panname.trim() ? null : this.createPanname}
+                onPress={!nickname.trim() ? null : this.createPanname}
               >
                 <Text style={[
                   globalStyles.buttonText, 
-                  !panname.trim() ? globalStyles.buttonDisText : null
+                  !nickname.trim() ? globalStyles.buttonDisText : null
                 ]}>确定</Text>
               </TouchableOpacity>
               <View style={{ width: 10 }} />

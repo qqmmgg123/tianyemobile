@@ -39,7 +39,7 @@ export default class Profile extends React.Component {
     let { navigation } = this.props
     let { profile } = this.state
     let userInfos = [
-      { key: 'panname', name: '称号', value: profile && profile.panname || '' },
+      { key: 'nickname', name: '称号', value: profile && profile.nickname || '' },
     ]
 
     return (

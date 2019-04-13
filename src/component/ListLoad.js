@@ -9,6 +9,10 @@ import {
 } from 'react-native'
 import globalStyles from 'app/component/globalStyles'
 
+/**
+ * 列表为空时，显示该组件
+ * @param {*} props 
+ */
 export const Empty = (props) =>(<View
   style={{
     flex: 1,
@@ -22,6 +26,10 @@ export const Empty = (props) =>(<View
   </Text>
 </View>)
 
+/**
+ * 列表上拉滚动加载时显示该组件
+ * @param {*} props 
+ */
 export const Footer = (props) => (props.data.length ? (<View>
   {!props.loading ? (props.page ? (<TouchableOpacity
     onPress={props.onLoadMore}
@@ -32,6 +40,10 @@ export const Footer = (props) => (props.data.length ? (<View>
   }]}>没有更多了。</Text>) : <ActivityIndicator />}
 </View>) : null)
 
+/**
+ * 列表数据加载错误时显示该组件
+ * @param {*} props 
+ */
 export const PageError = (props) =>(<ScrollView
   refreshControl={
     <RefreshControl
