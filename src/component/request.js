@@ -16,10 +16,10 @@ function alert(msg) {
 }
 
 // 正式服地址
-// export const rootUrl = 'http://47.110.236.154'
+export const rootUrl = 'http://47.110.236.154'
 
 // 测试服地址
-export const rootUrl = 'http://192.168.1.4:3000'
+// export const rootUrl = 'http://192.168.1.4:3000'
 
 // 当前访问地址
 let curRoute = ''
