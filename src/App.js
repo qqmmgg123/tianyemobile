@@ -78,6 +78,8 @@ AppNav.router.getStateForAction = (action, state) => {
     console.log(action.routeName)
     if (action.routeName !== 'Login' && action.routeName !== 'Signup') {
       setCurRoute(action.routeName)
+    } else {
+      setCurRoute('Mind')
     }
     switch (action.routeName) {
       case 'Mind':
@@ -108,21 +110,6 @@ export default class App extends React.Component {
   }
 
   async componentWillMount() {
-    // 监听用户登陆状态变化
-    /*let currentValue
-    const unsubscribe = store.subscribe(() => {
-      let previousValue = currentValue
-      currentValue = store.getState().loginData.userId
-      if (previousValue !== currentValue) {
-        // 获取通知
-        getNotification().then(notification => {
-          store.dispatch(layoutHomeData({ 
-            message: notification
-          }))
-        })
-      }
-    })
-    // unsubscribe()*/
     // 获取登陆信息
     const keys = await AsyncStorage.getAllKeys()
     const stores = await AsyncStorage.multiGet(keys)

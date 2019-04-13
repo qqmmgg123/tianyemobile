@@ -91,7 +91,10 @@ function request(api, method, data, headers = {}) {
   return new Promise(function(resolve, reject) {
     const memoryCookie = getCookieByMemory()
     , timeout = setTimeout(function() {
-      alert(api + ', 请求超时，请检查你的网络。')
+      setTimeout(() => {
+        alert(api + ', 请求超时，请检查你的网络。')
+      }, 0)
+      clearTimeout(timeout)
       reject(new Error('Request timed out'));
     }, REQUEST_TIMEOUT)
     CookieManager.clearAll().then(() => {

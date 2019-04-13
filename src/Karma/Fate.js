@@ -311,7 +311,7 @@ class FateList extends React.Component {
       return
     }
 
-    if (nextProps.loginData.userId !== this.props.loginData.userId) {
+    if (nextProps.loginData.userId && (nextProps.loginData.userId !== this.props.loginData.userId)) {
       this.reload()
     }
   }

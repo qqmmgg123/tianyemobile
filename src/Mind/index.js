@@ -488,7 +488,7 @@ class MindList extends React.Component {
     let query = msg => msg.feature === 'mind'
     let newMsg = nextProps.homeData.message.find(query)
     let curMsg = this.props.homeData.message.find(query)
-    if (nextProps.loginData.userId !== this.props.loginData.userId ||
+    if ((nextProps.loginData.userId && (nextProps.loginData.userId !== this.props.loginData.userId)) ||
       (newMsg && newMsg.total || 0) !== (curMsg && curMsg.total || 0)) {
       this.reload()
     }

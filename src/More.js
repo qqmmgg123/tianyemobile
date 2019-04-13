@@ -190,7 +190,7 @@ class MoreList extends React.Component {
       })
       let curRoute = getCurRoute()
       if (curRoute) {
-        this.props.navigation.navigate('Classic')
+        this.props.navigation.navigate('Earth')
       }
     }
   }
@@ -201,11 +201,12 @@ class MoreList extends React.Component {
 
   render() {
     console.log('启动结束渲染......')
-    let { loginData } = this.props
+    let { loginData, navigation } = this.props
     let { need_login, nickname, email } = loginData
     let userInfos = [
       { key: 'nickname', name: '称号', value: nickname },
       { key: 'email', name: '邮箱', value: email },
+      // { key: 'password', name: '密码' },
     ]
 
     return (
@@ -223,7 +224,11 @@ class MoreList extends React.Component {
               activeOpacity={info.key === 'nickname' ? 0 : 1}
               onPress={info.key === 'nickname'
                 ? () => this._modal.open()
-                : null}
+                : (info.key === 'password'
+                ? () => {
+                  // navigation.navigate('Password')
+                }
+                : null)}
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
