@@ -22,8 +22,8 @@ const Back = (props) => {
     <View style={{ 
       flexDirection: 'row',
       alignItems: 'center',
-      borderBottomColor: '#eaeaea',
-      borderBottomWidth: 1,
+      // borderBottomColor: '#eaeaea',
+      // borderBottomWidth: 1,
       borderStyle: 'solid',
       backgroundColor: '#fafafa',
       justifyContent: 'space-between',
@@ -37,7 +37,7 @@ const Back = (props) => {
           alignItems: 'center',
           padding: 10,
           flexDirection: 'row',
-          flexWrap: 'wrap'
+          // flexWrap: 'wrap'
         }}
       >
         <TYicon 

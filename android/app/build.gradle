@@ -101,8 +101,8 @@ android {
         applicationId "com.tianyemobile"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 4
+        versionName "1.0.1"
     }
     signingConfigs {
         release {
@@ -145,6 +145,12 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-exit-app')
+    implementation project(':react-native-wechat')
+    implementation project(':@astrocoders_react-native-selectable-text')
+    implementation project(':react-native-splash-screen')
+    implementation project(':RCTWeChat')    // Add this line only.
+    implementation project(':auto-update')
     implementation project(':react-native-cookies')
     implementation project(':react-native-rn-cardview')
     implementation project(':react-native-svg')

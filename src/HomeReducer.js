@@ -33,6 +33,16 @@ const loginReducer = (state = {
   }
 }
 
+// TODO 用户操作变化通知
+/* const userActionReducer = (state = {
+
+}, action) => {
+  switch (action.type) {
+    default:
+      return state
+  }
+} */
+
 export default combineReducers({
   homeData: homeReducer,
   loginData: loginReducer

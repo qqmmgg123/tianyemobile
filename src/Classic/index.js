@@ -14,109 +14,12 @@ import { get } from 'app/component/request'
 import globalStyles from 'app/component/globalStyles'
 import { createFriendModal } from 'app/component/GlobalModal'
 import { Empty, Footer } from 'app/component/ListLoad'
+import Quote from 'app/component/Quote'
 
 let noDataTips = '当前没有内容'
 
-const quotes = [
-  {
-    id: 'reply',
-    name: '回复',
-    press() {
-      this.props.modal.close()
-      this.props.navigation.navigate('HelpSelect', {
-        onGoBack: (help) => this.props.refReply(
-          help, this.selectedClassic
-        )
-      })
-    }
-  },
-  {
-    id: 'share',
-    name: '心得',
-    press() {
-      this.props.modal.close()
-      this.props.navigation.navigate('QuoteEditor', {
-        type: 'share',
-        classic: this.selectedClassic
-      })
-    }
-  },
-  {
-    id: 'help',
-    name: '心结',
-    press() {
-      this.props.modal.close()
-      this.props.navigation.navigate('QuoteEditor', {
-        type: 'help',
-        classic: this.selectedClassic
-      })
-    }
-  },
-  {
-    id: 'weixin',
-    name: '微信',
-  }
-]
-
-class Recommend extends React.Component {
-
-  constructor(props) {
-    super(props)
-    this.selectedClassic = props.modal.getParam('classic')
-  }
-
-  render() {
-    return (
-      <TouchableOpacity 
-        activeOpacity={1} 
-        onPressOut={() => this.props.modal.close()}
-        style={{
-          flex: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: 'rgba(0,0,0,0.5)'
-        }}
-      >
-        <View style={{
-          width: 250,
-          backgroundColor: 'white',
-          borderRadius: 3,
-          padding: 10
-        }}>
-          <View style={{
-            paddingVertical: 10
-          }}>
-            <Text style={{
-              color: '#666',
-              fontSize: 14,
-            }}>引用到:</Text>
-          </View>
-          {quotes.map((quote, index) => (<View
-            key={quote.id}
-          >
-            <TouchableOpacity
-              activeOpacity={1}
-              style={{
-                padding: 15,
-              }}
-              onPress={() => {
-                quote.press.call(this)
-              }}>
-              <Text style={{
-                textAlign: 'center',
-                fontSize: 16
-              }}>{quote.name}</Text>
-            </TouchableOpacity>
-            {index < quotes.length - 1 ? <View style={globalStyles.splitLine}></View> : null}
-          </View>))}
-        </View>
-      </TouchableOpacity>
-    )
-  }
-}
-
 const RecommendModal = createFriendModal({ 
-  Recommend
+  Quote
 })
 
 class Classic extends React.Component {
@@ -159,7 +62,7 @@ class Classic extends React.Component {
 
   async loadData() {
     const { page, loading, refreshing } =  this.state
-    let data = await get('features/classic', {
+    let data = await get('classic', {
       perPage: 20,
       page
     })

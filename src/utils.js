@@ -27,7 +27,7 @@ export function getDate(date, normalization) {
     var today = new Date([isoNowEls[1].replace(/-/g, '/'), isoNowEls[5].replace(/\d/g, '0')].join(' '));
     var times = now.getTime() - date.getTime();
     if (times < 0) {
-      console('错误，历史时间大于当前时间');
+      console.log('错误，历史时间大于当前时间');
       return invalidDate;
     }
 

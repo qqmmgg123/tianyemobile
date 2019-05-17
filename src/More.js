@@ -7,14 +7,16 @@ import {
   TouchableOpacity,
   TextInput,
   Text,
-  StyleSheet,
   AsyncStorage,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  Alert,
+  Platform,
+  NativeModules
 } from 'react-native'
 import TYicon from 'app/component/TYicon'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import Spinner from 'react-native-loading-spinner-overlay'
+import { Spinner } from 'app/component/GlobalModal'
 import { changeLoginState } from 'app/HomeActions'
 import { 
   get, 
@@ -22,17 +24,20 @@ import {
   removeCookieByMemory, 
   removeUserByMemory, 
   getCurRoute, 
-  getUserByMemory
+  getUserByMemory,
+  setUserByMemory
 } from 'app/component/request'
 import globalStyles from 'app/component/globalStyles'
 import { createFriendModal } from 'app/component/GlobalModal'
 import { toast } from 'app/Toast'
+import RNExitApp from 'react-native-exit-app'
 
-let routes = [
+const routes = [
   {
     key: 'Signup',
     label: '注册',
-    visible: 'unlogin'
+    visible: 'unlogin',
+    needArraw: true
   },
   {
     key: 'Login',
@@ -40,7 +45,8 @@ let routes = [
     visible: 'unlogin',
     params: {
       name: '登录'
-    }
+    },
+    needArraw: true
   },
   {
     key: 'Login',
@@ -48,7 +54,14 @@ let routes = [
     visible: 'login',
     params: {
       name: '切换账号'
-    }
+    },
+    needArraw: true
+  },
+  { 
+    key: 'About',
+    label: '关于田野',
+    visible: 'allways',
+    needArraw: false
   },
 ]
 
@@ -124,7 +137,7 @@ class NameModify extends React.Component {
             width: 250,
             backgroundColor: 'white',
             borderRadius: 3,
-            padding: 10
+            padding: 10,
           }}>
           <TextInput
             onChangeText={(nickname) => this.setState({nickname})}
@@ -174,6 +187,13 @@ class NameModify extends React.Component {
 const NameModifyModal = createFriendModal({ NameModify })
 
 class MoreList extends React.Component {
+  
+  constructor(props) {
+    super(props)
+    this.state = {
+      appversion: ''
+    }
+  }
 
   async postLogout() {
     let res = await get('logout')
@@ -199,14 +219,28 @@ class MoreList extends React.Component {
     return nextProps.homeData.launch || this.props.homeData.launch
   }
 
+  componentWillMount() {
+    if (Platform.OS === 'android') {
+      NativeModules.UpdateApp.getApkVersion(version => {
+        this.setState({
+          appversion: version
+        })
+      })
+    } else {
+      this.setState({
+        appversion: '1.0.1'
+      })
+    }
+  }
+
   render() {
     console.log('启动结束渲染......')
     let { loginData, navigation } = this.props
-    let { need_login, nickname, email } = loginData
-    let userInfos = [
-      { key: 'nickname', name: '称号', value: nickname },
+    , { need_login, nickname, email } = loginData
+    , userInfos = [
+      { key: 'nickname', name: '称号', value: nickname, show: true, arrow: true },
       { key: 'email', name: '邮箱', value: email },
-      // { key: 'password', name: '密码' },
+      { key: 'password', name: '密码', show: true, arrow: true }
     ]
 
     return (
@@ -214,19 +248,17 @@ class MoreList extends React.Component {
         style={globalStyles.container}
       >
         <View style={globalStyles.header}>
-          {/*<TYicon name='ellipsis' size={20} color='#EE3D80'></TYicon>*/}
           <Text style={globalStyles.logo}>其他</Text>
         </View>
-        {/*<View style={globalStyles.headerBottomLine}></View>*/}
-        {userInfos.map((info, index) => (
-          info.value ? (<View key={index}>
+        {!need_login ? userInfos.map((info, index) => (
+          info.value || info.show ? (<View key={index}>
             <TouchableOpacity
               activeOpacity={info.key === 'nickname' ? 0 : 1}
               onPress={info.key === 'nickname'
                 ? () => this._modal.open()
                 : (info.key === 'password'
                 ? () => {
-                  // navigation.navigate('Password')
+                  navigation.navigate('Password')
                 }
                 : null)}
               style={{
@@ -249,7 +281,7 @@ class MoreList extends React.Component {
                 }}
                 numberOfLines={1}
               >{info.value}</Text>
-              {info.key === 'nickname' ? (<TYicon 
+              {info.arrow ? (<TYicon 
                 style={{
                   transform: [{ rotate: '180deg'}],
                   marginBottom: 2
@@ -261,7 +293,7 @@ class MoreList extends React.Component {
             </TouchableOpacity>
             <View style={globalStyles.splitLine}></View>
         </View>) : null
-        ))}
+        )) : null}
         {routes.map(scene => {
           return ((!need_login && scene.visible === 'login') 
             || (need_login && scene.visible === 'unlogin')
@@ -276,6 +308,7 @@ class MoreList extends React.Component {
                   padding: 20,
                   backgroundColor: 'white'
                 }}
+                activeOpacity={scene.needArraw ? 0.6 : 1}
                 onPress={() => this.props.navigation.navigate(scene.key, scene.params || null)}
               >
                 <Text 
@@ -283,22 +316,36 @@ class MoreList extends React.Component {
                     flex: 1
                   }}
                 >{scene.label}</Text>
-                <TYicon 
-                  style={{
-                    transform: [{ rotate: '180deg'}],
-                    marginBottom: 2
-                  }}
-                  ref={ref => this._buttonText = ref} 
-                  name='fanhui' 
-                  size={16} 
-                  color='#ccc'></TYicon>
+                {
+                  scene.key === 'About' 
+                  ? <Text 
+                      style={{
+                        maxWidth: '50%',
+                        color: '#666'
+                      }}
+                      numberOfLines={1}
+                    >{ '版本：' + this.state.appversion }</Text> : null}
+                { 
+                  scene.needArraw ?    
+                  <TYicon 
+                    style={{
+                      transform: [{ rotate: '180deg'}],
+                      marginBottom: 2
+                    }}
+                    ref={ref => this._buttonText = ref} 
+                    name='fanhui' 
+                    size={16} 
+                    color='#ccc'></TYicon>
+                  : null
+                }
               </TouchableOpacity>
               <View style={globalStyles.splitLine}></View>
             </View>
           ) : null})}
         {!need_login
           ? (<View style={{
-            padding: 15
+            paddingTop: 15,
+            paddingHorizontal: 15
           }}>
               <TouchableOpacity
                 onPress={this.postLogout.bind(this)}
@@ -310,6 +357,19 @@ class MoreList extends React.Component {
               </TouchableOpacity>
             </View>)
           : null}
+          <View style={{
+            paddingTop: 15,
+            paddingHorizontal: 15
+          }}>
+            <TouchableOpacity
+              onPress={() => RNExitApp.exitApp()}
+              style={Object.assign({}, globalStyles.button, {
+                height: 42
+              })}
+            >
+              <Text style={globalStyles.buttonText}>关闭田野</Text>
+            </TouchableOpacity>
+          </View>
           <NameModifyModal 
             ref={ref => this._modal = ref}
             changeLoginState={

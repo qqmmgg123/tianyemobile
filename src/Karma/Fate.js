@@ -1,13 +1,22 @@
 import React from 'react'
-import { View, FlatList, ScrollView, RefreshControl, TouchableOpacity, Text, Animated } from 'react-native'
+import { 
+  View, 
+  FlatList, 
+  ScrollView, 
+  RefreshControl, 
+  TouchableOpacity, 
+  Text,
+  Animated
+} from 'react-native'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { layoutHomeData } from 'app/HomeActions'
-import { get, del } from 'app/component/request'
-import globalStyles from 'app/component/globalStyles'
+import { get } from 'app/component/request'
 import { Empty, Footer } from 'app/component/ListLoad'
-import TYicon from 'app/component/TYicon'
 import { getDate } from 'app/utils'
+import { EMOTIONS } from 'app/component/Const'
+import globalStyles from 'app/component/globalStyles'
+import TYicon from 'app/component/TYicon'
 
 const ANIMATION_DURATION = 250
 
@@ -15,43 +24,28 @@ class DiaryItem extends React.Component {
 
   constructor(props) {
     super(props)
-    this._animated = new Animated.Value(1);
-  }
-
-  async removeDiary(id) {
-    const res = await del(`diary/${id}`)
-    if (res.success) {
-      this.onRemove()
-    }
-  }
-
-  onRemove = () => {
-    const { onRemove } = this.props
-    if (onRemove) {
-      Animated.timing(this._animated, {
-        toValue: 0,
-        duration: ANIMATION_DURATION,
-      }).start(() => onRemove())
-    }
   }
 
   render() {
     const rowStyles = [
       { opacity: this._animated }
     ]
-    const thanks = {
+    , EMOTIONS = {
       thank: '认同',
-      understand: '理解'
+      understand: '理解',
+      text: '回复'
     }
-    const { 
+    , { 
       _id, 
       userId,
       nickname, 
-      type_id, 
-      giver_id, 
-      given_date, 
+      sub_type, 
+      creator_id, 
+      created_date, 
+      mTextTotal,
       mUnderstandTotal, 
       mThankTotal, 
+      oTextTotal,
       oUnderstandTotal, 
       oThankTotal, 
       onAddFriend 
@@ -59,16 +53,18 @@ class DiaryItem extends React.Component {
 
     let mFateWord = ''
     , oFateWord = ''
-    if (mThankTotal || mUnderstandTotal) {
+    if (mTextTotal || mThankTotal || mUnderstandTotal) {
       let mTotalArray = [
+        mTextTotal ? `回复您${mTextTotal}次` : '',
         mUnderstandTotal ? `理解您${mUnderstandTotal}次` : '',
         mThankTotal ? `认同您${mThankTotal}次` : ''
       ]
       mFateWord = '他一共' + mTotalArray.filter(text => text !== '').join(',')
     }
 
-    if (oThankTotal || oUnderstandTotal) {
+    if (oTextTotal || oThankTotal || oUnderstandTotal) {
       let oTotalArray = [
+        oTextTotal ? `回复他${oTextTotal}次` : '',
         oUnderstandTotal ? `理解他${oUnderstandTotal}次` : '',
         oThankTotal ? `认同他${oThankTotal}次` : ''
       ]
@@ -108,9 +104,9 @@ class DiaryItem extends React.Component {
                 }}
               >
                 {
-                  userId === giver_id 
-                    ? '您' + thanks[type_id] + '了' + nickname 
-                    : nickname + thanks[type_id] + '了你'
+                  userId === creator_id 
+                    ? '您' + EMOTIONS[sub_type] + '了' + (nickname || '未署名' )
+                    : (nickname || '未署名') + EMOTIONS[sub_type] + '了你'
                 }
               </Text>
               <Text
@@ -119,7 +115,7 @@ class DiaryItem extends React.Component {
                   color: '#999'
                 }}
               >
-                {getDate(new Date(given_date))}
+                {getDate(new Date(created_date))}
               </Text>
             </View>
             <Text 
@@ -186,7 +182,7 @@ class FateList extends React.Component {
 
   async loadData() {
     const { page, loading, refreshing } =  this.state
-    let data = await get('features/diary', {
+    let data = await get('karma/fate', {
       perPage: 20,
       page,
       isVisit: refreshing
@@ -256,7 +252,6 @@ class FateList extends React.Component {
 
       // 处理缘tab消息小红点
       let talkMsg = karmaMsg.sub_feature.find(msg => msg.feature === 'talk')
-      console.log(talkMsg)
       if (!talkMsg || (talkMsg.reply_total === 0 && talkMsg.mind_total === 0)) {
         karmaMsg.has_new = false
       }

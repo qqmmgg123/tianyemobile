@@ -19,15 +19,18 @@ class HelpItem extends React.Component {
 
   render() {
     const { 
-      content = '', 
+      title,
+      summary = '', 
       _id, 
-      remark = [], 
-      nickname = '' } = this.props
+      author, 
+      friend
+    } = this.props
+    , creatorname = (friend && friend.remark) || (author && author.nickname) || ''
     return (
         <TouchableOpacity 
           onPress={() => {
             this.props.navigation.goBack()
-            this.props.navigation.state.params.onGoBack({ _id, content });
+            this.props.navigation.state.params.onGoBack({ _id, summary });
           }}
           style={{
             paddingTop: 10,
@@ -38,13 +41,13 @@ class HelpItem extends React.Component {
               fontSize: 14,
               color: '#333',
               lineHeight: 24
-              }}>{remark[0] || nickname}：</Text>
+              }}>{creatorname}：</Text>
             <Text style={{ 
               marginTop: 5,
               fontSize: 14,
               color: '#333',
               lineHeight: 24
-              }}>{content}</Text>
+              }}>{summary}</Text>
           </View>
         </TouchableOpacity>
     )
@@ -141,22 +144,9 @@ export default class HelpSelect extends React.Component {
         style={globalStyles.container}
       >
         <Back 
-          centerCom={(<View
-            style={{
-              flexWrap: 'nowrap',
-              flexDirection: 'row',
-              justifyContent: 'center',
-              flex: 2,
-            }}
-          >
-            <Text style={{
-              fontSize: 16,
-              color: '#333'
-            }}>选择您要回复的主题</Text>
-          </View>)}
+          name='选择您要回复的谈心主题'
           navigation={this.props.navigation} 
         />
-        <View style={globalStyles.splitLine}></View>
         {
           helps && helps.length 
             ? <FlatList

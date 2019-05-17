@@ -35,6 +35,29 @@ export default StyleSheet.create({
     height: 5,
     backgroundColor: '#fafafa',
   },
+  inputText: {
+    width: '80%',
+    height: 48,
+    padding: 10,
+    marginTop: 10,
+    fontSize: 16,
+    borderBottomColor: '#ccc', 
+    borderBottomWidth: 1,
+  },
+  inputPasswordField: {
+    width: '80%',
+    flexDirection: 'row',
+    borderBottomColor: '#ccc', 
+    borderBottomWidth: 1,
+    marginTop: 10,
+    alignItems: 'center',
+  },
+  inputPassword: {
+    height: 48,
+    padding: 10,
+    flex: 1,
+    fontSize: 16
+  },
   button: {
     borderColor: '#dddddd', 
     borderWidth: 1, 
@@ -73,14 +96,13 @@ export default StyleSheet.create({
     marginTop: 10,
   },
   quoteTitle: {
-    color: '#666',
+    color: '#333',
     fontSize: 14,
     lineHeight: 24,
   },
   quoteSummary: {
-    color: '#999',
-    marginTop: 5,
-    fontSize: 12,
+    color: '#666',
+    fontSize: 14,
     lineHeight: 22,
   },
   dropDown: {
@@ -92,5 +114,5 @@ export default StyleSheet.create({
     top: 42,
     padding: 10,
     zIndex: 999,
-  },
+  }
 })

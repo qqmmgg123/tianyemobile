@@ -127,6 +127,7 @@ export default class AcceptPrompt extends React.Component {
         style={globalStyles.container} 
       >
         <Back 
+          mode="close"
           navigation={this.props.navigation} 
         />
         <KeyboardAvoidingView
@@ -197,7 +198,7 @@ export default class AcceptPrompt extends React.Component {
                 }}>
                   <Text style={{
                     flex: 1
-                  }}>与他（她）共享心结</Text>
+                  }}>与他（她）共享烦恼</Text>
                   <Switch 
                     style={{
                       marginLeft: 10
@@ -215,7 +216,7 @@ export default class AcceptPrompt extends React.Component {
                 }}>
                   <Text style={{
                     flex: 1
-                  }}>与他（她）共享心得</Text>
+                  }}>与他（她）共享感悟</Text>
                   <Switch 
                     style={{
                       marginLeft: 10

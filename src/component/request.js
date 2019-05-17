@@ -16,17 +16,17 @@ function alert(msg) {
 }
 
 // 正式服地址
-export const rootUrl = 'http://47.110.236.154'
+export const rootUrl = 'https://www.tianyeapp.top'
 
 // 测试服地址
-// export const rootUrl = 'http://192.168.1.4:3000'
+// export const rootUrl = 'http://192.168.1.7:3000'
 
 // 当前访问地址
 let curRoute = ''
 // 缓存用户信息
-let userInfo = ''
+, userInfo = ''
 // 缓存cookie
-let cookie = ''
+, cookie = ''
 
 export function get(api, data) {
   let queryStr = Object.keys(data || {})
@@ -86,7 +86,7 @@ export function removeCurRoute() {
 }
 
 function request(api, method, data, headers = {}) {
-  const REQUEST_TIMEOUT = 6000
+  const REQUEST_TIMEOUT = 12000
   
   return new Promise(function(resolve, reject) {
     const memoryCookie = getCookieByMemory()

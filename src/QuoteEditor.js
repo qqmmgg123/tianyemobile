@@ -1,3 +1,6 @@
+/**
+ * 引用编辑界面
+ */
 import React from 'react'
 import { 
   View, 
@@ -9,11 +12,11 @@ import {
   ScrollView,
 } from 'react-native'
 import { post } from 'app/component/request'
-import globalStyles from 'app/component/globalStyles'
-import Back from 'app/component/Back'
 import { toast } from 'app/Toast'
 import { MIND_TYPES, STATUS_BAR_HEIGHT } from 'app/component/Const'
-
+import globalStyles from 'app/component/globalStyles'
+import Back from 'app/component/Back'
+import { QuoteItem } from 'app/component/Quote'
 
 export default class QuoteEditor extends React.Component {
 
@@ -25,18 +28,21 @@ export default class QuoteEditor extends React.Component {
       type: navigation.getParam('type'),
       help: navigation.getParam('help'),
       classic: navigation.getParam('classic'),
+      quoteType: navigation.getParam('quoteType')
     }
   }
 
   async replyConfirm() {
-    let { content, help, classic } = this.state
-    let replyId = help._id
-    let ref_id = classic._id
-    let res = await post(`mind/${replyId}/reply`, { 
+    let { content, help, classic, quoteType } = this.state
+    , replyId = help._id
+    , ref_id = classic._id
+    , ref_type = quoteType
+    , res = await post(`mind/${replyId}/reply`, { 
       content,
       parent_id: replyId,
       parent_type: 'mind',
-      ref_id
+      ref_id,
+      ref_type
     })
     if (res) {
       let { success } = res
@@ -48,10 +54,15 @@ export default class QuoteEditor extends React.Component {
   }
 
   async mindConfirm() {
-    let { type, content, classic } = this.state
-    let ref_id = classic._id
-    let res = await post(`mind`, { 
-      content, ref_id, type_id: type, column_id: 'sentence',
+    let { type, content, classic, quoteType } = this.state
+    , ref_id = classic._id
+    , ref_type = quoteType
+    , res = await post(`mind`, { 
+      content, 
+      ref_id, 
+      ref_type,
+      type_id: type, 
+      column_id: 'sentence'
     })
     if (res) {
       let { success } = res
@@ -62,14 +73,32 @@ export default class QuoteEditor extends React.Component {
     }
   }
 
+  get quote() {
+    let { classic } = this.state
+    console.log(classic)
+    return {
+      title: classic.title,
+      summary: classic.summary,
+      perm_id: classic.perm_id,
+      is_friend: !!classic.is_friend,
+      type: 'mind',
+      url: classic._id
+    }
+  }
+
   render() {
-    let { type, help, classic, content } = this.state
+    let { navigation } = this.props
+    , { 
+      type, 
+      help, 
+      content 
+    } = this.state
     return (
       <View
         style={globalStyles.container} 
       >
         <Back 
-          navigation={this.props.navigation} 
+          navigation={navigation} 
           centerCom={(<View
             style={{
               padding: 10,
@@ -106,7 +135,7 @@ export default class QuoteEditor extends React.Component {
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
           >
-            {help && help.content ? <Text
+            {help ? <Text
               style={{
                 fontSize: 16,
                 color: '#333',
@@ -114,7 +143,7 @@ export default class QuoteEditor extends React.Component {
               }}
               numberOfLines={1}
             >
-              {help.content}
+              {help.title || help.summary}
             </Text> : null}
             <View style={{
               flexDirection: 'row', 
@@ -141,25 +170,10 @@ export default class QuoteEditor extends React.Component {
                 autoFocus={true}
               />
             </View>
-            <TouchableOpacity
-              style={[globalStyles.quoteBg, {
-                marginTop: 10
-              }]}
-              onPress={() => this.props.navigation.navigate('ClassicDetail', {
-                itemId: classic._id
-              })}
-            >
-              <Text
-                style={globalStyles.quoteTitle}
-              >
-                {classic.title}
-              </Text>
-              <Text
-                style={globalStyles.quoteSummary}
-              >
-                {classic.summary}
-              </Text>
-            </TouchableOpacity>
+            <QuoteItem 
+              quote={this.quote}
+              navigation={navigation}
+            />
           </ScrollView>
         </KeyboardAvoidingView>
       </View>

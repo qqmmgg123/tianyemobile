@@ -64,7 +64,7 @@ class FriendList extends React.Component {
   async loadData() {
     const { loading, refreshing } =  this.state
     try {
-      let data = await get('friend', {
+      let data = await get('karma/friend', {
         isVisit: refreshing
       })
       if (loading) {
@@ -120,7 +120,7 @@ class FriendList extends React.Component {
     let message = [...this.props.homeData.message]
     let karmaMsg = message.find(query)
     let karmaMsgs = karmaMsg && karmaMsg.sub_feature || []
-    let curMsg = karmaMsgs.find(msg => msg.feature === 'Friend')
+    let curMsg = karmaMsgs.find(msg => msg.feature === 'friend')
     if (!curMsg || !curMsg.total) {
       this.loadData()
     }
@@ -132,7 +132,7 @@ class FriendList extends React.Component {
       let message = [...this.props.homeData.message]
       let karmaMsg = message.find(query)
       let karmaMsgs = karmaMsg && karmaMsg.sub_feature || []
-      let curMsg = karmaMsgs.find(msg => msg.feature === 'Friend')
+      let curMsg = karmaMsgs.find(msg => msg.feature === 'friend')
       if (curMsg && curMsg.total) {
         this.friendNewReaded(message, karmaMsg, curMsg)
       }

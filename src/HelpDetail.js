@@ -10,15 +10,23 @@ import {
   RefreshControl, 
   Animated,
   Platform,
+  Alert
 } from 'react-native'
 import { connect } from 'react-redux'
 import { get, post, del, getUserByMemory } from 'app/component/request'
+import { STATUS_BAR_HEIGHT, MIND_TYPES, EMOTION } from 'app/component/Const'
+import Quote, { QuoteItem } from 'app/component/Quote'
 import Back from 'app/component/Back'
 import { Footer } from 'app/component/ListLoad'
-import globalStyles from 'app/component/globalStyles'
-import { STATUS_BAR_HEIGHT } from 'app/component/Const'
-import ActionModal from 'app/Karma/ActionModal'
 import { Spinner } from 'app/component/GlobalModal'
+import { createFriendModal } from 'app/component/GlobalModal'
+import globalStyles from 'app/component/globalStyles'
+import ActionSelect from 'app/Karma/ActionSelect'
+
+const ActionModal = createFriendModal({
+  ActionSelect,
+  Quote
+})
 
 let noDataTips = '当前没有评论'
 const ANIMATION_DURATION = 250
@@ -44,23 +52,29 @@ class ReplyItem extends React.Component {
     const rowStyles = [
       { opacity: this._animated }
     ]
-    const { 
+    , { 
       _id, 
       creator_id, 
       content = '',
-      remark = [], 
-      rremark = [],
-      nickname = '', 
-      ref_id, 
-      ref_title = '', 
-      ref_summary = '', 
+      type,
+      sub_type,
+      author,
+      friend,
+      receiver,
+      friend_receiver,
       reply_type, 
-      receivername = '',
       curUserId,
       onReply,
-      onShowAction
+      onShowAction,
+      quote,
+      navigation
     } = this.props
-    const replyName = (remark && remark[0] || nickname || '')
+    , isAuthorSelf = author && author._id === curUserId
+    , minename = '我'
+    , creatorname = isAuthorSelf ? minename : (friend && friend.remark) || (author && author.nickname) || ''
+    , isReceiverSelf = receiver && receiver._id === curUserId
+    , receivername = isReceiverSelf ? minename : (friend_receiver && friend_receiver.remark) || (receiver && receiver.nickname) || ''
+    , replyContent = type === 'emotion' ? EMOTIONS[sub_type] + '了' + (isReceiverSelf ? '你' : '他') : (type === 'text' ? content : '')
     return (
       <Animated.View style={rowStyles}>
         <TouchableOpacity
@@ -68,44 +82,30 @@ class ReplyItem extends React.Component {
           style={{
             padding: 10
           }}
-          onPress={creator_id !== curUserId ? () => onReply({ 
-            replyType: 'reply', 
-            replyId: _id,
-            receiverId: creator_id,
-            receiverName: replyName
-          }) : () => onShowAction()}
+          onPress={
+            isAuthorSelf 
+            ? () => onShowAction()
+            : () => {
+              let data = { 
+                replyType: 'reply', 
+                replyId: _id,
+                receiverId: creator_id,
+                receiverName: creatorname
+              }
+              onReply(data)
+            }}
         >
           <Text style={{
             fontSize: 14,
             lineHeight: 24,
             color: '#333'
           }}>
-            {replyName + (reply_type === 'reply' ? '@' + (rremark && rremark[0] || receivername) : '') + '：' + (content || '')}
+            {creatorname + (reply_type === 'reply' ? '@' + receivername : '') + '：' + replyContent}
           </Text>
-          {ref_id && ref_id[0] ? (
-            <TouchableOpacity
-              onPress={() => this.props.navigation.navigate('ClassicDetail', {
-                itemId: ref_id
-              })}
-              style={{
-                borderLeftColor: '#ccc',
-                borderLeftWidth: 3,
-                backgroundColor: '#eaeaea',
-                padding: 10,
-                marginTop: 10
-              }}
-            >
-              <Text style={{
-                color: '#666',
-                fontSize: 14
-              }}>{ref_title || ''}</Text>
-              <Text style={{
-                color: '#999',
-                marginTop: 5,
-                fontSize: 12
-              }}>{ref_summary || ''}</Text>
-            </TouchableOpacity>
-          ) : null}
+          <QuoteItem 
+            quote={quote}
+            navigation={navigation}
+          />
         </TouchableOpacity>
       </Animated.View>
     )
@@ -113,6 +113,16 @@ class ReplyItem extends React.Component {
 }
 
 class DetailView extends Component {
+
+  constructor(props) {
+    super(props)
+    let { help } = props,
+    { isThanked } = help
+    this.state = {
+      isThanked,
+      thanking: false
+    }
+  }
 
   async removeMind(id) {
     const res = await del(`mind/${id}`)
@@ -124,9 +134,74 @@ class DetailView extends Component {
     }
   }
 
+  async thank() {
+    let { isThanked, thanking } = this.state
+    , { help } = this.props
+    if (!isThanked && !thanking) {
+      this.setState({
+        thanking: true,
+        isThanked: true
+      })
+      try {
+        await post(`thank/${help._id}`, {
+          typeId: EMOTION[help.type_id].good.id
+        })
+        this.setState({
+          thanking: false,
+          isThanked: true
+        })
+      } catch (err) {
+        this.setState({
+          thanking: false,
+          isThanked: false
+        })
+      }
+    }
+  }
+
+  async cancelThank(mindId) {
+    let { isThanked, thanking } = this.state
+    , { help } = this.props
+    if (isThanked && !thanking) {
+      this.setState({
+        thanking: true,
+        isThanked: false
+      })
+      try {
+        await del(`thank/${help._id}`)
+        this.setState({
+          thanking: false,
+          isThanked: false
+        })
+      } catch (err) {
+        this.setState({
+          thanking: false,
+          isThanked: true
+        })
+      }
+    }
+  }
+
   render() {
-    let { help, curUserId } = this.props
-    , isCreator = help.creator_id === curUserId
+    let { 
+      help, 
+      isCreator, 
+      navigation,
+      onReply,
+      onQuote
+    } = this.props
+    , { 
+      _id,
+      title, 
+      perm_id,
+      type_id,
+      content, 
+      friend, 
+      author, 
+      creator_id,
+      quote
+    } = help
+    , { isThanked } = this.state
     return (
       <View style={{
         flex: 1
@@ -137,13 +212,41 @@ class DetailView extends Component {
           paddingHorizontal: 10,
           paddingBottom: 20
         }}>
+          {title ? (<View style={{
+            flex: 1,
+            padding: 10,
+          }}>
+            <Text
+              selectable={isCreator}
+              onLongPress={isCreator ? null : () => {
+                Alert.alert('', '内容关系作者权益，禁止拷贝，请谅解。', [
+                  {text: '确定'}
+                ])
+              }}
+              style={{
+                fontSize: 20,
+                lineHeight: 42,
+                textAlign: 'center'
+              }}
+            >{title}</Text>
+          </View>) : null}
           <Text
+            selectable={isCreator}
+            onLongPress={isCreator ? null : () => {
+              Alert.alert('', '内容关系作者权益，禁止拷贝，请谅解。', [
+                {text: '确定'}
+              ])
+            }}
             style={{
               fontSize: 16,
-              lineHeight: 28,
+              lineHeight: 36,
               color: '#333333',
             }}
-          >{help && help.content || ''}</Text>
+          >{content || ''}</Text>
+          <QuoteItem 
+            quote={quote}
+            navigation={navigation}
+          />
         </View>
         <View style={{
           marginTop: 5,
@@ -154,11 +257,14 @@ class DetailView extends Component {
             style={{
               padding: 10
             }}
-            onPress={() => this.props.onReply()}
+            onPress={() => {
+              let type = isCreator ? 'follow' : 'comment'
+              onReply(type)
+            }}
           >
             <Text style={{ 
               fontSize: 14,
-              color: '#666',
+              color: '#999',
             }}>{isCreator ? '跟进' : '回复'}</Text>
           </TouchableOpacity>
           {
@@ -167,12 +273,47 @@ class DetailView extends Component {
                   style={{
                     padding: 10
                   }}
-                  onPress={() => this.removeMind(help._id)}
+                  onPress={() => this.removeMind(_id)}
                 >
                   <Text style={{ 
                   fontSize: 14,
-                  color: '#666'
+                  color: '#999'
                   }}>{help.type_id === 'help' ? '已解' : '删除'}</Text>
+                </TouchableOpacity>
+              : null
+          }
+          {!isCreator ? 
+              <TouchableOpacity
+                style={{
+                  padding: 10
+                }}
+                onPress={
+                  isThanked 
+                    ? () => this.cancelThank()
+                    : () => this.thank()
+                  }
+              >
+                <Text 
+                  style={{
+                    color: '#999', 
+                    fontSize: 14
+                  }}
+                >{(isThanked ? '已' : '') + EMOTION[type_id].good.name}</Text>
+              </TouchableOpacity>
+            : null  
+          }
+          {
+            perm_id !== 'me'
+              ? <TouchableOpacity
+                  style={{
+                    padding: 10
+                  }}
+                  onPress={onQuote}
+                >
+                  <Text style={{ 
+                  fontSize: 14,
+                  color: '#999',
+                  }}>{isCreator ? '分享到' : '引用'}</Text>
                 </TouchableOpacity>
               : null
           }
@@ -186,6 +327,8 @@ class HelpDetail extends Component {
 
   constructor(props) {
     super(props)
+    let { navigation } = props
+    this._mindId = navigation.getParam('itemId')
     this._defaultReplyData = null
     this.state = {
       help: null,
@@ -193,7 +336,8 @@ class HelpDetail extends Component {
       noDataTips,
       refreshing: false,
       replyData: null,
-      reply: ''
+      reply: '',
+      needAutoFocus: false
     }
   }
 
@@ -223,10 +367,17 @@ class HelpDetail extends Component {
     }, async () => {
       // 界面上添加回复项
       let { help } = this.state
+      , type_map = {
+        follow: 'mind',
+        comment: 'mind',
+        reply: 'reply'
+      }
+      , reply_type = type_map[replyType]
       , reqParams = { 
         content,
         parent_id: parentId,
         parent_type: 'mind',
+        reply_type,
         receiver_id: receiverId
       }
       , newReply = Object.assign({}, reqParams)
@@ -235,13 +386,16 @@ class HelpDetail extends Component {
         , user = getUserByMemory()
         , key = replies.length
         newReply._id = 'newreply' + key
-        newReply.nickname = user.nickname
+        newReply.author = user
+        newReply.friend = null
         newReply.reply_id = replyId
-        newReply.reply_type = replyType
+        newReply.reply_type = reply_type
         newReply.creator_id = user._id
         if (replyType === 'reply') {
           let replyTo = help.replies.find(item => item._id === replyId)
-          newReply.receivername = replyTo.remark[0] || replyTo.nickname[0] || ''
+          , { friend, author } = replyTo
+          newReply.friend_receiver = friend
+          newReply.receiver = author
         }
         replies.unshift(newReply)
         this.setState({
@@ -276,26 +430,38 @@ class HelpDetail extends Component {
   }
 
   refresh = () => {
-    this.loadData()
+    this.setState({
+      refreshing: true
+    }, () => {
+      this.loadData()
+    })
   }
 
   async loadData() {
-    const mindId = this.props.navigation.getParam('itemId')
-    let data = await get(`help/${mindId}`)
+    let data = await get(`help/${this._mindId}`)
     if (data) {
-      let { success, help } = data
-      if (success) {
-        this._defaultReplyData = { 
-          replyType: 'mind', 
-          replyId: help._id,
-          parentId: help._id,
-          receiverId: help.creator_id 
-        }
-        this.setState({
-          help,
-          loading: false
-        })
-      }
+      let { navigation } = this.props
+      , action = navigation.getParam('action')
+      , passData = navigation.getParam('data') || null
+      , isMindType = ['follow', 'comment'].indexOf(action) !== -1
+      , { help } = data
+      // 配置默认回复内容
+      this._defaultReplyData = isMindType
+        ? Object.assign({
+            replyType: action,
+            replyId: help._id,
+            parentId: help._id,
+            receiverId: help.creator_id 
+          }, passData)
+        : null
+      this.setState({
+        help,
+        loading: false,
+        needAutoFocus: !!action,
+        replyData: action === 'reply' ? Object.assign({
+          replyType: action
+        }, passData) : this._defaultReplyData 
+      })
     }
   }
 
@@ -325,14 +491,44 @@ class HelpDetail extends Component {
   }
 
   render() {
-    let { noDataTips, help, reply, refreshing, loading } = this.state
-    const { receiverName = '' } = this.state.replyData || {}
-    const { userId = '' } = this.props.loginData
-    const { navigation } = this.props
-    const action = navigation.getParam('action')
-    const isFollow = action === 'follow'
+    let { 
+      noDataTips, 
+      help, 
+      reply, 
+      refreshing, 
+      loading,
+      needAutoFocus
+    } = this.state
+    const { replyType = '', receiverName = '' } = this.state.replyData || {}
+    const { navigation, loginData } = this.props
+    const { userId = '' } = loginData
+    let replyTips = ''
+    switch (replyType) {
+      case 'follow':
+        replyTips = '跟进...'
+        break
+      case 'comment':
+        replyTips = '回复...'
+        break
+      case 'reply':
+        replyTips = '回复' + receiverName
+        break
+    }
     if (help) {
-      let { replies } = help
+      let { 
+        _id,
+        title, 
+        content, 
+        type_id,
+        creator_id,
+        author,
+        friend,
+        replies
+      } = help
+      , isCreator = creator_id === userId
+      , creatorname = isCreator ? '我' : (friend && friend.remark) || (author && author.nickname) || ''
+      , headTitle = [creatorname, MIND_TYPES[type_id].name].join('的')
+
       return (
         <View 
           style={{ flex: 1 }}
@@ -345,7 +541,10 @@ class HelpDetail extends Component {
             color='#666'
             overlayColor='rgba(255,255,255, 0.25)'
           />*/}
-          <Back navigation={navigation} />
+          <Back 
+            name={headTitle}
+            navigation={navigation} 
+          />
           <FlatList
               contentContainerStyle={{
                 paddingHorizontal: 15,
@@ -358,15 +557,24 @@ class HelpDetail extends Component {
               onRefresh={this.refresh}
               ListHeaderComponent={
                 <DetailView 
-                  curUserId={userId} 
+                  isCreator={isCreator} 
                   navigation={navigation}
                   help={help} 
-                  onReply={() => this.onReply()} 
+                  onReply={type => this.onReply(
+                    Object.assign({}, this._defaultReplyData, {
+                      replyType: type
+                    })
+                  )}
+                  onQuote={() => this._modal.open('Quote', {
+                    classic: help,
+                    quoteType: 'mind',
+                    feature: isCreator ? 'mind' : 'talk'
+                  })}
                 />
               }
               renderItem={({item, index}) => <ReplyItem 
                 navigation={navigation}
-                onReply={(data) => {
+                onReply={data => {
                   data.parentId = help._id
                   this.onReply(data)
                 }} 
@@ -421,14 +629,14 @@ class HelpDetail extends Component {
                   backgroundColor: 'white',
                   marginRight: 8
                 }}
-                placeholder={isFollow? "跟进" : (receiverName ? "回复" + receiverName : "回复...")}
+                placeholder={replyTips}
                 placeholderTextColor="#cccccc"
                 allowFontScaling={false}
                 autoCapitalize="none"
                 underlineColorAndroid='transparent'
                 onChangeText={text => this.setState({ reply: text })}
                 value={reply}
-                autoFocus={isFollow}
+                autoFocus={needAutoFocus}
                 multiline={true}
               />
               {
@@ -449,6 +657,14 @@ class HelpDetail extends Component {
             <ActionModal 
               navigation={this.props.navigation}
               ref={ ref => this._modal = ref }
+              refReply={(help, classic, quoteType) => {
+                this.props.navigation.navigate('QuoteEditor', {
+                  type: 'reply',
+                  help,
+                  classic,
+                  quoteType
+                })
+              }}
             />
         </View>
       )

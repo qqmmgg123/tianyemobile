@@ -11,14 +11,15 @@ import {
   Platform,
   KeyboardAvoidingView,
   ScrollView,
+  Image
 } from 'react-native'
+import { toast } from 'app/Toast'
+import { Spinner } from 'app/component/GlobalModal'
+import { STATUS_BAR_HEIGHT, BASE_COLOR } from 'app/component/Const'
 import { post, getCurRoute } from 'app/component/request'
 import TYicon from 'app/component/TYicon'
 import Back from 'app/component/Back'
 import globalStyles from 'app/component/globalStyles'
-import { toast } from 'app/Toast'
-import { Spinner } from 'app/component/GlobalModal'
-import { STATUS_BAR_HEIGHT } from 'app/component/Const'
 
 export default class Signup extends Component {
 
@@ -129,7 +130,7 @@ export default class Signup extends Component {
       codeSending,
       isSecret,
     } = this.state
-    const submitBtnDis = !nickname.trim() || !password.trim() || !email.trim() || !code.trim()
+    const submitBtnDis = !nickname.trim() || !password || !email.trim() || !code.trim()
 
     return (
       <View
@@ -145,6 +146,7 @@ export default class Signup extends Component {
           overlayColor='rgba(255,255,255, 0.25)'
         />
         <Back 
+          name='注册'
           navigation={this.props.navigation}
           rightButton={{
             name: '登录',
@@ -161,27 +163,28 @@ export default class Signup extends Component {
           <ScrollView 
             contentContainerStyle={{
               flex: 1,
-              padding: 10,
               alignItems: 'center',
-              justifyContent: 'center',
+              justifyContent: 'flex-start',
+              paddingTop: '20%',
+              paddingHorizontal: 10
             }}
             keyboardShouldPersistTaps="handled"
             keyboardDismissMode="on-drag"
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
           >
-            <TextInput
+            <Image
+              source={require('./img/logo.png')}
               style={{
-                width: '80%',
-                borderBottomColor: '#ccc', 
-                borderBottomWidth: 1,
-                height: 48,
-                paddingTop: 3,
-                paddingHorizontal: 7,
-                paddingBottom: 4,
-                marginTop: 10,
-                fontSize: 16
+                width: 60,
+                height: 60,
+                backgroundColor: BASE_COLOR.BACKGROUND,
+                borderRadius: 5,
+                resizeMode: "center"
               }}
+            />
+            <TextInput
+              style={globalStyles.inputText}
               onChangeText={(nickname) => this.setState({nickname})}
               value={this.state.nickname}
               placeholder="称号"
@@ -191,25 +194,10 @@ export default class Signup extends Component {
               textContentType="nickname"
             />
             <View 
-              style={{
-                width: '80%',
-                flexDirection: 'row',
-                borderBottomColor: '#ccc', 
-                borderBottomWidth: 1,
-                borderRadius: 3,
-                marginTop: 10,
-                alignItems: 'center',
-              }}
+              style={globalStyles.inputPasswordField}
             >
               <TextInput
-                style={{
-                  height: 48,
-                  paddingTop: 3,
-                  paddingHorizontal: 7,
-                  paddingBottom: 4,
-                  flex: 1,
-                  fontSize: 16
-                }}
+                style={globalStyles.inputPassword}
                 placeholder="密码"
                 placeholderTextColor="#cccccc"
                 allowFontScaling={false}
@@ -228,20 +216,12 @@ export default class Signup extends Component {
                 })}
                 name={isSecret ? 'biyanjing' : 'yanjing'}
                 size={24} 
-                color='#333'></TYicon>
+                color={isSecret ? '#cccccc' : '#333333'}
+              >
+              </TYicon>
             </View>
             <TextInput
-              style={{
-                width: '80%',
-                borderBottomColor: '#ccc', 
-                borderBottomWidth: 1,
-                height: 48,
-                paddingTop: 3,
-                paddingHorizontal: 7,
-                paddingBottom: 4,
-                marginTop: 10,
-                fontSize: 16
-              }}
+              style={globalStyles.inputText}
               onChangeText={(email) => this.setState({email})}
               value={this.state.email}
               placeholder="邮箱"

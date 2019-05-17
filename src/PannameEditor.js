@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import Spinner from 'react-native-loading-spinner-overlay'
+import { Spinner } from 'app/component/GlobalModal'
 import { changeLoginState } from 'app/HomeActions'
 import { KeyboardAvoidingView, AsyncStorage, View, TouchableOpacity, TextInput, Text } from 'react-native'
 import globalStyles from 'app/component/globalStyles'

@@ -1,9 +1,15 @@
 /*
  * app主程序
  */
+import SplashScreen from 'react-native-splash-screen'
 import React from 'react'
 import { Provider } from 'react-redux'
-import { AppState, AsyncStorage } from 'react-native'
+import { 
+  AppState, 
+  AsyncStorage, 
+  NativeModules, 
+  Platform,
+} from 'react-native'
 import { 
   createAppContainer, 
   createStackNavigator,
@@ -23,8 +29,8 @@ import HelpDetail from 'app/HelpDetail'
 import HelpSelect from 'app/HelpSelect'
 import AcceptPrompt from 'app/Friend/AcceptPrompt'
 import QuoteEditor from 'app/QuoteEditor'
-import MindDetail from 'app/Mind/MindDetail'
 import MindEditor from 'app/Mind/MindEditor'
+import EarthItem from 'app/Earth/EarthItem'
 import ClassicDetail from 'app/Classic/ClassicDetail'
 import ClassicSection from 'app/Classic/ClassicSection'
 import ClassicTranslate from 'app/Classic/ClassicTranslate'
@@ -32,6 +38,8 @@ import ClassicTranslates from 'app/Classic/ClassicTranslates'
 import UserSearch from 'app/Friend/UserSearch'
 import Login from 'app/Login'
 import Signup from 'app/Signup'
+import Password from 'app/Password'
+import Forgot from 'app/Forgot'
 import NavigatorService from 'app/services/navigator'
 import { store } from 'app/Store'
 import StackViewStyleInterpolator from 'react-navigation-stack/dist/views/StackView/StackViewStyleInterpolator'
@@ -55,11 +63,13 @@ const AppNav = createStackNavigator({
   ClassicSection,
   ClassicTranslate,
   ClassicTranslates,
-  MindDetail,
   HelpDetail,
   HelpSelect,
+  EarthItem,
   Login,
   Signup,
+  Password,
+  Forgot
 }, {
   headerMode: 'none',
   mode: 'card',
@@ -76,7 +86,7 @@ const defaultGetStateForAction = AppNav.router.getStateForAction;
 AppNav.router.getStateForAction = (action, state) => {
   if (action.type === 'Navigation/NAVIGATE' && action.routeName) {
     console.log(action.routeName)
-    if (action.routeName !== 'Login' && action.routeName !== 'Signup') {
+    if (['Login', 'Signup', 'Forgot'].indexOf(action.routeName) === -1) {
       setCurRoute(action.routeName)
     } else {
       setCurRoute('Mind')
@@ -86,7 +96,9 @@ AppNav.router.getStateForAction = (action, state) => {
       case 'Karma':
         let userInfo = getUserByMemory()
         if (!userInfo) {
-          NavigatorService.navigate('Login')
+          NavigatorService.navigate('Login', {
+            name: '登录'
+          })
           return null
         }
         break
@@ -106,10 +118,11 @@ export default class App extends React.Component {
   }
 
   state = {
-    appState: AppState.currentState,
+    appState: AppState.currentState
   }
 
   async componentWillMount() {
+    Platform.OS === 'android' && NativeModules.UpdateApp.updateDialog()
     // 获取登陆信息
     const keys = await AsyncStorage.getAllKeys()
     const stores = await AsyncStorage.multiGet(keys)
@@ -142,14 +155,7 @@ export default class App extends React.Component {
       launch: true,
       message: notification
     }))
-  }
-
-  componentDidMount() {
-    AppState.addEventListener('change', this._handleAppStateChange)
-  }
-
-  componentWillUnmount() {
-    AppState.removeEventListener('change', this._handleAppStateChange);
+    SplashScreen.hide()
   }
 
   _handleAppStateChange = (nextAppState) => {

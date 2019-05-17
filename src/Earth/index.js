@@ -3,222 +3,34 @@
  */
 
 import React, { Component } from 'react'
-import { ScrollView, RefreshControl, View, Text, TouchableOpacity, Dimensions } from 'react-native'
+import { 
+  ScrollView, 
+  View, 
+  Text, 
+  Platform
+} from 'react-native'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { layoutHomeData } from 'app/HomeActions'
 import Swiper from 'app/component/SwiperList'
-import { get, post, getUserByMemory } from 'app/component/request'
-import TYicon from 'app/component/TYicon'
-import globalStyles from 'app/component/globalStyles'
+import { get } from 'app/component/request'
 import { Empty } from 'app/component/ListLoad'
 import { createFriendModal } from 'app/component/GlobalModal'
+import globalStyles from 'app/component/globalStyles'
+import Quote from 'app/component/Quote'
 import Report from 'app/component/Report'
 import TYRefreshCtrol from 'app/HorizontalList/RefreshControl'
-const { width } = Dimensions.get("window");
+import EarthItem from 'app/Earth/EarthItem'
+import Guide from 'app/Earth/Guide'
 
-const types = {
-  help: {
-    good: {
-      name: '理解',
-      id: 'understand'
-    },
-    bad: '无感'
-  },
-  share: {
-    good: {
-      name: '认同',
-      id: 'thank'
-    },
-    bad: '无感'
-  },
-}
+// 引用和举报弹窗
+const MindModal = createFriendModal({ 
+  Guide,
+  Quote,
+  Report
+})
 
-class MindDetail extends Component {
-
-  constructor(props) {
-    super(props)
-    this.state = {
-      refreshing: false,
-      mind: props.mind
-    }
-  }
-
-  async thank() {
-    let userInfo = getUserByMemory()
-    if (!userInfo) {
-      this.props.navigation.navigate('Login')
-      return
-    }
-
-    let { mind } = this.state
-    mind = Object.assign({}, mind)
-    if (!mind.isThanked && !mind.thanking) {
-      mind.thanking = true
-      mind.isThanked = true
-      this.setState({
-        mind,
-      })
-      const res = await post(`thank/${mind._id}`, {
-        typeId: types[mind.type_id].good.id
-      })
-      mind.thanking = false
-      if (res.success) {
-        mind.isThanked = true
-        this.setState({
-          mind
-        })
-      }
-    }
-  }
-
-  refresh = () => {
-    this.setState({
-      refreshing: true
-    }, () => {
-      this.loadData()
-    })
-  }
-
-  async loadData() {
-    let { _id } = this.state.mind
-    , data = await get(`mind/${_id}`)
-    if (data) {
-      let { success, mind } = data
-      if (success) {
-        this.setState({
-          mind,
-          loading: false
-        })
-      }
-    }
-  }
-  
-  render() {
-    let { refreshing, mind } = this.state
-    let { 
-      _id,
-      title, 
-      content, 
-      isThanked, 
-      type_id, 
-    } = mind
-    let { onReport } = this.props
-
-    return <View style={{ flex: 1, width: width }}>
-      <View style={{ flex: 1 }}>
-        <ScrollView
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={this.refresh}
-            />
-          }
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-        >
-          {title ? (<View style={{
-            flex: 1,
-            padding: 10,
-          }}>
-            <Text
-              style={{
-                fontSize: 20,
-                lineHeight: 32,
-                textAlign: 'center'
-              }}
-            >{title}</Text>
-          </View>) : null}
-          {content ? (<View style={{
-            flex: 1,
-            marginTop: 10,
-            paddingHorizontal: 10,
-            paddingBottom: 20
-          }}>
-            <Text style={{
-              color: '#333333',
-              fontSize: 16,
-              lineHeight: 28
-            }}>
-            {content}
-            </Text>
-          </View>) : null}
-        </ScrollView>
-      </View>
-      <View style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-        {isThanked
-          ? (
-            <TouchableOpacity
-              style={{
-                padding: 10,
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}
-            >
-              <TYicon 
-                style={{
-                  marginRight: 10
-                }}
-                name='xin' 
-                size={24} 
-                color='#EE3D80'></TYicon>
-              <Text style={{
-                color: '#999', 
-                fontSize: 14,
-                padding: 10
-              }}>已{types[type_id].good.name}</Text>
-            </TouchableOpacity>)
-          : (<TouchableOpacity
-                style={{
-                  padding: 10,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}
-                onPress={() => this.thank(_id)}
-              >
-                <TYicon 
-                  style={{
-                    marginRight: 10
-                  }}
-                  name='xin' 
-                  size={24} 
-                  color='#ccc'></TYicon>
-                <Text style={{ 
-                  fontSize: 14,
-                  color: '#666'
-                }}>{types[type_id].good.name}</Text>
-              </TouchableOpacity>)}
-          <TouchableOpacity
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              padding: 10
-            }}
-            onPress={() => onReport()}
-          >
-            <TYicon 
-              style={{
-                marginRight: 10
-              }}
-              name='jubao' 
-              size={24} 
-              color='#ccc'></TYicon>
-            <Text style={{ 
-              fontSize: 14,
-              color: '#666'
-            }}>举报</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-  }
-}
-
-const MindModal = createFriendModal({ Report })
-
+// 横向滑动心事幻灯列表
 class EarthSwiper extends Component {
 
   constructor(props) {
@@ -226,7 +38,9 @@ class EarthSwiper extends Component {
     this.state = {
       refreshing: false,
       loading: true,
-      minds: []
+      needBack: false,
+      minds: [],
+      page: 1
     }
   }
 
@@ -234,53 +48,53 @@ class EarthSwiper extends Component {
     gesturesEnabled: false
   }
 
-  refresh = () => {
-    this.setState({
-      refreshing: true
-    }, () => {
-      this.loadData()
-    })
-  }
-
-  reload() {
-    this.setState({
-      loading: true,
-      minds: []
-    }, () => {
-      this.loadData()
-    })
-  }
-
-  layoutData(data) {
+  layoutData(data, isLoadMore) {
     let { 
       appName, 
       slogan, 
       features, 
-      success, 
       pageInfo,
       minds = []
     } = data
-    if (success) {
-      this.props.layoutHomeData({
-        appName,
-        slogan,
-        features
-      })
-      this.setState({
-        minds,
-      })
+    this.props.layoutHomeData({
+      appName,
+      slogan,
+      features
+    })
+    let oldMinds = this.state.minds
+    , lastIndex = oldMinds.length - 1
+    , lastMind = oldMinds[lastIndex]
+    if (lastMind && lastMind.isLoading) {
+      oldMinds.splice(lastIndex, 1)
     }
+    let newMinds = [...oldMinds, ...minds, {
+      _id: 'loading',
+      isLoading: true
+    }]
+    , needBack = false
+    if ((!minds || !minds.length) && isLoadMore) {
+      needBack = true
+    }
+    this.setState({
+      page: pageInfo.nextPage || this.state.page,
+      minds: newMinds,
+      needBack
+    })
   }
 
-  async loadData() {
+  async loadData(needShowGuide, isLoadMore) {
     const { page, loading, refreshing } =  this.state
-    let data = await get('features/earth')
+    let data = await get('earth', {
+      perPage: 1,
+      page
+    })
     if (loading) {
       this.setState({
         loading: false,
         refreshing: false,
       }, () => {
-        data && this.layoutData(data)
+        data && this.layoutData(data, isLoadMore)
+        needShowGuide && this._modal.open('Guide')
       })
     }
     if (refreshing) {
@@ -293,24 +107,34 @@ class EarthSwiper extends Component {
     }
   }
 
-  componentWillMount() {
-    console.log('组件开始装载...')
+  refresh = () => {
+    this.setState({
+      refreshing: true
+    }, () => {
+      this.loadData()
+    })
   }
 
-  componentDidMount() {
-    console.log('组件渲染结束...')
+  reload() {
+    this.setState({
+      page: 1,
+      loading: true,
+      minds: []
+    }, () => {
+      this.loadData()
+    })
   }
 
-  componentDidCatch() {
-    console.log('捕获到错误...')
-  }
-
-  componentWillUpdate() {
-    console.log('组件即将更新...')
-  }
-
-  componentDidUpdate() {
-    console.log('组件更新结束...')
+  loadMore = () => {
+    const { page, loading } = this.state
+    console.log('loadMore...', page, loading)
+    if (!page || loading) return
+    this.setState({
+      loading: true,
+      needBack: false
+    }, () => {
+      this.loadData(false, true)
+    })
   }
 
   componentWillReceiveProps(nextProps) {
@@ -318,7 +142,7 @@ class EarthSwiper extends Component {
       // App启动时
       if (nextProps.homeData.launch !== this.props.homeData.launch) {
         console.log('App启动后......')
-        this.loadData()
+        this.loadData(true)
       }
     } else {
       // 账号切换时
@@ -340,7 +164,12 @@ class EarthSwiper extends Component {
     const { features } = homeData
     const { routeName } = navigation.state
     const title = features && features[routeName.toUpperCase()] || ''
-    let { minds, loading, refreshing } = this.state
+    let { 
+      minds, 
+      loading, 
+      refreshing,
+      needBack
+    } = this.state
 
     return (
       <View style={{ 
@@ -353,13 +182,22 @@ class EarthSwiper extends Component {
         {
           minds && minds.length 
             ? <Swiper
+                ref={ref => this.swiper = ref}
                 style={{ flex: 1 }}
                 refreshing={refreshing}
                 onRefresh={this.refresh}
+                onPageEnded={this.loadMore}
                 swipeData={minds}
-                renderSwipeItem={(mind, index) => <MindDetail
+                needBack={needBack}
+                renderSwipeItem={(mind, index) => <EarthItem
+                  isSwipe={true}
                   mind={mind}
                   navigation={navigation}
+                  onQuote={() => this._modal.open('Quote', {
+                    classic: mind,
+                    quoteType: 'mind',
+                    feature: 'earth'
+                  })}
                   onReport={() => this._modal.open('Report')}
                 />}
               /> 
@@ -391,6 +229,15 @@ class EarthSwiper extends Component {
        </Text></ScrollView> : <Empty loading={true} />)}
         <MindModal 
           ref={ref => this._modal = ref}
+          navigation={this.props.navigation}
+          refReply={(help, classic, quoteType) => {
+            this.props.navigation.navigate('QuoteEditor', {
+              type: 'reply',
+              help,
+              classic,
+              quoteType
+            })
+          }}
         />
       </View>
     )

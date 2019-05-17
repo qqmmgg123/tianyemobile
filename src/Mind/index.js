@@ -1,5 +1,5 @@
 /**
- * 心模块列表也
+ * 心模块列表
  */
 import React from 'react'
 import { 
@@ -8,7 +8,6 @@ import {
   TouchableOpacity, 
   Text, 
   Animated, 
-  findNodeHandle,
   ScrollView, 
   RefreshControl
 } from 'react-native'
@@ -16,17 +15,19 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { layoutHomeData } from 'app/HomeActions'
 import { get, del } from 'app/component/request'
-import globalStyles from 'app/component/globalStyles'
-import TYicon from 'app/component/TYicon'
 import { getDate } from 'app/utils'
 import { createFriendModal } from 'app/component/GlobalModal'
-import PannameEditor from 'app/PannameEditor'
 import { Empty, Footer } from 'app/component/ListLoad'
-import CardView from 'react-native-rn-cardview'
-import { ANIMATION_DURATION, MIND_TYPES } from 'app/component/Const'
+import { 
+  ANIMATION_DURATION,
+  MIND_TYPES, 
+  PERM_TYPES, 
+  EMOTIONS 
+} from 'app/component/Const'
+import globalStyles from 'app/component/globalStyles'
+import TYicon from 'app/component/TYicon'
+import Quote, { QuoteItem } from 'app/component/Quote'
 import TypeSelect from 'app/Mind/TypeSelect'
-
-let noDataTips = '当前没有内容'
 
 class MindItem extends React.Component {
 
@@ -35,7 +36,7 @@ class MindItem extends React.Component {
     this._readed = 0
     this._animated = new Animated.Value(1)
     const { curReply } = props
-    const { summary } = curReply
+    , { summary } = curReply
     this.state = {
       loading: false,
       curReply,
@@ -46,26 +47,11 @@ class MindItem extends React.Component {
     }
   }
 
+  // 删除
   async removeMind(id) {
     const res = await del(`mind/${id}`)
     if (res.success) {
       this.onRemove()
-    }
-  }
-
-  async loadMind(mindId) {
-    let data = await get(`mind/${mindId}`)
-    if (data) {
-      let { success, mind } = data
-      let { content } = mind
-      if (success) {
-        this.setState({
-          content: content,
-          text: content,
-          expand: true,
-          loading: false
-        })
-      }
     }
   }
 
@@ -79,13 +65,28 @@ class MindItem extends React.Component {
     }
   }
 
-  mindFollow = () => {
-    const { msgCount, onRemoveMsgTips } = this.props
-    const { curReply } = this.state
-    const { _id } = curReply
-    this.props.navigation.navigate('HelpDetail', {
+  async loadMind(mindId) {
+    let data = await get(`mind/${mindId}`)
+    if (data) {
+      let { mind } = data
+      , { content } = mind
+      this.setState({
+        content: content,
+        text: content,
+        expand: true,
+        loading: false
+      })
+    }
+  }
+
+  mindDetailShow(action, replyData) {
+    const { msgCount, onRemoveMsgTips, navigation } = this.props
+    , { curReply } = this.state
+    , { _id } = curReply
+    navigation.navigate('HelpDetail', {
       itemId: _id,
-      action: 'follow',
+      action: action,
+      data: replyData,
       onBackRemove: () => this.onRemove()
     })
     this._readed += 1
@@ -103,144 +104,181 @@ class MindItem extends React.Component {
     const { _id } = this.state.curReply
     this.props.navigation.navigate('MindEditor', {
       itemId: _id,
-      onListRefresh: this.refresh
+      onListRefresh: this.props.onListRefresh,
+      onListReload: this.props.onListReload
     })
+  }
+
+  // 回复提示
+  get newReplyNoticeBar() {
+    let mind = this.state.curReply
+    , { new_reply, new_reply_date, reply_visit_date } = mind
+    , hasNew = new_reply_date > reply_visit_date
+
+    if (new_reply && hasNew) {
+      let mindId = mind._id
+      , {
+        _id,
+        author, 
+        friend, 
+        sub_type,
+        created_date
+      } = new_reply
+      , newReplyId = _id
+      , creatorname = (friend && friend.remark) || (author && author.nickname) || ''
+      , replyData = { 
+        parentId: mindId, 
+        replyId: newReplyId,
+        receiverId: author && author._id,
+        receiverName: (friend && friend.remark) || (author && author.nickname)
+      }
+        
+      return (
+        <TouchableOpacity
+          style={{
+            padding: 10,
+            arginTop: 5,
+            backgroundColor: '#f3f4f5',
+            borderRadius: 3,
+            marginTop: 10,
+            marginBottom: 10
+          }}
+          onPress={() => {
+            this.mindDetailShow('reply', replyData)
+          }}
+        >
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              paddingVertical: 5
+            }}
+          >
+            <View style={{
+              width: 8,
+              height: 8,
+              borderRadius: 4,
+              backgroundColor: '#EE3D80'
+            }}></View>
+            <Text
+              style={{
+                fontSize: 12,
+                color: '#ccc',
+                marginLeft: 10,
+                flex: 1
+              }}
+            >{creatorname + EMOTIONS[sub_type] + '了你'}</Text>
+            <Text
+              style={{
+                fontSize: 12,
+                color: '#ccc',
+              }}
+            >{getDate(new Date(created_date))}</Text>
+          </View>
+          {
+            new_reply.sub_type === 'text'
+              ? 
+                <Text 
+                  style={{
+                    fontSize: 14,
+                    lineHeight: 24,
+                    color: '#333'
+                  }}
+                  numberOfLines={2}
+                >
+                  {new_reply.content || ''}
+                </Text>
+              : null
+          }
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'flex-end'
+            }}
+          >
+            <TouchableOpacity
+              style={{
+                padding: 10
+              }}
+              onPress={() => {
+                this.mindDetailShow('reply', replyData)
+              }}
+            >
+              <Text 
+                style={{ 
+                  fontSize: 12,
+                  color: '#ccc',
+                }}
+              >回复</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      )
+    }
   }
 
   render() {
     const rowStyles = [
       { opacity: this._animated }
     ]
-    const { text, content, expand, curReply } = this.state
-    const { curUserId, navigation } = this.props
-    const { 
+    , { 
+      text, 
+      content, 
+      expand, 
+      curReply 
+    } = this.state
+    , { curUserId, navigation, onQuote } = this.props
+    , { 
       _id, 
       type_id, 
       title = '', 
+      column_id, 
       creator_id,
-      created_date, 
-      updated_date, 
-      last_reply_date, 
-      reply_visit_date,
       new_reply, 
       quote, 
-      column_id, 
+      perm_id,
       is_extract, 
+      created_date, 
+      updated_date, 
     } = curReply
 
-    // 动态
-    let activity = ''
-    let notice = null
-    if (created_date) {
-      activity = `${getDate(new Date(created_date))}${MIND_TYPES[type_id].action}了`
-    }
-    if (updated_date) {
-      activity = `${getDate(new Date(created_date))}更新了`
-    }
-    if (last_reply_date && new_reply) {
-      const { author, friend } = new_reply
-      let creatorname = (friend && friend.remark) || (author && (author.nickname || author.nickname)) || ''
-      activity = `${creatorname} ${getDate(new Date(created_date))}回复了你的`
-      let hasNew = curUserId !== new_reply.creator_id && last_reply_date > reply_visit_date
-      if (hasNew) {
-        notice = <View style={{
-          width: 8,
-          height: 8,
-          borderRadius: 4,
-          backgroundColor: '#EE3D80',
-          marginTop: 8,
-          marginRight: 10,
-          alignSelf: 'flex-start'
-        }}></View>
-      }
-    }
+    // 权限提示
+    let permTips = (PERM_TYPES[perm_id] && PERM_TYPES[perm_id].name || '') + '可见'
+    // 头部信息
+    , mindType = MIND_TYPES[type_id]
+    , date = updated_date || created_date || ''
+    , { action } = MIND_TYPES[type_id]
+    date && (date = getDate(new Date(date)))
+    let activity = date + action
 
-    let header = <View
-      style={{
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-      }}
-    >
-      {notice}
-      <Text 
+    let header = (
+      <View
         style={{
-          fontSize: 14,
-          color: '#999',
-          flex: 1
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          paddingVertical: 10
         }}
-      >{[activity, MIND_TYPES[type_id].name].join('')}</Text>
-      {
-        new_reply 
-          ? <TouchableOpacity
-              style={{
-                padding: 10
-              }}
-              onPress={this.mindFollow}
-            >
-              <Text
-                style={{
-                  fontSize: 14,
-                  color: '#666'
-                }}  
-              >跟进</Text>
-            </TouchableOpacity>
-          : <TouchableOpacity
-              style={{
-                padding: 10
-              }}
-              onPress={this.mindModify}
-            >
-              <Text
-                style={{
-                  fontSize: 14,
-                  color: '#666'
-                }}
-              >修改</Text>
-            </TouchableOpacity>
-      }
-      {
-        (curUserId && curUserId === creator_id)
-        && (!last_reply_date && ['share', 'help'].indexOf(type_id) !== -1)
-        ? (<TouchableOpacity
-              style={{
-                padding: 10
-              }}
-              onPress={() => navigation.navigate('HelpDetail', {
-                itemId: _id,
-                onBackRemove: () => this.onRemove()
-              })}
-            >
-              <Text style={{ 
-              fontSize: 14,
-              color: '#666',
-              }}>回复</Text>
-            </TouchableOpacity>)
-        : null
-      }
-      {
-        curUserId && curUserId === creator_id
-        ? (<TouchableOpacity
-              style={{
-                padding: 10
-              }}
-              onPress={() => this.removeMind(_id)}
-            >
-              <Text style={{ 
-              fontSize: 14,
-              color: '#666'
-              }}>{type_id === 'help' ? '已解' : '删除'}</Text>
-            </TouchableOpacity>)
-        : null
-      }
-      <TYicon 
-        style={{
-          marginRight: 10
-        }}
-        name='gengduo' 
-        size={16} 
-        color='#666'></TYicon>
-    </View>
+      >
+        <Text 
+          style={{
+            fontSize: 12,
+            color: '#ccc',
+            flex: 1
+          }}
+        >
+          {mindType.name + mindType.icon}
+        </Text>
+        <Text
+          style={{ 
+            fontSize: 12,
+            color: '#ccc',
+          }}
+        >
+          {activity}
+        </Text>
+      </View>
+    )
 
     return (
       <Animated.View style={rowStyles}>
@@ -250,117 +288,172 @@ class MindItem extends React.Component {
             backgroundColor: 'white'
           }}
           activeOpacity={1}
-          onPress={new_reply ? this.mindFollow : this.mindModify}
+          // 跟进和编辑切换
+          onPress={
+            new_reply 
+              ? () => this.mindDetailShow('follow') 
+              : this.mindModify
+          }
         >
+          {header}
           <View>
-            {header}
-          </View>
-          <View>
-            { title ?
-              <Text style={{ 
-              fontSize: 16,
-              color: '#333',
-              lineHeight: 24
-            }}>{title}</Text> : null
+            {
+              title 
+                ?
+                  <Text 
+                    style={{ 
+                      fontSize: 16,
+                      color: '#333',
+                      lineHeight: 24
+                    }}
+                  >
+                    {title}
+                  </Text> 
+                : null
             }
             <Text 
               style={{
                 fontSize: title ? 14 : 16,
-                color: title ? '#4d4d4d' : '#333',
+                color: title ? '#999' : '#333',
                 lineHeight: 24,
-                marginTop: 10
+                marginTop: title ? 10 : null
               }}
             >{text}</Text>
           </View>
-          {column_id === 'sentence' && is_extract ? <TouchableOpacity
-            onPress={() => {
-              let { content, expand, summary } = this.state
-              if (content) {
-                this.setState({
-                  expand: !expand,
-                  text: expand ? summary : content
-                })
-              } else {
-                this.setState({
-                  loading: true
-                }, () => {
-                  this.loadMind(_id)
-                })
-              }
-            }}
-            style={{
-              marginTop: 5
-            }}
-          >
-            <Text
-              style={{
-                color: '#666'
-              }}
-            >{content && expand ? '收起' : '展开全文'}</Text>
-          </TouchableOpacity> : null}
-          {quote ? <TouchableOpacity
-            onPress={() => navigation.navigate('ClassicDetail', {
-              itemId: quote._id
-            })}
-            style={globalStyles.quoteBg}
-          >
-            <Text
-              style={globalStyles.quoteTitle}
-              numberOfLines={1}
-            >
-              {quote.title || ''}
-            </Text>
-            {/*<Text
-              style={globalStyles.quoteSummary}
-              numberOfLines={2}
-            >
-              {quote.summary || ''}
-            </Text>*/}
-          </TouchableOpacity> : null}
-          {!new_reply ? <View 
+          {
+            column_id === 'sentence' && is_extract 
+            ? <TouchableOpacity
+                onPress={() => {
+                  let { content, expand, summary } = this.state
+                  if (content) {
+                    this.setState({
+                      expand: !expand,
+                      text: expand ? summary : content
+                    })
+                  } else {
+                    this.setState({
+                      loading: true
+                    }, () => {
+                      this.loadMind(_id)
+                    })
+                  }
+                }}
+                style={{
+                  marginTop: 5
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 12,
+                    color: '#ccc'
+                  }}
+                >{content && expand ? '收起' : '展开全文'}</Text>
+              </TouchableOpacity> 
+            : null
+          }
+          <QuoteItem 
+            quote={quote}
+            navigation={navigation}
+          />
+          <View 
             style={{
               marginTop: 5,
               flexDirection: 'row',
-              justifyContent: 'flex-end'
+              alignItems: 'center'
             }}
           >
-          <TouchableOpacity
+            <View
               style={{
-                padding: 10
+                flex: 1
               }}
-              onPress={this.mindFollow}
             >
               <Text
                 style={{
-                  fontSize: 14,
-                  color: '#666'
-                }}  
-              >跟进</Text>
-            </TouchableOpacity>
-          </View> : null}
-          {
+                  fontSize: 12,
+                  color: '#ccc'
+                }}
+              >{permTips}</Text>
+            </View>
+            {
               new_reply 
                 ? <TouchableOpacity
-                  style={{
-                    padding: 10,
-                    arginTop: 5,
-                    backgroundColor: '#f3f4f5',
-                    borderRadius: 3,
-                    marginTop: 10,
-                    marginBottom: 10
-                  }}
-                  onPress={new_reply.creator_id !== curUserId ? () => onReply() : () => onShowAction()}
-                >
-                  <Text style={{
-                    fontSize: 14,
-                    lineHeight: 24,
-                    color: '#333'
-                  }}>
-                    {new_reply.content || ''}
-                  </Text>
-                </TouchableOpacity>
+                    style={{
+                      padding: 10
+                    }}
+                    onPress={() => this.mindDetailShow('follow')}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        color: '#ccc'
+                      }}  
+                    >跟进</Text>
+                  </TouchableOpacity>
+                : <TouchableOpacity
+                    style={{
+                      padding: 10
+                    }}
+                    onPress={this.mindModify}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        color: '#ccc'
+                      }}
+                    >编辑</Text>
+                  </TouchableOpacity>
+            }
+            {
+              !new_reply && type_id !== 'diary' 
+                ? <TouchableOpacity
+                    style={{
+                      padding: 10
+                    }}
+                    onPress={() => this.mindDetailShow('follow')}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        color: '#ccc'
+                      }}  
+                    >跟进</Text>
+                  </TouchableOpacity> 
+                : null
+            }
+            {
+              curUserId && curUserId === creator_id
+              ? (<TouchableOpacity
+                    style={{
+                      padding: 10
+                    }}
+                    onPress={() => this.removeMind(_id)}
+                  >
+                    <Text style={{ 
+                      fontSize: 12,
+                      color: '#ccc'
+                    }}>{type_id === 'help' ? '已解' : '删除'}</Text>
+                  </TouchableOpacity>)
               : null
             }
+            {
+              perm_id !== 'me'
+                ? <TouchableOpacity
+                    style={{
+                      padding: 10
+                    }}
+                    onPress={onQuote}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        color: '#ccc'
+                      }}  
+                    >分享到</Text>
+                  </TouchableOpacity>
+                : null
+            }
+          </View>
+          {this.newReplyNoticeBar}
         </TouchableOpacity>
       </Animated.View>
     )
@@ -369,7 +462,7 @@ class MindItem extends React.Component {
 
 const MindModal = createFriendModal({
   TypeSelect,
-  PannameEditor
+  Quote
 })
 
 class MindList extends React.Component {
@@ -379,11 +472,9 @@ class MindList extends React.Component {
     this._dropdowns = []
     this.state = {
       refreshing: false,
-      minds: [],
       loading: true,
-      noDataTips,
-      page: 1,
-      dropdownShow: false
+      minds: [],
+      page: 1
     }
   }
 
@@ -402,8 +493,7 @@ class MindList extends React.Component {
       features, 
       success, 
       pageInfo,
-      minds = [], 
-      noDataTips = noDataTips
+      minds = []
     } = data
     if (success) {
       this.props.layoutHomeData({
@@ -414,14 +504,13 @@ class MindList extends React.Component {
       this.setState({
         page: pageInfo.nextPage || 0,
         minds: [...this.state.minds, ...minds],
-        noDataTips
       })
     }
   }
 
   async loadData() {
     const { page, loading, refreshing } =  this.state
-    let data = await get('features/mind',  {
+    let data = await get('mind', {
       perPage: 20,
       page
     })
@@ -452,7 +541,7 @@ class MindList extends React.Component {
     })
   }
 
-  reload() {
+  reload = () => {
     this.setState({
       page: 1,
       loading: true,
@@ -495,34 +584,24 @@ class MindList extends React.Component {
   }
 
   render() {
-    let { features, message } = this.props.homeData
-    const { userId = '' } = this.props.loginData
-    const { routeName } = this.props.navigation.state
-    const title = features && features[routeName.toUpperCase()] || ''
-
-    let { 
+    let { homeData, loginData, navigation } = this.props
+    , { features, message } = homeData
+    , { userId = '' } = loginData
+    , { routeName } = navigation.state
+    , title = features && features[routeName.toUpperCase()] || ''
+    , { 
       minds, 
       refreshing, 
       loading, 
-      noDataTips, 
       page,
-      dropdownShow, 
     } = this.state
 
     message = [...message]
     let curMsg = message.find(msg => msg.feature === 'mind')
-    let msgCount = curMsg && curMsg.total || 0
+    , msgCount = curMsg && curMsg.total || 0
     
     return (
       <View 
-        onStartShouldSetResponderCapture={(e) => {
-          let target = e.nativeEvent.target
-          if (this._dropdowns.indexOf(target) === -1) {
-            this.setState({
-              dropdownShow: false
-            })
-          }
-        }}
         style={[globalStyles.container, {
           zIndex: 0
         }]}
@@ -530,22 +609,12 @@ class MindList extends React.Component {
         <View style={globalStyles.header}>
           <Text style={globalStyles.logo}>{ title }</Text>
           <TouchableOpacity
-            /* ref={ref => {
-              ref && this._dropdowns.push(findNodeHandle(ref))
-            }}
-            onPress={() => this.setState({
-              dropdownShow: !dropdownShow
-            })} */
             onPress={() => this._modal.open('TypeSelect')}
             style={{
               padding: 10
             }}
           >
             <TYicon 
-              ref={ref => {
-                this._dropdowns = []
-                ref && this._dropdowns.push(findNodeHandle(ref))
-              }}
               style={{
                 marginRight: 10
               }}
@@ -554,40 +623,6 @@ class MindList extends React.Component {
               color='#666'></TYicon>
           </TouchableOpacity>
         </View>
-        { 
-          dropdownShow
-            ? 
-            <CardView
-              ref={ref => {
-                ref && this._dropdowns.push(findNodeHandle(ref))
-              }}
-              cardElevation={4}
-              maxCardElevation={4}
-              radius={5}
-              backgroundColor={'#ffffff'}
-              style={globalStyles.dropDown}
-            >
-              {Object.entries(MIND_TYPES).map(([id, guide], index) => (<TouchableOpacity 
-                key={id}
-                ref={ref => {
-                  ref && this._dropdowns.push(findNodeHandle(ref))
-                }}
-                onPress={() => {
-                  this.setState({ dropdownShow: false })
-                }}
-                style={{
-                  padding: 10
-                }}
-              >
-                <Text
-                  ref={ref => {
-                    ref && this._dropdowns.push(findNodeHandle(ref))
-                  }}
-                >{guide.action + guide.name + guide.icon}</Text>
-              </TouchableOpacity>))}
-            </CardView>
-          : null
-        }
         {minds && minds.length ? <FlatList
           contentContainerStyle={{
             paddingVertical: 10
@@ -598,11 +633,13 @@ class MindList extends React.Component {
           onEndReached={this.loadMore}
           onEndReachedThreshold={100}
           renderItem={({item, index}) => <MindItem
-            navigation={this.props.navigation}
+            navigation={navigation}
             modal={this._modal}
             curReply={item}
             curUserId={userId}
             msgCount={msgCount}
+            onListRefresh={this.refresh}
+            onListReload={this.reload}
             onRemoveMsgTips={() => {
               console.log('消息全部已读')
               let { message } = this.props.homeData
@@ -618,7 +655,11 @@ class MindList extends React.Component {
             }}
             onRemove={this.removeItem.bind(this, index)} 
             onRefresh={() => this.refresh()}
-            onReport={() => this._modal.open('Report')}
+            onQuote={() => this._modal.open('Quote', {
+              classic: item,
+              quoteType: 'mind',
+              feature: 'mind'
+            })}
           />}
           ListFooterComponent={<Footer 
             data={minds} 
@@ -686,9 +727,18 @@ class MindList extends React.Component {
         </ScrollView>) : <Empty loading={true} />)}
         <MindModal 
           ref={ref => this._modal = ref}
+          navigation={navigation}
           onChangeType={(type_id) => {
             this.newMind(type_id)
             this._modal.close()
+          }}
+          refReply={(help, classic, quoteType) => {
+            navigation.navigate('QuoteEditor', {
+              type: 'reply',
+              help,
+              classic,
+              quoteType
+            })
           }}
         />
       </View>

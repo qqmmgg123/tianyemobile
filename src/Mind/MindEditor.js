@@ -1,27 +1,35 @@
+/**
+ * 心事编辑界面
+ */
 import React from 'react'
 import {
   View,
   KeyboardAvoidingView,
   TextInput,
   Text,
-  findNodeHandle,
   ActivityIndicator,
   TouchableOpacity,
   Platform,
-  Alert
+  Alert,
+  ScrollView,
+  Dimensions
 } from 'react-native'
-import Spinner from 'react-native-loading-spinner-overlay'
+import { Spinner } from 'app/component/GlobalModal'
 import { get, post, put } from 'app/component/request'
-import TYicon from 'app/component/TYicon'
+import { MIND_TYPES, STATUS_BAR_HEIGHT, BASE_COLOR } from 'app/component/Const'
 import { createFriendModal } from 'app/component/GlobalModal'
+import { QuoteItem } from 'app/component/Quote'
+import { PERM_TYPES } from '../component/Const'
+import globalStyles from 'app/component/globalStyles'
+import TYicon from 'app/component/TYicon'
 import Back from 'app/component/Back'
 import TypeSelect from 'app/Mind/TypeSelect'
-import { MIND_TYPES, STATUS_BAR_HEIGHT } from 'app/component/Const'
+import PermSelect from 'app/Mind/PermSelect'
 
-
-
-const TypeModal = createFriendModal({ 
+const { width } = Dimensions.get('window')
+, TypeModal = createFriendModal({ 
   TypeSelect,
+  PermSelect
 })
 
 export default class MindEditor extends React.Component {
@@ -35,51 +43,60 @@ export default class MindEditor extends React.Component {
       _id: '',
       type_id: 'diary',
       column_id: 'sentence',
-      content: ''
+      title: '',
+      content: '',
+      quote: null,
+      perm_id: 'all',
+      needTitle: false
     }
   }
 
   async postMind() {
-    const { navigation, listRefresh } = this.props
-    const { _id, type_id, content, column_id } = this.state
+    let { navigation } = this.props
+    , { 
+      _id, 
+      type_id, 
+      title,
+      content, 
+      column_id,
+      perm_id
+    } = this.state
+    if (type_id === 'diary') {
+      perm_id = 'me'
+    } 
     this.setState({
       spinner: true,
       spinnerText: '',
     })
     try {
-      let res = null
       if (_id) {
-        res = await put(`mind/${_id}`, {
+        await put(`mind/${_id}`, {
           _id: '',
           type_id,
+          title,
           column_id,
-          content
+          content,
+          perm_id
         })
       } else {
-        res = await post('mind', {
+        await post('mind', {
           _id: '',
           type_id,
+          title,
           column_id,
-          content
+          content,
+          perm_id
         })
       }
       this.setState({
         spinner: false,
         spinnerText: '',
       }, () => {
-        if (res) {
-          const { success, info } = res
-          if (success) {
-            navigation.goBack()
-            /* if (_id) {
-              navigation.navigate('MindDetail', {
-                itemId: _id
-              })
-            } */
-            navigation.state.params.onListRefresh()
-          } else {
-            toast(info)
-          }
+        navigation.goBack()
+        if (_id) {
+          navigation.state.params.onListReload()
+        } else {
+          navigation.state.params.onListRefresh()
         }
       })
     } catch (err) {
@@ -97,15 +114,23 @@ export default class MindEditor extends React.Component {
       let data = await get(`mind/${_id}`)
       this.setState({loading: false}, () => {
         if (data) {
-          let { success, mind } = data
-          const { content = '', type_id = 'diary' } = mind
-          if (success) {
-            this.setState({
-              type_id,
-              _id,
-              content,
-            })
-          }
+          let { mind } = data
+          const { 
+            title = '', 
+            content = '',
+            type_id = 'diary', 
+            quote, 
+            perm_id 
+          } = mind
+          this.setState({
+            type_id,
+            _id,
+            title,
+            needTitle: !!title,
+            content,
+            quote,
+            perm_id
+          })
         }
       })
     } else {
@@ -147,10 +172,45 @@ export default class MindEditor extends React.Component {
     }
   }
 
+  titleInput = el => this._titleInput = el
+
+  handleSelectionChange = ({ nativeEvent: { selection } }) => this.setState({ selection })
+
+  get downArraw() {
+    return (
+      <TYicon 
+        style={{
+          transform: [{ rotate: '-90deg'}],
+          marginLeft: 10,
+        }}
+        name='fanhui' 
+        size={16} 
+        color='#666'>
+      </TYicon>
+    )
+  }
+
   render() {
-    const { loading, type_id, content, spinner, spinnerText } = this.state
-    const curType = MIND_TYPES[type_id]
-    const { icon, name, action, description } = curType
+    const {
+      _id,
+      loading, 
+      type_id, 
+      perm_id,
+      title,
+      content, 
+      quote,
+      spinner, 
+      spinnerText,
+      needTitle
+    } = this.state
+    , { navigation } = this.props
+    , curType = type_id && MIND_TYPES[type_id]
+    , { icon, name, action, description } = curType
+    , curPerm = perm_id && PERM_TYPES[perm_id]
+    , curPermTips = curType && curType.permission || ''
+    , curPermName = curPerm && curPerm.name || ''
+    , permSelectText = curPermTips && curPermName ? curPermTips.replace(/\{name\}/, curPermName) : ''
+    , needShowPerm = ['share', 'help'].indexOf(type_id) !== -1 && permSelectText
     return (
         !loading ? (<View 
           style={{
@@ -185,15 +245,7 @@ export default class MindEditor extends React.Component {
                 fontSize: 16,
                 color: '#666'
               }}>{icon + ' ' + name}</Text>
-              <TYicon 
-                style={{
-                  transform: [{ rotate: '-90deg'}],
-                  marginLeft: 10,
-                }}
-                ref={ref => this._buttonText = ref} 
-                name='fanhui' 
-                size={16} 
-              color='#666'></TYicon>
+              {this.downArraw}
             </TouchableOpacity>)}
             rightButton={{
               name: action,
@@ -205,44 +257,134 @@ export default class MindEditor extends React.Component {
               keyboardVerticalOffset={Platform.select({ios: STATUS_BAR_HEIGHT, android: null})}
               behavior={Platform.select({ios: 'padding', android: null})}
               style={{flex: 1}}
-              onStartShouldSetResponderCapture={(e) => {
-                let target = e.nativeEvent.target
-                if (target !== findNodeHandle(this._input)
-                  && (target !== findNodeHandle(this._button))
-                  && (target !== findNodeHandle(this._buttonText))) {
-                    this._input && this._input.blur();
-                }
-              }}
             >
+              <ScrollView 
+                keyboardShouldPersistTaps="handled"
+                keyboardDismissMode="on-drag"
+                contentContainerStyle={{
+                  backgroundColor: '#fff',
+                  padding: 10,
+                }}
+                showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
+              >
+              {
+                needTitle
+                  ? 
+                  <TextInput
+                    ref={this.titleInput}
+                    onChangeText={value => {
+                      this.setState({title: value.trim().replace(/\n|\r|\t/gi, '')})
+                    }}
+                    value={title}
+                    style={{
+                      color: '#333',
+                      fontSize: 20,
+                      textAlignVertical: 'top',
+                      lineHeight: 32,
+                    }}
+                    placeholder='标题...'
+                    placeholderTextColor="#999999"
+                    underlineColorAndroid="transparent"
+                    autoCapitalize="none"
+                    returnKeyType='done'
+                    contextMenuHidden={false}
+                    blurOnSubmit={true}
+                    multiline={true}
+                  />
+                  : null
+              }
               <TextInput
-                onChangeText={(content) => {
-                  this.setState({content})
+                onChangeText={(value) => {
+                  this.setState({content: value})
                 }}
-                autoFocus={true}
-                value={this.state.content}
-                ref={ref => {
-                  this._input = ref
-                }}
+                value={content}
+                //autoFocus={true}
                 style={{
                   flex: 1,
                   color: '#333',
-                  padding: 10,
-                  marginTop: 10,
                   fontSize: 16,
                   textAlignVertical: 'top',
-                  lineHeight: 28
+                  lineHeight: 28,
                 }}
                 placeholder={description}
                 placeholderTextColor="#999999"
+                underlineColorAndroid="transparent"
+                contextMenuHidden={false}
                 autoCapitalize="none"
                 multiline={true}
               />
+              <QuoteItem 
+                quote={quote}
+                navigation={navigation}
+              />
+            </ScrollView>
+            <View
+              style={{
+                padding: 10,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                //position: 'absolute',
+                backgroundColor: BASE_COLOR.BACKGROUND,
+                width,
+                //bottom: 0
+              }}
+            >
+              {
+                needShowPerm 
+                  ? 
+                    <TouchableOpacity
+                      onPress={() => this._modal.open('PermSelect', {
+                        perm_id
+                      })}
+                      style={{
+                        paddingVertical: 10,
+                        flexDirection: 'row'
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          color: '#666666'
+                        }}
+                      >{permSelectText}</Text>
+                      {this.downArraw}
+                    </TouchableOpacity>
+                  : 
+                    null
+              }
+              <TouchableOpacity
+                onPress={() => {
+                  this.setState({
+                    needTitle: !needTitle,
+                    title: ''
+                  }, () => {
+                    this._titleInput && this._titleInput.focus()
+                  })
+                }}
+                style={{
+                  padding: 15,
+                  flexDirection: 'row'
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 14,
+                    color: '#666666'
+                  }}
+                >{!needTitle ? '+ 添加标题' : '- 取消标题'}</Text>
+              </TouchableOpacity>
+            </View>
           </KeyboardAvoidingView>
           <TypeModal 
             navigation={this.props.navigation}
             ref={ ref => this._modal = ref }
             onChangeType={(type_id) => this.setState({
+              perm_id: 'all',
               type_id
+            })}
+            onChangePerm={(perm_id) => this.setState({
+              perm_id
             })}
           />
         </View>) : (
