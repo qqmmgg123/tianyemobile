@@ -12,7 +12,7 @@
     "fbjs": "^1.0.0",
     "fbjs-scripts": "^1.2.0",
     "react": "16.6.1",
-    "react-native": "^0.58.5",
+    "react-native": "^0.70.2",
     "react-native-cookies": "^3.3.0",
     "react-native-exit-app": "^1.0.0",
     "react-native-gesture-handler": "^1.0.16",
